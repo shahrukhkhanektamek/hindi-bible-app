@@ -90,6 +90,22 @@ const HomeScreen = () => {
         }),
       ])
     ).start();
+
+    // if(appSetting.package.status==0 || appSetting.package.status==2)
+    // {
+    //   navigation.reset({
+    //     index: 0,
+    //     routes: [{ name: 'SelectCountryScreen' }], 
+    //   });
+    // }
+    // else
+    // {
+    //   navigation.reset({
+    //     index: 0,
+    //     routes: [{ name: 'Home' }], 
+    //   });
+    // }
+
   }, [opacity]);
 
   return (

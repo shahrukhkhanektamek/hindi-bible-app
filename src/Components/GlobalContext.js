@@ -8,7 +8,7 @@ import Loader from './Loader';
 import { MMKV } from 'react-native-mmkv';
 const storage = new MMKV();
  
- 
+   
 import { postData, apiUrl } from './api';
 import { View, ImageBackground, StyleSheet } from 'react-native';
 const urls=apiUrl();
@@ -26,7 +26,7 @@ export const GlobalProvider = ({ children }) => {
   const [isLoading, setisLoading] = useState(true);
 
  
- 
+  
    
  
   const [showAlert, setShowAlert] = useState(false);
@@ -40,25 +40,26 @@ export const GlobalProvider = ({ children }) => {
   const sidebar = { showSideBar, setSideBar };
   const loader = { showLoader, setShowLoader }; 
   
-  const extraData = {alert, sidebar, loader, appSetting, userDetail, setuserDetail, token, setToken};
   
-      
   
-   
-  const fetchPickerData = async () => { 
+  
+  
+  const fetchAppSettingData = async () => { 
     try {
       const response = await postData({}, urls.appSetting, "GET", navigation, extraData);
       setappSetting(JSON.parse(storage.getString('appSetting')));
-       if(storage.getString('user')) setuserDetail(JSON.parse(storage.getString('user'))); 
-       if(storage.getString('toekn')) setToken(JSON.parse(storage.getString('token'))); 
+      if(storage.getString('user')) setuserDetail(JSON.parse(storage.getString('user'))); 
+      if(storage.getString('toekn')) setToken(JSON.parse(storage.getString('token'))); 
       setisLoading(false)
     } catch (error) {
       console.error('Error fetching countries:', error);
     }
   };
 
+  const extraData = {alert, sidebar, loader, appSetting, userDetail, setuserDetail, token, setToken, fetchAppSettingData};
+  
   useEffect(() => {
-    fetchPickerData();
+    fetchAppSettingData();
   }, []);
   
   if(isLoading)

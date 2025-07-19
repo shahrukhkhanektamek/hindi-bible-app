@@ -12,8 +12,8 @@ const storage = new MMKV();
 export const apiUrl = () => {
 
   // const apiUrl = 'http://192.168.1.61/projects/codediffusion/hindibible/api/';
-  const apiUrl = 'https://digitalnamo.com/azmal/2025/april/hindibible/api/';
-  // const apiUrl = 'http://192.168.29.11/projects/hindibible/api/'; 
+  // const apiUrl = 'https://digitalnamo.com/azmal/2025/april/hindibible/api/';
+  const apiUrl = 'http://192.168.29.11/projects/hindibible/api/'; 
   // const apiUrl = 'https://developershahrukh.in/demo/tanjeem/jinnuncle/api/';
 
     
@@ -53,37 +53,16 @@ export const apiUrl = () => {
 
 
     "homeDetail":`${mainUrl}home-detail`,
-    "keuDetail":`${mainUrl}kyc-detail`,
-    "kycAdd":`${mainUrl}kyc-add`,
-    "walletList":`${mainUrl}wallet-list`,
-    "withdrawalList":`${mainUrl}withdrawal-list`,
-    "withdrawalAdd":`${mainUrl}withdrawal-add`,
-    "supportLsit":`${mainUrl}support-list`,
-    "supportAdd":`${mainUrl}support-add`,
-    "earningList":`${mainUrl}earning-list`,
-    "depositList":`${mainUrl}deposit-list`, 
-    "depositAdd":`${mainUrl}deposit-add`,
-    "depositSubmit":`${mainUrl}deposit-submit`,
-    "teamTree":`${mainUrl}team-tree`,
-    "teamDirect":`${mainUrl}team-direct`,
-    "teamLeft":`${mainUrl}team-left`,
-    "teamRight":`${mainUrl}team-right`,    
-    "newRegister":`${mainUrl}new-register`,
-    "accountActivation":`${mainUrl}account-activation`,
+    "createTransaction":`${mainUrl}create-transaction`,
+    "transactionStatus":`${mainUrl}check-transaction-status`,
     
-    "productList":`${mainUrl}product-list`,
-
-    "cartList":`${mainUrl}cart-list`,
-    "cartAdd":`${mainUrl}cart-add`,
-
-    "kycDetail":`${mainUrl}kyc-detail`,
 
   };
 };
 
 
  
-export const postData = async (filedata, url, method, navigation, extraData, loaderShowHide=null) => {
+export const postData = async (filedata, url, method, navigation, extraData, loaderShowHide=null, messageAlert=null) => {
 
   // console.log(navigation)
   // return false;
@@ -129,7 +108,7 @@ export const postData = async (filedata, url, method, navigation, extraData, loa
       },
       body: data, // Convert data to JSON string
     });    
-    return await responseCheck(response, navigation, extraData);   
+    return await responseCheck(response, navigation, extraData, messageAlert);   
   } catch (error) {
     extraData.loader.setShowLoader(false);
     console.error("Failed to make POST request:", error);
@@ -137,7 +116,7 @@ export const postData = async (filedata, url, method, navigation, extraData, loa
   }  
 };
 
-const responseCheck = async (response, navigation, extraData) => {
+const responseCheck = async (response, navigation, extraData, messageAlert) => {
   try {
 
     let result = [];
@@ -159,22 +138,36 @@ const responseCheck = async (response, navigation, extraData) => {
     if (result.status === 200) {
       switch (result.action) {
         case "add":
-          showSuccessMessage(result.message, extraData, 1);
+          showSuccessMessage(result.message, extraData, 1, messageAlert);
           return result;
   
         case "login":
-          showSuccessMessage(result.message, extraData, 1);
+          showSuccessMessage(result.message, extraData, 1, messageAlert);
           storeLoginToken(result);
           extraData.setuserDetail(JSON.stringify(result?.data));
           extraData.setToken(result?.token);
-          navigation.reset({
-            index: 0,
-            routes: [{ name: 'Home' }], 
-          });
-          return result;
+
+          if(result.package.status==0 || result.package.status==2)
+          {
+            navigation.reset({
+              index: 0,
+              routes: [{ name: 'SelectCountryScreen' }], 
+            });
+            return result;
+          }
+          else
+          {
+            navigation.reset({
+              index: 0,
+              routes: [{ name: 'Home' }], 
+            });
+            return result;
+          }
+
+          
 
           case "tokenUpdate":
-          showSuccessMessage(result.message, extraData, 1);
+          showSuccessMessage(result.message, extraData, 1, messageAlert);
           storeLoginToken(result);
           extraData.setuserDetail(JSON.stringify(result?.data));
           extraData.setToken(result?.token);
@@ -186,11 +179,27 @@ const responseCheck = async (response, navigation, extraData) => {
 
           case "appSetting":
           appSettingStore(result);
+          if(result.data.package.status==0 || result.data.package.status==2)
+          {
+            navigation.reset({
+              index: 0,
+              routes: [{ name: 'SelectCountryScreen' }], 
+            });
+            return result;
+          }
+          else
+          {
+            navigation.reset({
+              index: 0,
+              routes: [{ name: 'Home' }], 
+            });
+            return result;
+          }
           return result;
 
           
           case "register":
-          showSuccessMessage(result.message, extraData, 1);
+          showSuccessMessage(result.message, extraData, 1, messageAlert);
           storeLoginToken(result);
           extraData.setuserDetail(JSON.stringify(result?.data));
           extraData.setToken(result?.token);
@@ -201,7 +210,7 @@ const responseCheck = async (response, navigation, extraData) => {
           return result;
           
           case "logout":
-          showSuccessMessage(result.message, extraData, 1);
+          showSuccessMessage(result.message, extraData, 1, messageAlert);
           extraData.setuserDetail(null);
           extraData.setToken(null);
           storage.delete('token');
@@ -227,7 +236,7 @@ const responseCheck = async (response, navigation, extraData) => {
           return result;
   
         default:
-          showSuccessMessage(result.message, extraData, 1);
+          showSuccessMessage(result.message, extraData, 1, messageAlert);
           return result;
       }
     } 
@@ -236,18 +245,18 @@ const responseCheck = async (response, navigation, extraData) => {
   
       if (result.status === 400) {
         if (result.action === "login") {
-          showSuccessMessage(result.message, extraData, 0);
+          showSuccessMessage(result.message, extraData, 0, messageAlert);
           // storeLoginToken('');
         } else if (result.action === "edit" || result.action === "add") {
-          showSuccessMessage(result.message, extraData, 0);
+          showSuccessMessage(result.message, extraData, 0, messageAlert);
         } else if (result.action === "check_login") {
           return result;
         } else {
-          showSuccessMessage(result.message, extraData, 0);
+          showSuccessMessage(result.message, extraData, 0, messageAlert);
         }
       } 
       else if (result.status === 401) {
-          // showSuccessMessage(result.message, extraData, 1);
+          // showSuccessMessage(result.message, extraData, 1, messageAlert);
           extraData.setuserDetail(null);
           extraData.setToken(null);
           storage.delete('token');
@@ -276,10 +285,13 @@ const responseCheck = async (response, navigation, extraData) => {
   }
 };
 
-export const showSuccessMessage = (message, extraData, type) => {
-  extraData.alert.setAlertMessage(message);
-  extraData.alert.setShowAlert(true);
-  extraData.alert.setAlertType(type);
+export const showSuccessMessage = (message, extraData, type, messageAlert) => {
+  if(!messageAlert)
+  {
+    extraData.alert.setAlertMessage(message);
+    extraData.alert.setShowAlert(true);
+    extraData.alert.setAlertType(type);
+  }
 };
 
 const showErrorMessage = (message) => {
