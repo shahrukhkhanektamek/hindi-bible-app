@@ -1,14 +1,41 @@
 /* eslint-disable comma-dangle */
 import { StyleSheet, Text, View, ScrollView } from 'react-native';
-import React from 'react';
+import React, { useState, useContext } from 'react';
 import TopBarPrimary from '../../Components/TopBar/TopBarPrimary.js';
 import GradiantButton from '../../Components/Button/GradientButton.js';
 import { useNavigation } from '@react-navigation/native';
 import COLORS from '../../Constants/Colors.js';
 import BACKGROUND_COLORS from '../../Constants/BackGroundColors.js';
 
-const PayNowScreen = () => {
+import { GlobalContext } from '../../Components/GlobalContext';
+import { postData, apiUrl } from '../../Components/api';
+const urls=apiUrl();
+
+const PayNowScreen = ({route}) => {
   const navigation = useNavigation();
+  const filedata = (route.params).filedata;
+  const { extraData } = useContext(GlobalContext);
+    
+  const [amount, setamount] = useState(filedata.amount);
+
+  const priceFormat = (value) => {
+    if(filedata.payment_type==1)
+      return `₹${parseFloat(value).toFixed(2)}`;
+    else
+      return '$'+`${parseFloat(value).toFixed(2)}`;
+  };
+
+   
+  const handleSubmit = async () => {
+    
+    const response = await postData(filedata, urls.createTransaction,"GET", navigation,extraData);
+    if(response.status==200)
+    {
+      navigation.navigate("PaymentGateway",{payment_type:filedata.payment_type,data:response.data});
+    }
+  
+  };
+
 
   return (
     <ScrollView style={styles.container}>
@@ -31,7 +58,7 @@ const PayNowScreen = () => {
       <View style={styles.mainContainer}>
         <View style={styles.moneyContainer}>
           <Text style={styles.text}>CONFIRM PAY</Text>
-          <Text style={styles.text}>Rs. 1/-</Text>
+          <Text style={styles.text}>{priceFormat(amount)}/-</Text>
         </View>
         <View style={styles.buttonContainer}>
           <GradiantButton
@@ -42,7 +69,8 @@ const PayNowScreen = () => {
             fontWeight={500}
             gradientType="vibrantGreen"
             borderRadius={5}
-            onPress={() => navigation.navigate('ConfirmPay')}
+            // onPress={() => navigation.navigate('ConfirmPay')}
+            onPress={handleSubmit}
           />
           <GradiantButton
             title="Cancel"

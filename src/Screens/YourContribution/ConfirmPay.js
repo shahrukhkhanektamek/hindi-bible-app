@@ -1,12 +1,17 @@
 import { Image, ScrollView, StyleSheet, View } from 'react-native';
-import React from 'react';
+import React, { useState, useContext } from 'react';
 import TopBarPrimary from '../../Components/TopBar/TopBarPrimary.js';
 import BACKGROUND_COLORS from '../../Constants/BackGroundColors.js';
 import GradiantButton from '../../Components/Button/GradientButton.js';
 import { useNavigation } from '@react-navigation/native';
 
-const ConfirmPayScreen = () => {
+
+
+
+
+const ConfirmPayScreen = ({route}) => {
   const navigation = useNavigation();
+ 
 
   return (
     <ScrollView style={styles.container}>
@@ -26,7 +31,7 @@ const ConfirmPayScreen = () => {
           fontSize={16}
           gradientType="green"
           borderRadius={5}
-          onPress={() => navigation.navigate('PaymentSuccess')}
+          // onPress={handleSubmit}
         />
       </View>
     </ScrollView>

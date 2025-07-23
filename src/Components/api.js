@@ -11,9 +11,9 @@ const storage = new MMKV();
    
 export const apiUrl = () => {
 
-  // const apiUrl = 'http://192.168.1.61/projects/codediffusion/hindibible/api/';
+  const apiUrl = 'http://192.168.1.61/projects/codediffusion/hindibible/api/';
   // const apiUrl = 'https://digitalnamo.com/azmal/2025/april/hindibible/api/';
-  const apiUrl = 'http://192.168.29.11/projects/hindibible/api/'; 
+  // const apiUrl = 'http://192.168.29.11/projects/hindibible/api/'; 
   // const apiUrl = 'https://developershahrukh.in/demo/tanjeem/jinnuncle/api/';
 
     
@@ -47,6 +47,7 @@ export const apiUrl = () => {
     "postDetail":`${mainUrl}post/detail`,
 
     "NewsList":`${mainUrl}news/list`,
+    "packageHistory":`${mainUrl}package-history`,
 
     "appSetting":`${commurl}app-setting`,
     "contactInquiry":`${commurl}contact-inquiry`,
@@ -179,22 +180,22 @@ const responseCheck = async (response, navigation, extraData, messageAlert) => {
 
           case "appSetting":
           appSettingStore(result);
-          if(result.data.package.status==0 || result.data.package.status==2)
-          {
-            navigation.reset({
-              index: 0,
-              routes: [{ name: 'SelectCountryScreen' }], 
-            });
-            return result;
-          }
-          else
-          {
-            navigation.reset({
-              index: 0,
-              routes: [{ name: 'Home' }], 
-            });
-            return result;
-          }
+          // if(result.data.package.status==0 || result.data.package.status==2)
+          // {
+          //   navigation.reset({
+          //     index: 0,
+          //     routes: [{ name: 'SelectCountryScreen' }], 
+          //   });
+          //   return result;
+          // }
+          // else
+          // {
+          //   navigation.reset({
+          //     index: 0,
+          //     routes: [{ name: 'Home' }], 
+          //   });
+          //   return result;
+          // }
           return result;
 
           

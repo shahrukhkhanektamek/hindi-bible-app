@@ -16,13 +16,13 @@ const urls=apiUrl();
 const PaymentGatewayScreen = ({route}) => {
   const navigation = useNavigation();
   const {payment_type, data} = route.params;
-
+  console.log(data)
 
   const { extraData } = useContext(GlobalContext);
   const appSetting = extraData.appSetting;
   const userDetail = extraData.userDetail;
   const fetchAppSettingData = extraData.fetchAppSettingData;
-  console.log(appSetting.package.status)
+  // console.log(appSetting.package.status)
   
  
   
@@ -75,43 +75,13 @@ const PaymentGatewayScreen = ({route}) => {
 
   return (
     <View style={styles.container}>
-      {/* <View style={styles.topBar}>
-        <TopBarPrimary />
-      </View> */}
-
-      {/* <View style={[styles.button, { marginBottom: 30 }]}>
-        <GradiantButton
-          title="Home"
-          height="35"
-          width="30%"
-          fontSize={16}
-          gradientType="yellow"
-          borderRadius={5}
-          onPress={() => navigation.navigate('Home')}
-        />
-      </View> */}
- 
       <WebView
         style={styles.webviewVideo} 
         // javaScriptEnabled={true}
         // domStorageEnabled={true}
         source={{ uri: `${data.url}` }}
       />
-
       <View style={styles.buttonContainer}>
-        
-        
-        {/* <View style={styles.button}>
-          <GradiantButton
-            title="Sccess"
-            height="40"
-            width="40%"
-            fontSize={16}
-            gradientType="orange"
-            borderRadius={5}
-            onPress={() => navigation.navigate('Register')}
-          />
-        </View> */}
       </View>
     </View>
   );

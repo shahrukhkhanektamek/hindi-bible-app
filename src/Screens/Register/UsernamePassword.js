@@ -39,7 +39,7 @@ const UsernamePasswordScreen = ({route}) => {
       "name":data.name,
       "phone":data.phone,
       "email":data.email,
-      "country":data.email,
+      "country":data.selectedCountry,
       "show_case":data.show_case,
     };
     const response = await postData(filedata, urls.registerOtpSend,"POST", navigation,extraData);

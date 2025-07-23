@@ -5,6 +5,8 @@ import { useNavigation } from '@react-navigation/native';
 import AlertMessage from './AlertMessage'; 
 import Loader from './Loader'; 
 
+import { SplashScreen } from '../Screens/SplashScreen';
+
 import { MMKV } from 'react-native-mmkv';
 const storage = new MMKV();
  
@@ -12,7 +14,7 @@ const storage = new MMKV();
 import { postData, apiUrl } from './api';
 import { View, ImageBackground, StyleSheet } from 'react-native';
 const urls=apiUrl();
-  
+    
 
 export const GlobalContext = createContext();  
 
@@ -66,7 +68,7 @@ export const GlobalProvider = ({ children }) => {
   {
     return ( 
       <View flex={1}> 
-        
+        <SplashScreen />
       </View>
     ); 
   }

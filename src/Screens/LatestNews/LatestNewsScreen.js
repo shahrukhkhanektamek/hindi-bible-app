@@ -8,6 +8,9 @@ import TopBarPrimary from '../../Components/TopBar/TopBarPrimary.js';
 import VideoPlayer from '../../Components/Video/VideoPlayer.js';
 
 
+import RenderHTML from 'react-native-render-html';
+import { useWindowDimensions } from 'react-native';
+
 import { GlobalContext } from '../../Components/GlobalContext';
 import PageLoding from '../../Components/PageLoding.js';
 import { postData, apiUrl } from '../../Components/api';
@@ -18,7 +21,7 @@ const urls=apiUrl();
 
 const LatestNewsScreen = () => {
   const navigation = useNavigation();
-
+  const { width } = useWindowDimensions();
 
     const { extraData } = useContext(GlobalContext);
   const appSetting = extraData.appSetting;
@@ -94,26 +97,25 @@ const LatestNewsScreen = () => {
         <Text style={styles.heading}>Latest News</Text>
         
         {data.map((item) => (
-          <React.Fragment key={item.id}>
-            
-              
-
-              <View style={styles.videoPlayer}>
-                <VideoPlayer
-                  videoSource={require('../../Assets/myvideo.mp4')}
-                  thumbnail={{uri:item.image}}
-                  frameSource={require('../../Assets/videoFrame.jpeg')}
-                />
-              </View>
-              <Text style={styles.description}>Following a hiker in a beautiful green forest with patches.</Text>
-              <Text style={styles.description}>एक सुन्दर हरे भरे जंगल में एक यात्री का पीछा करते हुए।</Text>
-
-            
+          <React.Fragment key={item.id}> 
+            <View style={styles.videoPlayer}>
+              <VideoPlayer
+                videoSource={require('../../Assets/myvideo.mp4')} // change to item.video_url if dynamic
+                thumbnail={{ uri: item.image }}
+                frameSource={require('../../Assets/videoFrame.jpeg')}
+              />
+            </View> 
+            <RenderHTML
+              contentWidth={width}
+              source={{ html: item.description }}
+              baseStyle={styles.description}
+            />
+            <Text style={styles.description}>{item.description || 'No description available.'}</Text>
           </React.Fragment>
         ))}
 
           
-
+ 
 
       </View>
     </ScrollView>

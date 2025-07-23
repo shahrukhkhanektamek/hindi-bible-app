@@ -6,8 +6,9 @@ import { useNavigation } from '@react-navigation/native';
 import COLORS from '../../Constants/Colors.js';
 import BACKGROUND_COLORS from '../../Constants/BackGroundColors.js';
 
-const YourContributionScreen = () => {
+const YourContributionScreen = ({route}) => {
   const navigation = useNavigation();
+  const {payment_type} = route.params;
 
   return (
     <ScrollView style={styles.container}>
@@ -40,7 +41,7 @@ const YourContributionScreen = () => {
           fontSize={16}
           gradientType="green"
           borderRadius={5}
-          onPress={() => navigation.navigate('PayDirect')}
+          onPress={() => navigation.navigate('PayDirect',{"payment_type":payment_type})}
         />
       </View>
 
@@ -57,7 +58,7 @@ const YourContributionScreen = () => {
           fontSize={16}
           gradientType="yellow"
           borderRadius={5}
-          onPress={() => navigation.navigate('PayThruApp')}
+          onPress={() => navigation.navigate('PayThruApp',{"payment_type":payment_type})}
         />
       </View>
     </ScrollView>

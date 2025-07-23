@@ -1,17 +1,71 @@
-import { View, ScrollView, StyleSheet, Text, SafeAreaView } from 'react-native';
-import React from 'react';
+import { View, ScrollView, StyleSheet, Text, SafeAreaView, RefreshControl } from 'react-native';
+import React, { useState, useEffect, useCallback, useContext } from 'react';
 import BACKGROUND_COLORS from '../../Constants/BackGroundColors';
 import Button from '../../Components/Button/Button';
 import GradiantButton from '../../Components/Button/GradientButton';
 import { useNavigation } from '@react-navigation/native';
 
+import { GlobalContext } from '../../Components/GlobalContext';
+import PageLoding from '../../Components/PageLoding.js';
+import { postData, apiUrl } from '../../Components/api';
+const urls=apiUrl();
+
+
 const OrderHistoryScreen = () => {
   const navigation = useNavigation();
 
+  const { extraData } = useContext(GlobalContext);
+  const appSetting = extraData.appSetting;
+  const userDetail = extraData.userDetail;
+
+
+  const [page, setPage] = useState(0);
+  const [isLoading, setisLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+  const [data, setData] = useState([]);
+  const onRefresh = useCallback(() => {
+    // setPage(0);
+    setRefreshing(true);
+    setRefreshing(false); 
+    fetchData(page);
+  }, []);
+
+  const fetchData = async () => { 
+      try {
+        const response = await postData({}, urls.packageHistory, "GET", navigation, extraData, 1);
+        if(response.status==200)
+        {
+          setData(response.data);           
+          setisLoading(false)
+        }
+      } catch (error) {
+        console.error('Error fetching countries:', error);
+      }
+    };
+
+    useEffect(() => {
+      fetchData()
+    },[])
+    if (isLoading) {
+      return ( 
+          <PageLoding />          
+      ); 
+    }
+
+
+    const priceFormat = (value, payment_type) => {
+      if(payment_type==1)
+        return `₹${parseFloat(value).toFixed(2)}`;
+      else
+        return '$'+`${parseFloat(value).toFixed(2)}`;
+    };
+
   return (
-    <SafeAreaView style={styles.safeContainer}>
+    <SafeAreaView style={styles.safeContainer} >
       <View style={styles.container}>
-        <ScrollView contentContainerStyle={styles.scrollContent}>
+        <ScrollView contentContainerStyle={styles.scrollContent}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+        >
           <View style={styles.heading}>
             <View style={styles.headingItem}>
               <Button
@@ -51,19 +105,19 @@ const OrderHistoryScreen = () => {
             </View>
           </View>
 
-          {[1].map((_, index) => (
-            <View style={styles.content} key={index}>
-              <View style={styles.contentItem}>
-                <Text style={styles.contentText}>26/04/2025</Text>
+          {data.map((item) => (
+              <View style={styles.row} key={item.id}>
+                <View style={styles.cell}>
+                  <Text style={styles.cellText}>{item.start_date_time}</Text>
+                </View>
+                <View style={styles.cell}>
+                  <Text style={styles.cellText}>{item.end_date_time}</Text>
+                </View>
+                <View style={styles.cell}>
+                  <Text style={styles.cellText}>{item.final_amount}</Text>
+                </View>
               </View>
-              <View style={styles.contentItem}>
-                <Text style={styles.contentText}>26/04/2026</Text>
-              </View>
-              <View style={styles.contentItem}>
-                <Text style={styles.contentText}>Rs. 300</Text>
-              </View>
-            </View>
-          ))}
+            ))}
         </ScrollView>
 
         <View style={styles.buttonWrapper}>
@@ -127,6 +181,29 @@ const styles = StyleSheet.create({
     right: 0,
     alignItems: 'center',
   },
+
+  row: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 5,
+    paddingVertical: 10,
+    paddingHorizontal: 5,
+    marginBottom: 8,
+    backgroundColor: '#f9f9f9',
+  },
+  cell: {
+    flex: 1,
+    alignItems: 'center',
+    paddingHorizontal: 4,
+  },
+  cellText: {
+    fontSize: 14,
+    color: '#333',
+  },
+
 });
 
 export default OrderHistoryScreen;

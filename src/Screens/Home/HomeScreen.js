@@ -1,6 +1,6 @@
 /* eslint-disable react-native/no-inline-styles */
-import { View, Text, StyleSheet, Linking, ScrollView, Animated, Dimensions  } from 'react-native';
-import React, { useEffect, useRef, useState, useContext  } from 'react';
+import { View, Text, StyleSheet, Linking, ScrollView, Animated, Dimensions, RefreshControl  } from 'react-native';
+import React, { useEffect, useRef, useState, useContext, useCallback  } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import GradientButton from '../../Components/Button/GradientButton.js';
 import TopBarPrimary from '../../Components/TopBar/TopBarPrimary.js';
@@ -15,6 +15,10 @@ import FreeTrialExpireModal from '../../Components/Modal/MemberLogin/FreeTrialEx
 import PackageExpireModal from '../../Components/Modal/MemberLogin/PackageExpireModal.js';
 
 import Logout from '../../Components/Button/Logout';
+
+import PageLoding from '../../Components/PageLoding.js';
+import { postData, apiUrl } from '../../Components/api';
+const urls=apiUrl();
 
 import { GlobalContext } from '../../Components/GlobalContext';
 import WebView from 'react-native-webview';
@@ -35,6 +39,35 @@ const HomeScreen = () => {
   const [isFreeTrialRuningModalModalVisible, setIsFreeTrialRuningModalVisible] = useState(false);
   const [isFreeTrialExpireModalVisible, setIsFreeTrialExpireModalVisible] = useState(false);
   const [isPackageExpireModalVisible, setIsPackageExpireModalVisible] = useState(false);
+
+
+    const [page, setPage] = useState(0);
+    const [isLoading, setisLoading] = useState(true);
+    const [refreshing, setRefreshing] = useState(false);
+    const onRefresh = useCallback(() => {
+      // setPage(0);
+      setRefreshing(true);
+      setRefreshing(false); 
+      fetchSettingData2(page);
+    }, []);
+    const fetchSettingData2 = async () => { 
+      try {
+        const response = await postData({}, urls.appSetting, "GET", navigation, extraData, 1);
+        if(response.status==200)
+        {
+          setisLoading(false);
+          if(response.data.package.status==0 || response.data.package.status==2)
+          {
+            navigation.reset({
+              index: 0,
+              routes: [{ name: 'SelectCountryScreen' }], 
+            });
+          }          
+        }
+      } catch (error) { 
+        console.error('Error fetching countries:', error);
+      }
+    };
 
 
   const handleFreeTrial = async () => {      
@@ -75,41 +108,53 @@ const HomeScreen = () => {
   };
   
 
+  // useEffect(() => {
+  //   Animated.loop(
+  //     Animated.sequence([
+  //       Animated.timing(opacity, {
+  //         toValue: 0,
+  //         duration: 500,
+  //         useNativeDriver: true,
+  //       }),
+  //       Animated.timing(opacity, { 
+  //         toValue: 1,
+  //         duration: 500,
+  //         useNativeDriver: true,
+  //       }),
+  //     ])
+  //   ).start();
+
+  //   fetchSettingData2()
+  //   // if(appSetting.package.status==0 || appSetting.package.status==2)
+  //   // {
+  //   //   navigation.reset({
+  //   //     index: 0,
+  //   //     routes: [{ name: 'SelectCountryScreen' }], 
+  //   //   });
+  //   // }
+  //   // else
+  //   // {
+  //   //   navigation.reset({
+  //   //     index: 0,
+  //   //     routes: [{ name: 'Home' }], 
+  //   //   });
+  //   // }
+
+  // }, [opacity]);
+
   useEffect(() => {
-    Animated.loop(
-      Animated.sequence([
-        Animated.timing(opacity, {
-          toValue: 0,
-          duration: 500,
-          useNativeDriver: true,
-        }),
-        Animated.timing(opacity, { 
-          toValue: 1,
-          duration: 500,
-          useNativeDriver: true,
-        }),
-      ])
-    ).start();
-
-    // if(appSetting.package.status==0 || appSetting.package.status==2)
-    // {
-    //   navigation.reset({
-    //     index: 0,
-    //     routes: [{ name: 'SelectCountryScreen' }], 
-    //   });
-    // }
-    // else
-    // {
-    //   navigation.reset({
-    //     index: 0,
-    //     routes: [{ name: 'Home' }], 
-    //   });
-    // }
-
-  }, [opacity]);
+    fetchSettingData2()
+  },[])
+  if (isLoading) {
+    return (
+        <PageLoding />          
+    );
+  }
 
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView style={styles.container}
+    refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+    >
       <View style={styles.topBar}>
         <TopBarPrimary />
       </View>

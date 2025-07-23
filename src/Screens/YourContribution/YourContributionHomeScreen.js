@@ -45,7 +45,7 @@ const YourContributionHomeScreen = () => {
           gradientType="green"
           borderRadius={5}
           fontSize={14}
-          onPress={() => navigation.navigate('YourContribution')}
+          onPress={() => navigation.navigate('YourContribution',{"payment_type":"india"})}
         />
         <GradiantButton
           title="International"
@@ -54,7 +54,7 @@ const YourContributionHomeScreen = () => {
           gradientType="orange"
           borderRadius={5}
           fontSize={14}
-          onPress={() => navigation.navigate('YourContribution')}
+          onPress={() => navigation.navigate('YourContribution',{"payment_type":"international"})}
         />
       </View>
     </ScrollView>

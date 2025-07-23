@@ -1,7 +1,7 @@
 /* eslint-disable react-native/no-inline-styles */
 /* eslint-disable comma-dangle */
 import { StyleSheet, Text, View, TextInput, ScrollView } from 'react-native';
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import TopBarPrimary from '../../Components/TopBar/TopBarPrimary.js';
 import GradiantButton from '../../Components/Button/GradientButton.js';
 import { useNavigation } from '@react-navigation/native';
@@ -9,40 +9,35 @@ import COLORS from '../../Constants/Colors.js';
 import BACKGROUND_COLORS from '../../Constants/BackGroundColors.js';
 import { Picker } from '@react-native-picker/picker';
 
-const PayThruAppScreen = () => {
-  const navigation = useNavigation();
-  const [countryCode, setCountryCode] = useState('+91');
-  const [mobile, setMobile] = useState('');
+import Coutries from '../../Components/CountryPicker.js';
 
-  const countryCodes = [
-    { label: '+1', value: '+1' },
-    { label: '+91', value: '+91' },
-    { label: '+44', value: '+44' },
-    { label: '+61', value: '+61' },
-    { label: '+49', value: '+49' },
-    { label: '+33', value: '+33' },
-    { label: '+39', value: '+39' },
-    { label: '+81', value: '+81' },
-    { label: '+55', value: '+55' },
-    { label: '+86', value: '+86' },
-    { label: '+34', value: '+34' },
-    { label: '+27', value: '+27' },
-    { label: '+52', value: '+52' },
-    { label: '+64', value: '+64' },
-    { label: '+7', value: '+7' },
-    { label: '+977', value: '+977' },
-    { label: '+92', value: '+92' },
-    { label: '+94', value: '+94' },
-    { label: '+880', value: '+880' },
-    { label: '+39', value: '+39' },
-    { label: '+353', value: '+353' },
-    { label: '+63', value: '+63' },
-    { label: '+44', value: '+44' },
-    { label: '+54', value: '+54' },
-    { label: '+971', value: '+971' },
-    { label: '+60', value: '+60' },
-    { label: '+41', value: '+41' },
-  ];
+
+import { GlobalContext } from '../../Components/GlobalContext';
+import { postData, apiUrl } from '../../Components/api';
+const urls=apiUrl();
+
+const PayThruAppScreen = ({route}) => {
+  const navigation = useNavigation();
+  const {payment_type} = route.params;
+  const { extraData } = useContext(GlobalContext);
+
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [mobile, setMobile] = useState('');
+  const [selectedCountry, setSelectedCountry] = useState();
+  const [countryCode, setCountryCode] = useState('91');
+  const [amount, setamount] = useState();
+
+  const filedata = {
+    "name":name,
+    "phone":mobile,
+    "email":email,
+    "country":selectedCountry,
+    "amount":amount,
+    "type":3,
+    "payment_type":payment_type=='india'?1:2,
+  };
+
 
   return (
     <ScrollView style={styles.container}>
@@ -70,23 +65,26 @@ const PayThruAppScreen = () => {
           <Text style={[styles.formTitle, { marginBottom: 20 }]}>यदि आप अपना विवरण देंगे तो हम आपके भुगतान की पुष्टि कर सकते हैं।</Text>
 
           <View style={styles.inputGroup}>
-            <Text style={styles.label}>Name <Text style={styles.redStar}>*</Text></Text>
-            <TextInput style={styles.input} />
+            <Text style={styles.label}>Your Name (आपका नाम)</Text>
+            <TextInput style={styles.input}
+            value={name}
+            onChangeText={setName}
+            />
+          </View>
+
+
+          <View style={styles.inputGroup}>
+            <Text style={styles.label}>Rahne Ka Desh - Residing Country</Text>
+            <View style={styles.mobileInputContainer}>            
+              <Coutries style={styles.pickerFullWidth} selectedCountry={selectedCountry} setSelectedCountry={setSelectedCountry} setCountryCode={setCountryCode} />          
+            </View>
           </View>
 
           <View style={styles.inputGroup}>
-            <Text style={styles.label}>Mobile <Text style={styles.redStar}>*</Text></Text>
+            <Text style={styles.label}>Mobile (मोबाइल)</Text>
             <View style={styles.mobileInputContainer}>
               <View style={styles.pickerWrapper}>
-                <Picker
-                  selectedValue={countryCode}
-                  onValueChange={(itemValue) => setCountryCode(itemValue)}
-                  style={styles.picker}
-                >
-                  {countryCodes.map((code) => (
-                    <Picker.Item key={code.value} label={code.label} value={code.value} />
-                  ))}
-                </Picker>
+                <Text style={styles.pl5}>+{countryCode}</Text>              
               </View>
               <TextInput
                 style={styles.mobileInput}
@@ -97,9 +95,13 @@ const PayThruAppScreen = () => {
             </View>
           </View>
 
+
           <View style={styles.inputGroup}>
-            <Text style={styles.label}>Email <Text style={styles.redStar}>*</Text></Text>
-            <TextInput style={styles.input} keyboardType="email-address" />
+            <Text style={styles.label}>Email (ईमेल)</Text>
+            <TextInput style={styles.input} keyboardType="email-address"
+            value={email}
+            onChangeText={setEmail}
+            />
           </View>
 
           <View style={styles.inputGroup}>
@@ -109,6 +111,8 @@ const PayThruAppScreen = () => {
               keyboardType="numeric"
               placeholder="Rs."
               placeholderTextColor="black"
+              value={amount}
+              onChangeText={setamount}
             />
           </View>
 
@@ -121,7 +125,7 @@ const PayThruAppScreen = () => {
               fontWeight={500}
               gradientType="lightBlue"
               borderRadius={5}
-              onPress={() => navigation.navigate('PayNow')}
+              onPress={() => navigation.navigate('PayNow',{"filedata":filedata})}
             />
           </View>
         </View>
@@ -204,6 +208,9 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: COLORS.black,
   },
+  pl5:{
+    paddingLeft:10,
+  }
 });
 
 export default PayThruAppScreen;
