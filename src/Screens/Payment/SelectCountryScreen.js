@@ -4,7 +4,7 @@ import TopBarPrimary from '../../Components/TopBar/TopBarPrimary.js';
 import GradiantButton from '../../Components/Button/GradientButton.js';
 import { useNavigation } from '@react-navigation/native';
 import BACKGROUND_COLORS from '../../Constants/BackGroundColors.js';
-
+import LogoutButton from '../../Components/LogoutButton.js';
 const SelectCountryScreen = () => {
   const navigation = useNavigation();
 
@@ -14,18 +14,19 @@ const SelectCountryScreen = () => {
         <TopBarPrimary />
       </View>
 
-      <View style={styles.button}>
+      <View style={styles.buttonTop}>
         <GradiantButton
           title="Home"
-          height="35"
-          width="30%"
-          fontSize={16}
+          height="30"
+          width="25%"
           gradientType="yellow"
           borderRadius={5}
+          fontSize={15}
           onPress={() => navigation.navigate('Home')}
         />
+        <LogoutButton />
       </View>
-
+      
       <View style={styles.buttonContainer}>
         <View style={styles.button}>
           <GradiantButton
@@ -70,6 +71,13 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     marginTop: 60,
+  },
+  buttonTop: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    columnGap: 20,
+    marginBottom: 20,
   },
 });
 

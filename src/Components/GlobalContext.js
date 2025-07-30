@@ -58,7 +58,7 @@ export const GlobalProvider = ({ children }) => {
     }
   };
 
-  const extraData = {alert, sidebar, loader, appSetting, userDetail, setuserDetail, token, setToken, fetchAppSettingData};
+  const extraData = {alert, sidebar, loader, appSetting, userDetail, setuserDetail, token, setToken, fetchAppSettingData, setappSetting};
   
   useEffect(() => {
     fetchAppSettingData();

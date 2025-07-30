@@ -16,6 +16,7 @@ const GradiantButton = ({
   borderRadius = 5,
   fontSize = 14,
   fontWeight = '500',
+  count=0
 }) => {
   const colors = GRADIENT_COLORS[gradientType] || GRADIENT_COLORS.orange;
 
@@ -25,6 +26,12 @@ const GradiantButton = ({
       onPress={onPress}
       activeOpacity={0.8}
     >
+      {count?(
+            <View style={styles.countWrapper}>
+              <Text style={styles.countText}>{count}</Text>
+            </View>
+          ): null
+          }
       <LinearGradient
         colors={colors}
         style={[styles.gradient, { borderRadius }]}
@@ -43,6 +50,7 @@ const GradiantButton = ({
 const styles = StyleSheet.create({
   buttonWrapper: {
     overflow: 'hidden',
+    position:'relative'
   },
   gradient: {
     flex: 1,
@@ -51,10 +59,32 @@ const styles = StyleSheet.create({
   },
   textContainer: {
     alignItems: 'center',
+    position:'relative'
   },
   text: {
     textAlign: 'center',
   },
+  countWrapper:{
+    position:'absolute',
+    width:'100%',
+    height:'100%',
+    top:0,
+    zIndex:1,
+    textAlign:'right',
+    justifyContent:'space-between'
+  },
+  countText: {
+    backgroundColor: 'red',
+    borderRadius: 10,
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    width: 20,
+    color: 'white',
+    fontSize: 12,
+    fontWeight: 'bold',
+    marginLeft:2,
+    marginTop:2,
+},
 });
 
 export default GradiantButton;

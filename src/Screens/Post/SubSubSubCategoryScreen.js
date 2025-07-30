@@ -10,6 +10,7 @@ import Button from '../../Components/Button/Button.js';
 import { GlobalContext } from '../../Components/GlobalContext';
 import PageLoding from '../../Components/PageLoding.js';
 import { postData, apiUrl } from '../../Components/api';
+import LogoutButton from '../../Components/LogoutButton.js';
 const urls=apiUrl();
 
 
@@ -84,13 +85,10 @@ const OldTestamentScreen = ({route}) => {
           borderRadius={5}
           onPress={() => navigation.navigate('Home')}
         />
-        <GradiantButton
-          title="Log Out"
-          height="30"
-          width="25%"
-          gradientType="red"
-          borderRadius={5}
-        />
+        {!show_case?(
+          <LogoutButton />
+        ):null
+        }
         <GradiantButton
           title="Back"
           height="30"
@@ -123,11 +121,12 @@ const OldTestamentScreen = ({route}) => {
                   title2={item?.name2}
                   height="45"
                   width="100%"
-                  gradientType="orange"
+                  gradientType={item.post_used?'orange':'gray'}
                   borderRadius={5}
                   fontSize={Number(item?.font_size)}
                   fontWeight="500"
-                  onPress={() => navigation.navigate('Post', {id:item.id,name:item.name,show_case:show_case,"category_type":4})}
+                  count={item?.post_count}
+                  onPress={() => item.post_used?navigation.navigate('Post', {id:item.id,name:item.name,show_case:show_case,"category_type":4}):null}
                 />
               </View>
           ))}

@@ -7,14 +7,13 @@ import { MMKV } from 'react-native-mmkv';
 const storage = new MMKV(); 
 
 
-
+ 
    
 export const apiUrl = () => {
 
-  const apiUrl = 'http://192.168.1.61/projects/codediffusion/hindibible/api/';
+  // const apiUrl = 'http://192.168.1.61/projects/codediffusion/hindibible/api/';
   // const apiUrl = 'https://digitalnamo.com/azmal/2025/april/hindibible/api/';
-  // const apiUrl = 'http://192.168.29.11/projects/hindibible/api/'; 
-  // const apiUrl = 'https://developershahrukh.in/demo/tanjeem/jinnuncle/api/';
+  const apiUrl = 'http://192.168.29.11/projects/hindibible/api/'; 
 
     
   const commurl = apiUrl;    
@@ -29,7 +28,7 @@ export const apiUrl = () => {
     "updateProfilePhoto":`${mainUrl}update-profile-photo`, 
     "updatePassword":`${mainUrl}update-password`,
     "getProfile":`${mainUrl}get-profile`,
-    "logout":`${mainUrl}logout`, 
+    "logout":`${mainUrl}logout`,  
     "sendOtp":`${mainUrl}send-otp`,
     "submitOtp":`${mainUrl}submit-otp`,
     "createPassword":`${mainUrl}create-password`,
@@ -38,6 +37,7 @@ export const apiUrl = () => {
     "package":`${commurl}package`,
     "state":`${commurl}state`,
     "appVisit":`${commurl}app-visit`,
+    "appLike":`${commurl}app-like`,
 
     "category":`${mainUrl}category`,
     "subCategory":`${mainUrl}sub-category`,
@@ -306,7 +306,7 @@ const appSettingStore = (result) => {
     console.error("Failed to save token:", error);
   }
 };
-
+ 
 const storeLoginToken = (result) => {
   try {
     storage.set('token',result?.token);

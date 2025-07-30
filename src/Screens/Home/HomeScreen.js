@@ -1,5 +1,5 @@
 /* eslint-disable react-native/no-inline-styles */
-import { View, Text, StyleSheet, Linking, ScrollView, Animated, Dimensions, RefreshControl  } from 'react-native';
+import { View, Text, StyleSheet, Linking, ScrollView, Animated, Dimensions, RefreshControl, TouchableOpacity  } from 'react-native';
 import React, { useEffect, useRef, useState, useContext, useCallback  } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import GradientButton from '../../Components/Button/GradientButton.js';
@@ -20,6 +20,9 @@ import PageLoding from '../../Components/PageLoding.js';
 import { postData, apiUrl } from '../../Components/api';
 const urls=apiUrl();
 
+import { MMKV } from 'react-native-mmkv';
+const storage = new MMKV
+
 import { GlobalContext } from '../../Components/GlobalContext';
 import WebView from 'react-native-webview';
 
@@ -28,9 +31,11 @@ const HomeScreen = () => {
   const { extraData } = useContext(GlobalContext);
   const appSetting = extraData.appSetting;
   const userDetail = extraData.userDetail;
-
-
+  const setappSetting = extraData.setappSetting;
   
+
+
+    
   const navigation = useNavigation();
   const opacity = useRef(new Animated.Value(1)).current;  
 
@@ -39,6 +44,10 @@ const HomeScreen = () => {
   const [isFreeTrialRuningModalModalVisible, setIsFreeTrialRuningModalVisible] = useState(false);
   const [isFreeTrialExpireModalVisible, setIsFreeTrialExpireModalVisible] = useState(false);
   const [isPackageExpireModalVisible, setIsPackageExpireModalVisible] = useState(false);
+
+  const [isLatestNews, setisLatestNews] = useState(false);
+  const [NewDate, setNewDate] = useState('');
+  const [NewsId, setNewsId] = useState('');
 
 
     const [page, setPage] = useState(0);
@@ -51,18 +60,30 @@ const HomeScreen = () => {
       fetchSettingData2(page);
     }, []);
     const fetchSettingData2 = async () => { 
-      try {
+      try { 
         const response = await postData({}, urls.appSetting, "GET", navigation, extraData, 1);
         if(response.status==200)
         {
-          setisLoading(false);
-          if(response.data.package.status==0 || response.data.package.status==2)
+          setappSetting(JSON.parse(storage.getString('appSetting')));
+          setNewDate(response.data.latestNews.add_date_time)
+          setNewsId(response.data.latestNews.id)
+
+        
+          if(String(response.data.latestNews.id)!=storage.getString('latestNews'))
           {
-            navigation.reset({
-              index: 0,
-              routes: [{ name: 'SelectCountryScreen' }], 
-            });
-          }          
+            setisLatestNews(true)
+          }
+          setisLoading(false);
+          if(response.data.is_login==1)
+          {
+            if(response.data.package.status==0 || response.data.package.status==2)
+            {
+              navigation.reset({
+                index: 0,
+                routes: [{ name: 'SelectCountryScreen' }], 
+              });
+            }
+          }
         }
       } catch (error) { 
         console.error('Error fetching countries:', error);
@@ -108,39 +129,52 @@ const HomeScreen = () => {
   };
   
 
-  // useEffect(() => {
-  //   Animated.loop(
-  //     Animated.sequence([
-  //       Animated.timing(opacity, {
-  //         toValue: 0,
-  //         duration: 500,
-  //         useNativeDriver: true,
-  //       }),
-  //       Animated.timing(opacity, { 
-  //         toValue: 1,
-  //         duration: 500,
-  //         useNativeDriver: true,
-  //       }),
-  //     ])
-  //   ).start();
 
-  //   fetchSettingData2()
-  //   // if(appSetting.package.status==0 || appSetting.package.status==2)
-  //   // {
-  //   //   navigation.reset({
-  //   //     index: 0,
-  //   //     routes: [{ name: 'SelectCountryScreen' }], 
-  //   //   });
-  //   // }
-  //   // else
-  //   // {
-  //   //   navigation.reset({
-  //   //     index: 0,
-  //   //     routes: [{ name: 'Home' }], 
-  //   //   });
-  //   // }
 
-  // }, [opacity]);
+    const fetchLike = async (likeType) => { 
+      try { 
+        const response = await postData({"type":likeType}, urls.appLike, "GET", navigation, extraData);
+        if(response.status==200)
+        {
+          appSetting.total_thumb = response.data.total_thumb;
+          appSetting.total_heart = response.data.total_heart;
+        }
+      } catch (error) { 
+        console.error('Error fetching countries:', error);
+      }
+    }; 
+    const handleLike = async (likeType) => {      
+      fetchLike(likeType); 
+    };
+
+
+    const handleLatestnew = async () => {     
+      try {
+        storage.set('latestNews', String(NewsId));
+        setisLatestNews(false)
+        navigation.navigate('LatestNews');
+      } catch (error) {
+        console.error("Failed to save New Id:", error);
+      }
+    };
+
+
+  useEffect(() => {
+    Animated.loop(
+      Animated.sequence([
+        Animated.timing(opacity, {
+          toValue: 0,
+          duration: 500,
+          useNativeDriver: true,
+        }),
+        Animated.timing(opacity, { 
+          toValue: 1,
+          duration: 500,
+          useNativeDriver: true,
+        }),
+      ])
+    ).start();
+  }, [opacity]);
 
   useEffect(() => {
     fetchSettingData2()
@@ -163,7 +197,9 @@ const HomeScreen = () => {
 
       <View style={styles.starContainer}>
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-          <Animated.Text style={{ opacity, fontSize: 16, color: 'red' }}>★</Animated.Text>
+          {isLatestNews ? (
+            <Animated.Text style={{ opacity, fontSize: 16, color: 'red' }}>★</Animated.Text>
+          ) : null}
         </View>
       </View>
 
@@ -184,7 +220,7 @@ const HomeScreen = () => {
           width="28%"
           gradientType="blue"
           borderRadius={5}
-          onPress={() => navigation.navigate('LatestNews')}
+          onPress={handleLatestnew}
         />
         <GradientButton
           title="Contact Us"
@@ -199,12 +235,17 @@ const HomeScreen = () => {
       <View style={styles.emojiContainer}>
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 37 }}>
           <View style={styles.emojiBackground}>
-            <Text style={styles.emoji}>❤️ {appSetting.total_heart}</Text>
+            <TouchableOpacity onPress={() => handleLike(1)}>
+              <Text style={styles.emoji}>❤️ {appSetting.total_heart}</Text>
+            </TouchableOpacity>
+
           </View>
-          <View style={styles.emojiBackground}>
-            <Text style={styles.emoji}>👍 {appSetting.total_thumb}</Text>
+          <View style={styles.emojiBackground}> 
+            <TouchableOpacity onPress={() => handleLike(2)}>
+              <Text style={styles.emoji}>👍 {appSetting.total_thumb}</Text>
+            </TouchableOpacity>
           </View>
-          <Text style={[styles.text, { marginTop: 0 }]}>26/03/2025</Text>
+          <Text style={[styles.text, { marginTop: 0 }]}>{NewDate}</Text>
         </View>
       </View>
 

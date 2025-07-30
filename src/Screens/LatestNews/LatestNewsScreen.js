@@ -108,9 +108,16 @@ const LatestNewsScreen = () => {
             <RenderHTML
               contentWidth={width}
               source={{ html: item.description }}
-              baseStyle={styles.description}
+              baseStyle={styles.description} 
+              tagsStyles={tagsStyles}
             />
-            <Text style={styles.description}>{item.description || 'No description available.'}</Text>
+
+            <RenderHTML
+              contentWidth={width}
+              source={{ html: item.full_description }}
+              baseStyle={styles.description}
+              tagsStyles={tagsStyles}
+            />
           </React.Fragment>
         ))}
 
@@ -161,5 +168,12 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
 });
+
+const tagsStyles = {
+  a: {
+    color: 'blue',
+    textDecorationLine: 'underline',
+  },
+};
 
 export default LatestNewsScreen;

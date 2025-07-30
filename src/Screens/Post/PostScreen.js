@@ -15,6 +15,7 @@ import { postData, apiUrl } from '../../Components/api';
 import Pdf from '../../Components/Pdf/Pdf.js';
 import AudioPlayer from '../../Components/Audio/AudioPlayer.js';
 import Article from '../../Components/Article/Article.js';
+import LogoutButton from '../../Components/LogoutButton.js';
 const urls=apiUrl();
 
 
@@ -124,14 +125,10 @@ const GenesisScreen = ({route}) => {
           fontSize={15}
           onPress={() => navigation.navigate('Main')}
         />
-        <GradiantButton
-          title="Log Out"
-          height="30"
-          width="20%"
-          gradientType="red"
-          borderRadius={5}
-          fontSize={15}
-        />
+        {!show_case?(
+          <LogoutButton />
+        ):null
+        }
         <GradiantButton
           title="Back"
           height="30"

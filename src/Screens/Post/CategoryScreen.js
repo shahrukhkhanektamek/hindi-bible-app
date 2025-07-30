@@ -17,7 +17,7 @@ const storage = new MMKV();
 
 const MainScreen = ({route}) => {
   const navigation = useNavigation();
-  const show_case = route.params?.show_case;
+  const show_case = route.params?.show_case?route.params?.show_case:0;
    
 
 
@@ -77,7 +77,11 @@ const MainScreen = ({route}) => {
           fontSize={15}
           onPress={() => navigation.navigate('Home')}
         />
-        <LogoutButton />
+        {!show_case?(
+          <LogoutButton />
+        ):null
+        }
+        
         <GradiantButton
           title="Back"
           height="30"
@@ -107,13 +111,14 @@ const MainScreen = ({route}) => {
                 <GradiantButton
                     title={item.name}
                     title2={item?.name2}
+                    count={item?.post_count}
                     height="45"
                     width="100%"
-                    gradientType="orange"
+                    gradientType={item.post_used?'orange':'gray'}
                     borderRadius={5}
                     fontSize={Number(item?.font_size)}
                     fontWeight="500"
-                    onPress={() => navigation.navigate('SubCategory', {id:item.id,name:item.name,show_case:show_case,"category_type":1})}
+                    onPress={() => item.post_used?navigation.navigate('SubCategory', {id:item.id,name:item.name,show_case:show_case,"category_type":1}):null}
                   />
                 </View>
             ))}
@@ -124,7 +129,8 @@ const MainScreen = ({route}) => {
 
 
 
-
+            {!show_case?(
+          
             <View style={styles.buttonWrapper}>
                 <GradiantButton
                   title="Edit Profile"
@@ -132,31 +138,33 @@ const MainScreen = ({route}) => {
                   width="33%"
                   gradientType="green"
                   borderRadius={5}
-                  fontSize={15}
+                  fontSize={13}
                   fontWeight="500"
                   onPress={() => navigation.navigate('EditProfile')}
-                />
+                  />
                 <GradiantButton
                   title="Edit Username"
                   height="35"
                   width="33%"
                   gradientType="green"
                   borderRadius={5}
-                  fontSize={15}
+                  fontSize={13}
                   fontWeight="500"
                   onPress={() => navigation.navigate('EditUsernamePassword')}
-                />
+                  />
                 <GradiantButton
                   title="Order History"
                   height="35"
                   width="33%"
                   gradientType="green"
                   borderRadius={5}
-                  fontSize={15}
+                  fontSize={13}
                   fontWeight="500"
                   onPress={() => navigation.navigate('OrderHistory')}
-                />
+                  />
               </View>
+            ):null
+            }
               
 
 
@@ -164,9 +172,9 @@ const MainScreen = ({route}) => {
 
 
 {/*           
-          <GradiantButton
-            title=""
-            height="45"
+  <GradiantButton
+  title=""
+  height="45"
             width="45%"
             gradientType="gray"
             borderRadius={5}
