@@ -162,22 +162,13 @@ const GenesisScreen = ({route}) => {
           <React.Fragment key={item.id}>
             {(item.post_type==1) ? ( 
                <Video
-                  thumbnail={require('../../Assets/videoThumbnail.jpeg')}
+                  thumbnail={{uri:item.image}}
                   frameSource={require('../../Assets/videoFrame.jpeg')}
-                  // onPress={() =>
-                  //   navigation.navigate('SingleVideo', {
-                  //     videoSource: require('../../Assets/myvideo.mp4'),
-                  //     thumbnail: require('../../Assets/videoThumbnail.jpeg'),
-                  //     frameSource: require('../../Assets/videoFrame.jpeg'),
-                  //     buttonTitle: 'Genesis Classes',
-                  //     title: 'Video 1 - How to learn coding in simple and easy way...',
-                  //     publishedOn: '15 February 2025',
-                  //     description: 'Exploring the Wonders of Space: A Journey Beyond Earth, Mastering React Native: Build Your First Mobile App, The Secret Life of Ocean Creatures: Underwater Wonders,',
-                  //   })
-                  // }
-
-                  onPress={handleOpenVide}
-
+                  onPress={() =>
+                    navigation.navigate('SinglePost', {
+                      item:item,
+                    })
+                  }
                 />
             ) : (item.post_type==2) ? ( 
               

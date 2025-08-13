@@ -21,6 +21,7 @@ import SubCategoryScreen from '../Screens/Post/SubCategoryScreen.js';
 import SubSubCategoryScreen from '../Screens/Post/SubSubCategoryScreen.js';
 import SubSubSubCategoryScreen from '../Screens/Post/SubSubSubCategoryScreen.js';
 import PostScreens from '../Screens/Post/PostScreen.js';
+import SinglePost from '../Screens/Post/SinglePost.js';
 
 
 import PayThruAppScreen from '../Screens/YourContribution/PayThruAppScreen.js';
@@ -136,6 +137,7 @@ const StackNavigation = () => (
     <Stack.Screen name="SubSubCategory" component={SubSubCategoryScreen} />
     <Stack.Screen name="SubSubSubCategory" component={SubSubSubCategoryScreen} />
     <Stack.Screen name="Post" component={PostScreens} />
+    <Stack.Screen name="SinglePost" component={SinglePost} />
 
     <Stack.Screen name="YourContributionHome" component={YourContributionHomeScreen} />
     <Stack.Screen name="YourContribution" component={YourContributionScreen} />

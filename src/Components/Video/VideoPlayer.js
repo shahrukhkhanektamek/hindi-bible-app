@@ -15,13 +15,13 @@ const VideoPlayer = ({ videoSource, thumbnail, frameSource }) => {
         <View style={styles.videoContainer}>
           {!playVideo ? (
             <TouchableOpacity onPress={() => setPlayVideo(true)} style={styles.videoWrapper}>
-              <Image source={thumbnail} style={styles.video} resizeMode="cover" />
+              <Image source={{uri:thumbnail}} style={styles.video} resizeMode="cover" />
               <View style={styles.playIconContainer}>
                 <Icon name="play-circle" size={50} color="white" />
               </View>
             </TouchableOpacity>
           ) : (
-            <Video source={videoSource} style={styles.video} resizeMode="cover" controls paused={false} />
+            <Video source={{uri:videoSource}} style={styles.video} resizeMode="cover" controls paused={false} />
           )}
         </View>
       </ImageBackground>
