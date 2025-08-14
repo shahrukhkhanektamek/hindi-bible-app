@@ -8,12 +8,12 @@ const storage = new MMKV();
 
 
  
-   
+    
 export const apiUrl = () => {
 
-  const apiUrl = 'http://192.168.1.61/projects/codediffusion/hindibible/api/';
+  // const apiUrl = 'http://192.168.1.61/projects/codediffusion/hindibible/api/';
   // const apiUrl = 'https://digitalnamo.com/azmal/2025/april/hindibible/api/';
-  // const apiUrl = 'http://192.168.29.11/projects/hindibible/api/'; 
+  const apiUrl = 'http://192.168.1.17/projects/hindibible/api/'; 
 
     
   const commurl = apiUrl;    

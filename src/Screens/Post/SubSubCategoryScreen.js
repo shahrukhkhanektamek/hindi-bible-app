@@ -59,7 +59,13 @@ const BibleBooksScreen = ({route}) => {
         ); 
       }
 
-
+      const handleChangePage = async (item) => { 
+        if(item.sub_sub_sub_category_used){
+          item.post_used?navigation.navigate('SubSubSubCategory', {id:item.id,name:item.name,show_case:show_case,"category_type":3}):null;
+        }else{
+          item.post_used?navigation.navigate('Post', {id:item.id,name:item.name,show_case:show_case,"category_type":3}):null
+        }
+      };
 
 
   return (
@@ -128,7 +134,7 @@ const BibleBooksScreen = ({route}) => {
                     fontSize={Number(item?.font_size)}
                     fontWeight="500"
                     count={item?.post_count}
-                    onPress={() => item.post_used?navigation.navigate('SubSubSubCategory', {id:item.id,name:item.name,show_case:show_case,"category_type":3}):null}
+                    onPress={() => handleChangePage(item)}
                   />
                 </View>
             ))}

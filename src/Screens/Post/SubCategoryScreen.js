@@ -64,6 +64,14 @@ const BibleStudyScreen = ({route}) => {
 
 
 
+    const handleChangePage = async (item) => { 
+      if(item.sub_sub_category_used){
+        item.post_used?navigation.navigate('SubSubCategory', {id:item.id,name:item.name,show_case:show_case,"category_type":2}):null;
+      }else{
+        item.post_used?navigation.navigate('Post', {id:item.id,name:item.name,show_case:show_case,"category_type":2}):null
+      }
+    };
+
   return (
     <ScrollView style={styles.container}
     refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
@@ -132,7 +140,7 @@ const BibleStudyScreen = ({route}) => {
                     fontSize={Number(item?.font_size)}
                     fontWeight="500"
                     count={item?.post_count}
-                    onPress={() => item.post_used?navigation.navigate('SubSubCategory', {id:item.id,name:item.name,show_case:show_case,"category_type":2}):null}
+                    onPress={() => handleChangePage(item)}
                   />
                 </View>
             ))}

@@ -11,7 +11,7 @@ npm i @react-native-picker/picker @react-navigation/elements @react-navigation/n
 
 adb devices
 adb tcpip 5555
-adb connect 192.168.29.39:5555
+adb connect 192.168.1.29:5555
 
 
 mkdir -p android/app/src/main/assets

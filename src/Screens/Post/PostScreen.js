@@ -1,4 +1,4 @@
-import { ScrollView, StyleSheet, View, RefreshControl, Image, Text } from 'react-native';
+import { ScrollView, StyleSheet, View, RefreshControl, Image, Text, TouchableOpacity } from 'react-native';
 import React, { useState, useEffect, useCallback, useContext } from 'react';
 import TopBarPrimary from '../../Components/TopBar/TopBarPrimary.js';
 import GradiantButton from '../../Components/Button/GradientButton.js';
@@ -175,17 +175,19 @@ const GenesisScreen = ({route}) => {
               <View style={styles.pdfWrapper}>        
                   <AudioPlayer
                       id={item.id}
-                      chapterTitle="Counselling3"
-                      source={require('../../Assets/myaudio.mp3')}
+                      chapterTitle={item?.chapter}
+                      source={{uri:item.audio}}
                       setPlayingId={setPlayingId}
                       playingId={playingId}
+                      title={item.name}
+                      artist={item?.artist}
                     />
               </View>
             
             ) : (item.post_type==3) ? ( 
               <View style={styles.imageWrapper}>
                 <View style={styles.imageContainer}>
-                  <Image source={require('../../Assets/videoThumbnail.jpeg')} style={styles.image} />
+                  <Image source={{uri:item.image}} style={styles.image} />
                   <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
                     <View style={styles.imageTitleWrapper}>
                       <Text style={styles.imageTitle}>Album Title</Text>
@@ -209,26 +211,34 @@ const GenesisScreen = ({route}) => {
               </View>
 
             ) : (item.post_type==4) ? ( 
-              <View style={styles.pdfWrapper}>        
-                  <Pdf
-                    title={`TGC Learning Guide 1`}
-                    fileName="tgc_learning_guide.pdf"
-                    fileSize="2.3 MB"
-                    fileUrl="https://example.com/tgc_learning_guide.pdf"
-                  />                
+              <View style={styles.pdfWrapper}>  
+                <TouchableOpacity 
+              onPress={() =>
+                      navigation.navigate('SinglePost', {
+                        item:item,
+                      })
+                    }>
+                    <Pdf
+                      title={item.name}
+                      // fileName="tgc_learning_guide.pdf"
+                      // fileSize="2.3 MB"
+                      fileUrl={item.pdf}
+                    />
+                  </TouchableOpacity>                      
               </View>
 
             ) : (item.post_type==5) ? ( 
-              <Article
-                imageSource={require('../../Assets/videoThumbnail.jpeg')}
-                description="How to learn coding in easy way, If you are using a custom button component, ensure it accepts and applies the style prop correctly."
-                title="If you are using a custom button..."
-                links={[
-                  'https://www.youtube.com',
-                  'https://www.youtube.com',
-                  'https://www.youtube.com',
-                ]}
-              />
+              <TouchableOpacity 
+              onPress={() =>
+                      navigation.navigate('SinglePost', {
+                        item:item,
+                      })
+                    }>
+                <Article
+                  imageSource={{uri:item.image}}
+                  data={item}
+                />
+                </TouchableOpacity>
 
             ) : (
               <Text>None</Text>

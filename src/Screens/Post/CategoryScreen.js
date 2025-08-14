@@ -59,6 +59,13 @@ const MainScreen = ({route}) => {
         );
       }
 
+      const handleChangePage = async (item) => { 
+        if(item.sub_category_used){
+          item.post_used?navigation.navigate('SubCategory', {id:item.id,name:item.name,show_case:show_case,"category_type":1}):null;
+        }else{
+          item.post_used?navigation.navigate('Post', {id:item.id,name:item.name,show_case:show_case,"category_type":1}):null
+        }
+      };
 
   return (
     <ScrollView style={styles.container}
@@ -118,7 +125,7 @@ const MainScreen = ({route}) => {
                     borderRadius={5}
                     fontSize={Number(item?.font_size)}
                     fontWeight="500"
-                    onPress={() => item.post_used?navigation.navigate('SubCategory', {id:item.id,name:item.name,show_case:show_case,"category_type":1}):null}
+                    onPress={() => handleChangePage(item)}
                   />
                 </View>
             ))}

@@ -2,27 +2,32 @@ import React from 'react';
 import { View, Image, Text, Linking, StyleSheet } from 'react-native';
 import BACKGROUND_COLORS from '../../Constants/BackGroundColors';
 import COLORS from '../../Constants/Colors';
+import { useWindowDimensions } from "react-native";
 
-const Article = ({ imageSource, description, title, links = [] }) => {
+import RenderHTML from "react-native-render-html";
+
+const Article = ({ imageSource, data=[] }) => {
+
+  const { width } = useWindowDimensions();
+
   return (
     <View style={styles.wrapper}>
       <View style={styles.imageContainer}>
         <Image style={styles.image} source={imageSource} />
       </View>
       <View style={styles.title}>
-        <Text style={styles.titleText}>{title}</Text>
+        <Text style={styles.titleText}>{data.name}</Text>
       </View>
       <View style={styles.descriptionContainer}>
-        <Text style={styles.description}>{description}</Text>
-        {links.map((link, idx) => (
-          <Text
-            key={idx}
-            style={styles.link}
-            onPress={() => Linking.openURL(link)}
-          >
-            {link}
-          </Text>
-        ))}
+        
+          <RenderHTML
+            contentWidth={width}
+            source={{ html: data.description }}
+            baseStyle={styles.description}
+            tagsStyles={tagsStyles}
+          />
+          
+        
       </View>
     </View>
   );
@@ -70,5 +75,17 @@ const styles = StyleSheet.create({
     textDecorationLine: 'underline',
   },
 });
+
+const tagsStyles = {
+    a: {
+      color: 'blue',
+      textDecorationLine: 'underline',
+    },
+    h2: {
+      fontSize:20,
+      marginTop:10,
+
+    },
+  };
 
 export default Article;

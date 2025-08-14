@@ -9,7 +9,10 @@ const Pdf = ({ title, fileName, fileSize, fileUrl }) => {
       <FontAwesome name="file-pdf-o" size={35} color="red" />
       <View style={styles.pdfInfo}>
         <Text style={styles.pdfTitle}>{title}</Text>
+        {(fileName?
         <Text style={styles.pdfDetails}>{fileName} • {fileSize}</Text>
+          :null
+          )}
       </View>
       <TouchableOpacity onPress={() => Linking.openURL(fileUrl)}>
         <FontAwesome name="download" size={30} color="#555" />

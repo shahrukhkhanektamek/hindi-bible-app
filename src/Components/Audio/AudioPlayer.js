@@ -1,6 +1,6 @@
 /* eslint-disable no-extra-semi */
 import React, { useEffect, useRef, useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Linking } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import BACKGROUND_COLORS from '../../Constants/BackGroundColors';
@@ -50,14 +50,11 @@ const AudioPlayer = ({ id, playingId, setPlayingId, title = 'Unknown Title...', 
           <Text style={styles.audioDuration}>{formatTime(currentTime)} / {formatTime(duration)}</Text>
         </View>
 
-        <TouchableOpacity style={styles.rightSection}>
-          <Icon name="more-vert" size={25} color="#555" />
-        </TouchableOpacity>
       </View>
 
       <View style={styles.bottomSection}>
         <Text style={styles.chapterTitle}>{chapterTitle}</Text>
-        <TouchableOpacity onPress={() => Linking.openURL(fileUrl)}>
+        <TouchableOpacity onPress={() => Linking.openURL(source)}>
           <FontAwesome name="download" size={25} color="#555" />
         </TouchableOpacity>
       </View>
