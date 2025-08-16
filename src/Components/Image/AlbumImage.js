@@ -10,6 +10,8 @@ const AlbumImage = ({ route }) => {
   const { images, initialIndex } = route.params;
   const [index, setIndex] = useState(initialIndex);
 
+  console.log(images)
+
   const goPrev = () => {
     const newIndex = index === 0 ? images.length - 1 : index - 1;
     setIndex(newIndex);
@@ -22,7 +24,7 @@ const AlbumImage = ({ route }) => {
 
   return (
     <View style={styles.container}>
-      <Image source={images[index].image} style={styles.image} />
+      <Image source={{uri:images[index].image}} style={styles.image} />
       <Text style={styles.title}>{images[index].title}</Text>
 
       <View style={styles.navigation}>

@@ -98,6 +98,23 @@ const GenesisScreen = ({route}) => {
 
 
 
+  const handleAudioEnd = (currentId) => {
+  // saare audio items filter karo
+  const audioItems = data.filter((i) => i.post_type == 2);
+
+  // current ka index nikal lo
+  const currentIndex = audioItems.findIndex((i) => i.id === currentId);
+
+  // agla element exist karta hai to uska id setPlayingId me daalo
+  if (currentIndex !== -1 && currentIndex + 1 < audioItems.length) {
+    const nextItem = audioItems[currentIndex + 1];
+    setPlayingId(nextItem.id);
+  } else {
+    // agar last audio hai to stop kar do
+    setPlayingId(null);
+  }
+};
+
 
   return (
     <ScrollView style={styles.container}
@@ -181,6 +198,7 @@ const GenesisScreen = ({route}) => {
                       playingId={playingId}
                       title={item.name}
                       artist={item?.artist}
+                      onEnd={() => handleAudioEnd(item.id)}
                     />
               </View>
             
@@ -189,25 +207,34 @@ const GenesisScreen = ({route}) => {
                 <View style={styles.imageContainer}>
                   <Image source={{uri:item.image}} style={styles.image} />
                   <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
+                  </View>
+                </View>
+              </View>
+            
+            ) : (item.post_type==6) ? ( 
+              <View style={styles.imageWrapper}>
+                <View style={styles.imageContainer}>
+                  <Image source={{uri:item.image}} style={styles.image} />
+                  <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
                     <View style={styles.imageTitleWrapper}>
-                      <Text style={styles.imageTitle}>Album Title</Text>
+                      <Text style={styles.imageTitle}>{item.name}</Text>
                     </View>
                     <GradiantButton
                       title="Album"
                       height="31"
                       width="25%"
                       gradientType="orange"
-                      borderRadius={5}
+                      borderRadius={5} 
                       fontSize={15}
                       onPress={() =>
                         navigation.navigate('AlbumImage', {
-                          images: {},
+                          images: item?.album?item.album:[],
                           initialIndex: 0,
                         })
                       }
                     />
                   </View>
-                </View>
+                </View> 
               </View>
 
             ) : (item.post_type==4) ? ( 
