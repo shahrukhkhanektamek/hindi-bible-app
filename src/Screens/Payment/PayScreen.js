@@ -19,21 +19,33 @@ const PayScreen = ({route}) => {
     const { extraData } = useContext(GlobalContext);
     const appSetting = extraData.appSetting;
     const userDetail = extraData.userDetail;
+
+    let typeO = route.params.type;
+    if(!typeO) typeO = 1
+
+    let item_id = route.params.item_id;
+    if(!item_id) item_id = 0
   
 
   const [payment_type, setpayment_type] = useState(route.params.country);
-  const [type, settype] = useState(1);
-  const [amount, setamount] = useState('');
-  const [gst, setgst] = useState('');
-  const [payableamount, setpayableamount] = useState('');
+  const [amount, setamount] = useState('00.00');
+  const [gst, setgst] = useState('00.00');
+  const [payableamount, setpayableamount] = useState('00.00');
 
+  const [title, settitle] = useState('Wait...');
+  const [fromDate, setfromDate] = useState('Wait...');
+  const [toDate, settoDate] = useState('Wait...');
+  
+  const [type, settype] = useState(typeO);
 
+  
 
 
     const handleCreateTransaction = async () => {
       
       const filedata = {
         "type":type,
+        "item_id":item_id,
         "payment_type":payment_type=='india'?1:2
       };
       const response = await postData(filedata, urls.createTransaction,"GET", navigation,extraData);
@@ -44,23 +56,61 @@ const PayScreen = ({route}) => {
   
     };
 
+    const fetchPostData = async () => { 
+      try {
+        const response = await postData({id:item_id}, urls.postDetail, "GET", null, extraData, 1);
+        if(response.status==200)
+        {
+          if(payment_type=='india')
+          {
+            setamount('Rs. '+response.data.amount);
+            setgst('Rs. '+response.data.amount);
+            setpayableamount('Rs. '+response.data.amount);
+          }
+          else
+          {
+            setamount('$'+response.data.amount);
+            setgst('$'+response.data.amount);
+            setpayableamount('$'+response.data.amount);
+          }
+          settitle(response.data.name);
+          setfromDate(response.data.from_date); 
+          settoDate(response.data.to_date);
+        } 
+      } catch (error) {
+        console.error('Error fetching countries:', error);
+      }
+    };
+
 
 
 
 
     useEffect(() => {
-      if(payment_type=='india')
+      
+
+      if(item_id)
       {
-        setamount('Rs. '+appSetting.detail.india.fees);
-        setgst('Rs. '+appSetting.detail.india.gst);
-        setpayableamount('Rs. '+appSetting.detail.india.payable_price);
+        fetchPostData();
       }
-      else
-      {
-        setamount('$'+appSetting.detail.international.fees);
-        setgst('$'+appSetting.detail.international.gst);
-        setpayableamount('$'+appSetting.detail.international.payable_price);
-      }  
+      else{
+        settitle('YOUR PACKAGE PERIOD');
+        setfromDate(appSetting.detail.start_date_time);
+        settoDate(appSetting.detail.end_date_time);
+        if(payment_type=='india')
+        {
+          setamount('Rs. '+appSetting.detail.india.fees);
+          setgst('Rs. '+appSetting.detail.india.gst);
+          setpayableamount('Rs. '+appSetting.detail.india.payable_price);
+        }
+        else
+        {
+          setamount('$'+appSetting.detail.international.fees);
+          setgst('$'+appSetting.detail.international.gst);
+          setpayableamount('$'+appSetting.detail.international.payable_price);
+        }
+      }
+
     }, []);
 
 
@@ -92,8 +142,8 @@ const PayScreen = ({route}) => {
             <Text style={[styles.textStyle, { color: COLORS.black }]}>एक वर्ष की फीस</Text>
           </View>
           <View style={styles.textBox2}>
-            <Text style={[styles.textStyle, { color: COLORS.goldenYellow }]}>YOUR PACKAGE PERIOD</Text>
-            <Text style={styles.textStyle}>{appSetting.detail.start_date_time} - {appSetting.detail.end_date_time}</Text>
+            <Text style={[styles.textStyle, { color: COLORS.goldenYellow }]}>{title}</Text>
+            <Text style={styles.textStyle}>{fromDate} - {toDate}</Text>
           </View>
         </View>
         <View style={styles.button}>

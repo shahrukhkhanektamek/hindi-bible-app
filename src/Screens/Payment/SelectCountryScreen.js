@@ -1,13 +1,21 @@
 import { StyleSheet, View } from 'react-native';
-import React from 'react';
+import React, { useState } from 'react';
 import TopBarPrimary from '../../Components/TopBar/TopBarPrimary.js';
 import GradiantButton from '../../Components/Button/GradientButton.js';
 import { useNavigation } from '@react-navigation/native';
 import BACKGROUND_COLORS from '../../Constants/BackGroundColors.js';
 import LogoutButton from '../../Components/LogoutButton.js';
-const SelectCountryScreen = () => {
+const SelectCountryScreen = ({route}) => {
   const navigation = useNavigation();
 
+  
+  let type = route.params.type;
+  if(!type) type = 1;
+  
+  let item_id = route.params.item_id;
+  if(!item_id) item_id = 1;
+
+  
   return (
     <View style={styles.container}>
       <View style={styles.topBar}>
@@ -36,7 +44,7 @@ const SelectCountryScreen = () => {
             fontSize={16}
             gradientType="green"
             borderRadius={5}
-            onPress={() => navigation.navigate('Pay',{country:'india'})}
+            onPress={() => navigation.navigate('Pay',{country:'india',type:type,item_id:item_id})}
           />
         </View>
         <View style={styles.button}>
@@ -47,7 +55,7 @@ const SelectCountryScreen = () => {
             fontSize={16}
             gradientType="orange"
             borderRadius={5}
-            onPress={() => navigation.navigate('Pay',{country:'international'})}
+            onPress={() => navigation.navigate('Pay',{country:'international',type:type,item_id:item_id})}
           />
         </View>
       </View>

@@ -79,22 +79,10 @@ const GenesisScreen = ({route}) => {
     }
 
 
-
-
-    const albumImages = [
-    {
-      title: 'CONFERENCE',
-      image: require('../../Assets/videoThumbnail.jpeg'),
-    },
-    {
-      title: 'MEETING',
-      image: require('../../Assets/videoThumbnail.jpeg'),
-    },
-    {
-      title: 'PLAYING',
-      image: require('../../Assets/videoThumbnail.jpeg'),
-    },
-  ];
+    const handlePay = async (id) => { 
+      console.log("fasfa");
+      navigation.navigate("SelectCountryScreen",{"type":2,"item_id":id})
+    };
 
 
 
@@ -176,101 +164,111 @@ const GenesisScreen = ({route}) => {
         
 
         {data.map((item) => (
-          <React.Fragment key={item.id}>
-            {(item.post_type==1) ? ( 
-               <Video
-                  thumbnail={{uri:item.image}}
-                  frameSource={require('../../Assets/videoFrame.jpeg')}
-                  onPress={() =>
-                    navigation.navigate('SinglePost', {
-                      item:item,
-                    })
-                  }
-                />
-            ) : (item.post_type==2) ? ( 
+          <View style={[styles.itemContainer]} key={item.id}>
+            <React.Fragment >
+              {(item.post_type==1) ? ( 
+                <View style={[styles.videoFrame]}>
+                  <TouchableOpacity 
+                  style={styles.imageWrapper}
+                  onPress={() =>!item.is_paid?navigation.navigate('SinglePost', {item:item}):handlePay(item.id)}
+                  >
+                      <Image source={{uri:item.image}} style={styles.image} />
+                      <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
+                      </View>
+                  </TouchableOpacity>
+                </View>
+              ) : (item.post_type==2) ? ( 
+                
+                <View style={styles.pdfWrapper}>        
+                    <AudioPlayer
+                        id={item.id}
+                        chapterTitle={item?.chapter}
+                        source={{uri:item.audio}}
+                        setPlayingId={setPlayingId}
+                        playingId={playingId}
+                        title={item.name}
+                        artist={item?.artist}
+                        onEnd={() => handleAudioEnd(item.id)}
+                      />
+                </View>
               
-              <View style={styles.pdfWrapper}>        
-                  <AudioPlayer
-                      id={item.id}
-                      chapterTitle={item?.chapter}
-                      source={{uri:item.audio}}
-                      setPlayingId={setPlayingId}
-                      playingId={playingId}
-                      title={item.name}
-                      artist={item?.artist}
-                      onEnd={() => handleAudioEnd(item.id)}
-                    />
-              </View>
-            
-            ) : (item.post_type==3) ? ( 
-              <View style={styles.imageWrapper}>
-                <View style={styles.imageContainer}>
-                  <Image source={{uri:item.image}} style={styles.image} />
-                  <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
+              ) : (item.post_type==3) ? ( 
+                <View style={styles.imageWrapper}>
+                  <View style={styles.imageContainer}>
+                    <Image source={{uri:item.image}} style={styles.image} />
+                    <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
+                    </View>
                   </View>
                 </View>
-              </View>
-            
-            ) : (item.post_type==6) ? ( 
-              <View style={styles.imageWrapper}>
-                <View style={styles.imageContainer}>
-                  <Image source={{uri:item.image}} style={styles.image} />
-                  <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
-                    <View style={styles.imageTitleWrapper}>
-                      <Text style={styles.imageTitle}>{item.name}</Text>
+              
+              ) : (item.post_type==6) ? ( 
+                <View style={styles.imageWrapper}>
+                  <View style={styles.imageContainer}>
+                    <Image source={{uri:item.image}} style={styles.image} />
+                    <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
+                      <View style={styles.imageTitleWrapper}>
+                        <Text style={styles.imageTitle}>{item.name}</Text>
+                      </View>
+                      <GradiantButton
+                        title="Album"
+                        height="31"
+                        width="25%"
+                        gradientType="orange"
+                        borderRadius={5} 
+                        fontSize={15}
+                        onPress={() =>
+                          navigation.navigate('AlbumImage', {
+                            images: item?.album?item.album:[],
+                            initialIndex: 0,
+                          })
+                        }
+                      />
                     </View>
-                    <GradiantButton
-                      title="Album"
-                      height="31"
-                      width="25%"
-                      gradientType="orange"
-                      borderRadius={5} 
-                      fontSize={15}
-                      onPress={() =>
-                        navigation.navigate('AlbumImage', {
-                          images: item?.album?item.album:[],
-                          initialIndex: 0,
+                  </View> 
+                </View>
+
+              ) : (item.post_type==4) ? ( 
+                <View style={styles.pdfWrapper}>  
+                  <TouchableOpacity 
+                onPress={() =>
+                        navigation.navigate('SinglePost', {
+                          item:item,
                         })
-                      }
-                    />
-                  </View>
-                </View> 
-              </View>
+                      }>
+                      <Pdf
+                        title={item.name}
+                        // fileName="tgc_learning_guide.pdf"
+                        // fileSize="2.3 MB"
+                        fileUrl={item.pdf}
+                      />
+                    </TouchableOpacity>                      
+                </View>
 
-            ) : (item.post_type==4) ? ( 
-              <View style={styles.pdfWrapper}>  
+              ) : (item.post_type==5) ? ( 
                 <TouchableOpacity 
-              onPress={() =>
-                      navigation.navigate('SinglePost', {
-                        item:item,
-                      })
-                    }>
-                    <Pdf
-                      title={item.name}
-                      // fileName="tgc_learning_guide.pdf"
-                      // fileSize="2.3 MB"
-                      fileUrl={item.pdf}
-                    />
-                  </TouchableOpacity>                      
-              </View>
+                onPress={() =>
+                        navigation.navigate('SinglePost', {
+                          item:item,
+                        })
+                      }>
+                  <Article
+                    imageSource={{uri:item.image}}
+                    data={item}
+                  />
+                  </TouchableOpacity>
 
-            ) : (item.post_type==5) ? ( 
-              <TouchableOpacity 
-              onPress={() =>
-                      navigation.navigate('SinglePost', {
-                        item:item,
-                      })
-                    }>
-                <Article
-                  imageSource={{uri:item.image}}
-                  data={item}
-                />
-                </TouchableOpacity>
+              ) : (
+                <Text>None</Text>
+              )} 
+            </React.Fragment>
+            
+            {(item.is_paid==1)?(
+              <Text style={[styles.paidStatus]}>Paid</Text>
+            ):null
+            }
 
-            ) : (
-              <Text>None</Text>
-            )}
-          </React.Fragment>
+          </View>
+          
         ))}
 
 
@@ -306,6 +304,30 @@ const styles = StyleSheet.create({
   topBar: {
     marginTop: 25,
     marginBottom: 16,
+  },
+  itemContainer:{
+    width:'100%',
+    // display:'flex',    
+    // resizeMode:'cover',
+    // aspectRatio: 30 / 9,
+  },
+  video:{
+    width:'100%',
+    resizeMode:'cover',
+  },
+  videoFrame: {
+    width: '100%',
+    // backgroundColor: '#000',
+  },
+  paidStatus:{
+    position:'absolute',
+    right:0,
+    top:0,
+    backgroundColor:'red',
+    color:'white',
+    paddingVertical:5,
+    paddingHorizontal:10,
+    fontWeight:'bold'
   },
   button: {
     alignItems: 'center',
@@ -364,11 +386,12 @@ const styles = StyleSheet.create({
   image: {
     width: '100%',
     height: 200,
-    resizeMode: 'contain',
+    resizeMode: 'cover',
   },
   imageContainer: {
     marginBottom: 0,
     marginTop: 5,
+    width:'100%'
   },
   imageTitleWrapper: {
     backgroundColor: '#fff',

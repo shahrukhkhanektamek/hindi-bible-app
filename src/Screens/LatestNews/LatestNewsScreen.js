@@ -14,6 +14,7 @@ import { useWindowDimensions } from 'react-native';
 import { GlobalContext } from '../../Components/GlobalContext';
 import PageLoding from '../../Components/PageLoding.js';
 import { postData, apiUrl } from '../../Components/api';
+import WebView from 'react-native-webview';
 
 const urls=apiUrl();
 
@@ -99,12 +100,14 @@ const LatestNewsScreen = () => {
         {data.map((item) => (
           <React.Fragment key={item.id}> 
             <View style={styles.videoPlayer}>
-              <VideoPlayer
-                videoSource={require('../../Assets/myvideo.mp4')} // change to item.video_url if dynamic
-                thumbnail={{ uri: item.image }}
-                frameSource={require('../../Assets/videoFrame.jpeg')}
-              />
+              <WebView
+                style={styles.webviewVideo}
+                javaScriptEnabled={true}
+                domStorageEnabled={true}
+                source={{ uri: `https://www.youtube.com/embed/${item.video}` }}
+              />             
             </View> 
+            <Text style={[styles.title]}>{item.name}</Text>
             <RenderHTML
               contentWidth={width}
               source={{ html: item.description }}
@@ -132,6 +135,11 @@ const LatestNewsScreen = () => {
 const styles = StyleSheet.create({
   container: {
     backgroundColor: BACKGROUND_COLORS.primary,
+  },
+  title:{
+    color:'white',
+    fontSize:18,
+    marginTop:10
   },
   topBar: {
     marginTop: 25,
@@ -166,6 +174,12 @@ const styles = StyleSheet.create({
     color: COLORS.white,
     fontSize: 14,
     marginTop: 20,
+  },
+  webviewVideo: {
+    // height: (Dimensions.get('window').width * 9) / 16,
+    height:180,
+    width:'100%',
+    margin:'auto'
   },
 });
 
