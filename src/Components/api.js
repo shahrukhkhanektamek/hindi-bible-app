@@ -5,20 +5,20 @@ import DeviceInfo from 'react-native-device-info';
 import RNFS from 'react-native-fs';
 import { MMKV } from 'react-native-mmkv';
 const storage = new MMKV(); 
-
+  
 
  
     
 export const apiUrl = () => { 
 
-  const apiUrl = 'http://192.168.1.61/projects/codediffusion/hindibible/api/';
-  // const apiUrl = 'https://digitalnamo.com/azmal/2025/april/hindibible/api/';
-  // const apiUrl = 'http://192.168.1.17/projects/hindibible/api/'; 
+  // const apiUrl = 'http://192.168.1.61/projects/codediffusion/hindibible/api/';
+  // const apiUrl = 'https://digitalnamo.com/azmal/2025/april/hindibible/api/'; 
+  const apiUrl = 'http://192.168.1.17/projects/hindibible/api/';
 
      
   const commurl = apiUrl;    
   const mainUrl = apiUrl+'user/';   
-  
+   
    
   return {
     "login":`${mainUrl}login`,
@@ -44,6 +44,8 @@ export const apiUrl = () => {
     "subSubCategory":`${mainUrl}sub-sub-category`,
     "subSubSubCategory":`${mainUrl}sub-sub-sub-category`, 
     "postList":`${mainUrl}post/list`, 
+    "postView":`${mainUrl}post/view`, 
+    "postLike":`${mainUrl}post/like`, 
     "postDetail":`${mainUrl}post/detail`,
 
     "NewsList":`${mainUrl}news/list`,

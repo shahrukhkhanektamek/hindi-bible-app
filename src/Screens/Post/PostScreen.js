@@ -8,6 +8,7 @@ import Video from '../../Components/Video/Video.js';
 import Button from '../../Components/Button/Button.js';
 import SearchInput from '../../Components/Search/SearchInput.js';
 import BeforeFreeTrialModal from '../../Components/Modal/MemberLogin/BeforeFreeTrialModal.js';
+import Icon from 'react-native-vector-icons/Ionicons';
 
 import { GlobalContext } from '../../Components/GlobalContext';
 import PageLoding from '../../Components/PageLoding.js';
@@ -68,7 +69,21 @@ const GenesisScreen = ({route}) => {
       }
     };
 
+      const postViewData = async () => { 
+      try {
+        const response = await postData({id:id,category_type:category_type}, urls.postView, "POST", null, extraData, 1);
+        if(response.status==200)
+        {
+          // setData(response.data);           
+          // setisLoading(false)
+        }
+      } catch (error) {
+        console.error('Error fetching countries:', error);
+      }
+    };
+
     useEffect(() => {
+      postViewData()
       fetchData()
     },[])
     if(isLoading)
@@ -267,6 +282,34 @@ const GenesisScreen = ({route}) => {
             ):null
             }
 
+            <View style={styles.reactionContainer}>
+              <TouchableOpacity style={styles.reactionButton}>
+                <Icon name="heart" style={styles.reactionIcon} />
+                <Text style={styles.reactionCount}>12</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity style={styles.reactionButton}>
+                <Icon name="thumbs-up" style={styles.reactionIcon} />
+                <Text style={styles.reactionCount}>5</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity style={styles.reactionButton}>
+                <Icon name="flame" style={styles.reactionIcon} />
+                <Text style={styles.reactionCount}>3</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity style={styles.reactionButton}>
+                <Icon name="happy" style={styles.reactionIcon} />
+                <Text style={styles.reactionCount}>7</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity style={styles.reactionButton}>
+                <Icon name="sparkles" style={styles.reactionIcon} />
+                <Text style={styles.reactionCount}>9</Text>
+              </TouchableOpacity>
+            </View>
+
+
           </View>
           
         ))}
@@ -298,114 +341,183 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: BACKGROUND_COLORS.primary,
-    padding: 10,
-    paddingBottom:200
+    paddingHorizontal: 12,
+    paddingTop: 10,
+    paddingBottom: 120,
   },
   topBar: {
     marginTop: 25,
-    marginBottom: 16,
+    marginBottom: 12,
   },
-  itemContainer:{
-    width:'100%',
-    // display:'flex',    
-    // resizeMode:'cover',
-    // aspectRatio: 30 / 9,
-  },
-  video:{
-    width:'100%',
-    resizeMode:'cover',
-  },
-  videoFrame: {
-    width: '100%',
-    // backgroundColor: '#000',
-  },
-  paidStatus:{
-    position:'absolute',
-    right:0,
-    top:0,
-    backgroundColor:'red',
-    color:'white',
-    paddingVertical:5,
-    paddingHorizontal:10,
-    fontWeight:'bold'
+  buttonTop: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    alignItems: 'center',
+    marginVertical: 12,
   },
   button: {
     alignItems: 'center',
     marginVertical: 10,
   },
-  buttonTop: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    columnGap: 15,
-    marginBottom: 20,
-    marginTop: 10,
-  },
-  videoContainer: {
-    alignItems: 'center',
-    rowGap: 20,
-    marginTop: 20,
-    marginBottom: 20,
-  },
   searchContainer: {
     flexDirection: 'row',
     backgroundColor: '#fff',
-    borderRadius: 8,
+    borderRadius: 0,
     alignItems: 'center',
-    paddingLeft: 10,
-    marginTop: 10,
-    marginHorizontal: 25,
+    paddingHorizontal: 12,
+    marginTop: 12,
+    marginHorizontal: 12,
     height: 45,
-    borderColor: '#999',
-    borderWidth: 1,
+    shadowColor: '#000',
+    shadowOpacity: 0.08,
+    shadowRadius: 4,
+    elevation: 2,
   },
   searchInput: {
     flex: 1,
     fontSize: 16,
-    color: '#555',
+    color: '#333',
   },
   searchButton: {
-    borderLeftColor: '#999',
-    borderLeftWidth: 1,
-    borderRadius: 8,
-    padding: 9,
+    marginLeft: 8,
+    borderRadius: 10,
+    padding: 8,
     backgroundColor: '#eee',
   },
-   mediaContainer: {
-    alignItems: 'center',
-    marginVertical: 10,
+
+  videoContainer: {
+    marginTop: 20,
+    rowGap: 18,
+    marginBottom: 40,
+    width: "100%",
   },
-   pdfWrapper: {
-    paddingHorizontal: 10,
-    width:"100%"
+  itemContainer: {
+    width: "100%",
+    backgroundColor: "#fff",
+    borderRadius: 0,
+    shadowColor: "#000",
+    shadowOpacity: 0.08,
+    shadowRadius: 5,
+    elevation: 3,
+    overflow: "hidden",
+  },
+  videoFrame: {
+    width: "100%",
+  },
+  video: {
+    width: "100%",
+    resizeMode: "cover",
+    borderRadius: 0,
   },
   imageWrapper: {
-    paddingHorizontal: 16,
-    width:"100%"
+    width: "100%",
+    borderRadius: 0,
+    overflow: "hidden",
   },
   image: {
-    width: '100%',
+    width: "100%",
     height: 200,
-    resizeMode: 'cover',
+    borderRadius: 0,
   },
   imageContainer: {
-    marginBottom: 0,
-    marginTop: 5,
-    width:'100%'
+    width: "100%",
   },
+
+  pdfWrapper: {
+    width: "100%",
+    borderRadius: 0,
+    overflow: "hidden",
+  },
+  mediaContainer: {
+    alignItems: "center",
+    marginVertical: 10,
+  },
+
   imageTitleWrapper: {
-    backgroundColor: '#fff',
-    borderRadius: 5,
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-    alignSelf: 'flex-start',
+    backgroundColor: "#fff",
+    borderRadius: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    marginTop: 8,
+    shadowColor: "#000",
+    shadowOpacity: 0.05,
+    shadowRadius: 3,
+    elevation: 2,
   },
   imageTitle: {
     fontSize: 16,
-    fontWeight: '400',
-    color: '#333',
+    fontWeight: "500",
+    color: "#222",
   },
 
+  paidStatus: {
+    position: "absolute",
+    right: 10,
+    top: 10,
+    backgroundColor: "red",
+    color: "white",
+    fontSize: 12,
+    paddingVertical: 3,
+    paddingHorizontal: 8,
+    borderRadius: 6,
+    overflow: "hidden",
+  },
+
+  // reactionContainer: {
+  //   flexDirection: "row",
+  //   alignItems: "center",
+  //   justifyContent: "space-between",
+  //   paddingVertical: 8,
+  //   paddingHorizontal: 12,
+  //   borderTopWidth: 1,
+  //   borderTopColor: "#eee",
+  //   backgroundColor: "#fafafa",
+  //   columnGap: 12,
+  // },
+  // reactionIcon: {
+  //   fontSize: 22,
+  //   color: "#666",
+  //   padding: 6,
+  //   borderRadius: 50,
+  //   backgroundColor: "#f2f2f2",
+  //   overflow: "hidden",
+  // },
+
+
+  reactionContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginTop: 8,
+    justifyContent: "space-between",
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    gap: 12, // space between each reaction
+  },
+  reactionButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#f1f1f1",
+    borderRadius: 20,
+    paddingVertical: 4,
+    paddingHorizontal: 8,
+  },
+  reactionIcon: {
+    fontSize: 20,
+    color: "#555",
+    marginRight: 4,
+  },
+  reactionCount: {
+    fontSize: 14,
+    color: "#333",
+    fontWeight: "500",
+  },
+
+
+  
+
+
+
 });
+
 
 export default GenesisScreen;
