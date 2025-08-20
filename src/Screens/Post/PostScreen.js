@@ -27,7 +27,9 @@ const GenesisScreen = ({route}) => {
   const [playingId, setPlayingId] = useState(null);
 
   const handleSearch = () => {
-    Alert.alert('Search Submitted', `You searched for: "${search}"`);
+    setPage(0);
+    setisLoading(true)
+    fetchData(page);
   };
 
   const [BeforeFreeTrialModalVisible, setBeforeFreeTrialModalVisible] = useState(false);
@@ -48,20 +50,22 @@ const GenesisScreen = ({route}) => {
   const [page, setPage] = useState(0);
   const [isLoading, setisLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
-  const [data, setData] = useState([]);
-  const onRefresh = useCallback(() => {
-    // setPage(0);
+  const [data, setData] = useState([]); 
+  const onRefresh = useCallback(() => { 
+    setPage(0);
     setRefreshing(true);
     setRefreshing(false);
-    fetchData(page);
+    fetchData();
   }, []);
 
-  const fetchData = async () => { 
+    const fetchData = async () => { 
       try {
-        const response = await postData({id:id,category_type:category_type,show_case:show_case}, urls.postList, "GET", null, extraData, 1);
+        const response = await postData({page:page,id:id,category_type:category_type,show_case:show_case,search:search}, urls.postList, "GET", null, extraData, 1);
         if(response.status==200)
         {
-          setData(response.data);           
+          // setData(response.data);
+          const data = response.data;
+          setData(prevPosts => page === 0 ? data : [...prevPosts, ...data]);
           setisLoading(false)
         }
       } catch (error) {
@@ -69,22 +73,35 @@ const GenesisScreen = ({route}) => {
       }
     };
 
-      const postViewData = async () => { 
+    const postViewData = async () => { 
       try {
         const response = await postData({id:id,category_type:category_type}, urls.postView, "POST", null, extraData, 1);
-        if(response.status==200)
-        {
-          // setData(response.data);           
-          // setisLoading(false)
-        }
       } catch (error) {
         console.error('Error fetching countries:', error);
       }
     };
 
+    const postLike = async (post_like_id, post_type, position) => { 
+      try {
+        const response = await postData({post_id:post_like_id,type:post_type}, urls.postLike, "POST", null, extraData,0,1);
+        if(response.status==200)
+        {
+          data[position].likes = response.data;
+        }
+      } catch (error) {
+        console.error('Error fetching countries:', error);
+      } 
+    }; 
+
+    useEffect(() => {
+      fetchData()
+    },[page])
+    const handleLoadMore = () => {
+      setPage(page + 1);      
+    };
+
     useEffect(() => {
       postViewData()
-      fetchData()
     },[])
     if(isLoading)
     {
@@ -95,7 +112,6 @@ const GenesisScreen = ({route}) => {
 
 
     const handlePay = async (id) => { 
-      console.log("fasfa");
       navigation.navigate("SelectCountryScreen",{"type":2,"item_id":id})
     };
 
@@ -121,7 +137,9 @@ const GenesisScreen = ({route}) => {
 
   return (
     <ScrollView style={styles.container}
-            refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+      onEndReached={handleLoadMore}
+      onEndReachedThreshold={0.5}
+      refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
         >
       <View style={styles.topBar}>
         <TopBarPrimary />
@@ -178,7 +196,7 @@ const GenesisScreen = ({route}) => {
         
         
 
-        {data.map((item) => (
+        {data.map((item, index) => (
           <View style={[styles.itemContainer]} key={item.id}>
             <React.Fragment >
               {(item.post_type==1) ? ( 
@@ -283,29 +301,29 @@ const GenesisScreen = ({route}) => {
             }
 
             <View style={styles.reactionContainer}>
-              <TouchableOpacity style={styles.reactionButton}>
+              <TouchableOpacity style={styles.reactionButton} onPress={() => postLike(item.id,1,index)}>
                 <Icon name="heart" style={styles.reactionIcon} />
-                <Text style={styles.reactionCount}>12</Text>
+                <Text style={styles.reactionCount}>{item.likes.heart?item.likes.heart:0}</Text>
               </TouchableOpacity>
 
-              <TouchableOpacity style={styles.reactionButton}>
+              <TouchableOpacity style={styles.reactionButton} onPress={() => postLike(item.id,2,index)}>
                 <Icon name="thumbs-up" style={styles.reactionIcon} />
-                <Text style={styles.reactionCount}>5</Text>
+                <Text style={styles.reactionCount}>{item.likes.thumbs?item.likes.thumbs:0}</Text>
               </TouchableOpacity>
 
-              <TouchableOpacity style={styles.reactionButton}>
+              <TouchableOpacity style={styles.reactionButton} onPress={() => postLike(item.id,3,index)}>
                 <Icon name="flame" style={styles.reactionIcon} />
-                <Text style={styles.reactionCount}>3</Text>
+                <Text style={styles.reactionCount}>{item.likes.fire?item.likes.fire:0}</Text>
               </TouchableOpacity>
 
-              <TouchableOpacity style={styles.reactionButton}>
+              <TouchableOpacity style={styles.reactionButton} onPress={() => postLike(item.id,4,index)}>
                 <Icon name="happy" style={styles.reactionIcon} />
-                <Text style={styles.reactionCount}>7</Text>
+                <Text style={styles.reactionCount}>{item.likes.smile?item.likes.smile:0}</Text>
               </TouchableOpacity>
 
-              <TouchableOpacity style={styles.reactionButton}>
+              <TouchableOpacity style={styles.reactionButton} onPress={() => postLike(item.id,5,index)}>
                 <Icon name="sparkles" style={styles.reactionIcon} />
-                <Text style={styles.reactionCount}>9</Text>
+                <Text style={styles.reactionCount}>{item.likes.sparkles?item.likes.sparkles:0}</Text>
               </TouchableOpacity>
             </View>
 
