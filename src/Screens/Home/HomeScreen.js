@@ -119,6 +119,7 @@ const HomeScreen = () => {
     }
   };
   const handleLogin = async () => {      
+    
     if(appSetting.device_is_register==0){
       setIsBeforeRegisterModalVisible(true)
     }
@@ -212,7 +213,8 @@ const HomeScreen = () => {
           borderRadius={5}
         />
         <View style={styles.subscriber}>
-          <Text style={styles.subscriberText}>{appSetting.total_subscribe}</Text>
+          {/* appSetting.total_subscribe */}
+          <Text style={styles.subscriberText}>900000</Text>
         </View>
         <GradientButton
           title="Latest News"

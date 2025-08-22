@@ -44,6 +44,7 @@ import FeedbackScreen from '../Screens/Feedback/FeedbackScreen.js';
 
 import OrderHistoryScreen from '../Screens/OrderHistory/OrderHistoryScreen.js';
 import AlbumImage from '../Components/Image/AlbumImage.js';
+// import SingleImage from '../Components/Image/SingleImage.js';
 
 import InterviewScreen from '../Screens/Videos/InterviewScreen.js';
 import EditProfileScreen from '../Screens/Profile/EditProfileScreen.js';
@@ -165,6 +166,7 @@ const StackNavigation = () => (
     <Stack.Screen name="Interview" component={InterviewScreen} />
     
     <Stack.Screen name="AlbumImage" component={AlbumImage} />
+    {/* <Stack.Screen name="SingleImage" component={SingleImage} /> */}
 
     <Stack.Screen name="Feedback" component={FeedbackScreen} />
 

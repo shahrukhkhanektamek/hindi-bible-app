@@ -31,7 +31,7 @@ const PayNowScreen = ({route}) => {
     const response = await postData(filedata, urls.createTransaction,"GET", navigation,extraData);
     if(response.status==200)
     {
-      navigation.navigate("PaymentGateway",{payment_type:filedata.payment_type,data:response.data});
+      navigation.navigate("PaymentGateway",{payment_type:filedata.payment_type,data:response.data,type:3});
     }
   
   };

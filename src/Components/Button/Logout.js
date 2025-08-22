@@ -31,7 +31,7 @@ const Logout = () => {
               title="Logout"
               height="50"
               width="50%"
-              gradientType="blue"
+              gradientType="red"
               color={COLORS.white}
               borderRadius={5}
               fontSize={15}

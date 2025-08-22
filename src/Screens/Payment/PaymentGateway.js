@@ -10,12 +10,12 @@ import COLORS from '../../Constants/Colors.js';
 import WebView from 'react-native-webview';
 
 import { GlobalContext } from '../../Components/GlobalContext';
-import { postData, apiUrl } from '../../Components/api';
+import { postData, apiUrl } from '../../Components/api'; 
 const urls=apiUrl();
 
 const PaymentGatewayScreen = ({route}) => {
   const navigation = useNavigation();
-  const {payment_type, data} = route.params;
+  const {payment_type, data, type} = route.params;
   console.log(data)
 
   const { extraData } = useContext(GlobalContext);
@@ -54,10 +54,27 @@ const PaymentGatewayScreen = ({route}) => {
       const response = await postData(filedata, urls.transactionStatus,"GET", navigation,extraData,1,1);
       if(response.status==200)
       {
-        navigation.reset({
-          index: 0,
-          routes: [{ name: 'Home' }], 
-        });
+        if(type==1)
+        {
+          navigation.reset({
+            index: 0,
+            routes: [{ name: 'Category' }], 
+          });
+        }
+        else if(type==2)
+        {
+          navigation.reset({
+            index: 0,
+            routes: [{ name: 'Home' }], 
+          });
+        }
+        else if(type==3)
+        {
+          navigation.reset({
+            index: 0,
+            routes: [{ name: 'Home' }], 
+          });
+        }
       }  
     };
     

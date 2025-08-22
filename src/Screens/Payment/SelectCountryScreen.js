@@ -9,10 +9,10 @@ const SelectCountryScreen = ({route}) => {
   const navigation = useNavigation();
 
   
-  let type = route.params.type;
+  let type = route.params?.type;
   if(!type) type = 1;
   
-  let item_id = route.params.item_id;
+  let item_id = route.params?.item_id;
   if(!item_id) item_id = 1;
 
   

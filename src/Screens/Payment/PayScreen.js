@@ -20,12 +20,13 @@ const PayScreen = ({route}) => {
     const appSetting = extraData.appSetting;
     const userDetail = extraData.userDetail;
 
-    let typeO = route.params.type;
+    let typeO = route.params?.type;
     if(!typeO) typeO = 1
 
-    let item_id = route.params.item_id;
+    let item_id = route.params?.item_id;
     if(!item_id) item_id = 0
-  
+
+    console.log(typeO)
 
   const [payment_type, setpayment_type] = useState(route.params.country);
   const [amount, setamount] = useState('00.00');
@@ -51,9 +52,9 @@ const PayScreen = ({route}) => {
       const response = await postData(filedata, urls.createTransaction,"GET", navigation,extraData);
       if(response.status==200)
       {
-        navigation.navigate("PaymentGateway",{payment_type:payment_type,data:response.data});
+        navigation.navigate("PaymentGateway",{payment_type:payment_type,data:response.data,type:type});
       }
-  
+   
     };
 
     const fetchPostData = async () => { 
@@ -89,7 +90,7 @@ const PayScreen = ({route}) => {
     useEffect(() => {
       
 
-      if(item_id)
+      if(typeO!=1)
       {
         fetchPostData();
       }
@@ -99,9 +100,9 @@ const PayScreen = ({route}) => {
         settoDate(appSetting.detail.end_date_time);
         if(payment_type=='india')
         {
-          setamount('Rs. '+appSetting.detail.india.fees);
-          setgst('Rs. '+appSetting.detail.india.gst);
-          setpayableamount('Rs. '+appSetting.detail.india.payable_price);
+          setamount('₹ '+appSetting.detail.india.fees);
+          setgst('₹ '+appSetting.detail.india.gst);
+          setpayableamount('₹ '+appSetting.detail.india.payable_price);
         }
         else
         {
@@ -135,9 +136,18 @@ const PayScreen = ({route}) => {
       <View style={styles.buttonContainer}>
         <View style={styles.textContainer}>
           <View style={styles.textBox1}>
-            <Text style={[styles.textStyle, { color: COLORS.darkRed, fontWeight: '700' }]}>Fees: {amount}</Text>
-            <Text style={[styles.textStyle, { color: COLORS.darkRed, fontWeight: '700' }]}>Gst: {gst}</Text>
-            <Text style={[styles.textStyle, { color: COLORS.darkRed, fontWeight: '700' }]}>Payable Fees: {payableamount}</Text>
+            
+            
+            {(gst>0)?(
+              <View>
+                <Text style={[styles.textStyle, { color: COLORS.darkRed, fontWeight: '700',fontSize:20 }]}>Fees: {amount}</Text>
+                <Text style={[styles.textStyle, { color: COLORS.darkRed, fontWeight: '700',fontSize:20 }]}>Gst: {gst}</Text>
+                <Text style={[styles.textStyle, { color: COLORS.darkRed, fontWeight: '700',fontSize:20 }]}>Payable Fees: {payableamount}</Text>
+              </View>
+            ):(
+              <Text style={[styles.textStyle, { color: COLORS.darkRed, fontWeight: '700',fontSize:25 }]}>Fees: {amount}</Text>
+            )}
+
             <Text style={[styles.textStyle, { color: COLORS.black }]}>ONE YEAR FEES</Text>
             <Text style={[styles.textStyle, { color: COLORS.black }]}>एक वर्ष की फीस</Text>
           </View>

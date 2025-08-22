@@ -5,6 +5,10 @@ import GradiantButton from '../../Components/Button/GradientButton.js';
 import { useNavigation } from '@react-navigation/native';
 import BACKGROUND_COLORS from '../../Constants/BackGroundColors.js';
 import Video from '../../Components/Video/Video.js';
+
+import GradientButton from '../../Components/Button/GradientButton.js';
+import COLORS from '../../Constants/Colors.js';
+
 import Button from '../../Components/Button/Button.js';
 import SearchInput from '../../Components/Search/SearchInput.js';
 import BeforeFreeTrialModal from '../../Components/Modal/MemberLogin/BeforeFreeTrialModal.js';
@@ -33,7 +37,7 @@ const GenesisScreen = ({route}) => {
   };
 
   const [BeforeFreeTrialModalVisible, setBeforeFreeTrialModalVisible] = useState(false);
-  const handleOpenVide = () => {
+  const handleOpenView = () => {
     if(show_case)
     {
       setBeforeFreeTrialModalVisible(true)
@@ -60,6 +64,7 @@ const GenesisScreen = ({route}) => {
 
     const fetchData = async () => { 
       try {
+        console.log({page:page,id:id,category_type:category_type,show_case:show_case,search:search})
         const response = await postData({page:page,id:id,category_type:category_type,show_case:show_case,search:search}, urls.postList, "GET", null, extraData, 1);
         if(response.status==200)
         {
@@ -73,9 +78,9 @@ const GenesisScreen = ({route}) => {
       }
     };
 
-    const postViewData = async () => { 
+    const postViewData = async (item_post_id) => { 
       try {
-        const response = await postData({id:id,category_type:category_type}, urls.postView, "POST", null, extraData, 1);
+        const response = await postData({post_id:item_post_id,id:id,category_type:category_type}, urls.postView, "POST", null, extraData, 1);
       } catch (error) {
         console.error('Error fetching countries:', error);
       }
@@ -101,8 +106,42 @@ const GenesisScreen = ({route}) => {
     };
 
     useEffect(() => {
-      postViewData()
+      // postViewData()
     },[])
+    
+    const handleViewPost = async (item) => { 
+      
+      postViewData(item)
+      if(item.post_type==1)
+      {
+        !item.is_paid?navigation.navigate('SinglePost', {item:item}):handlePay(item.id)
+      }
+      else if(item.post_type==2)
+      {
+        // !item.is_paid?navigation.navigate('SinglePost', {item:item}):handlePay(item.id)
+      }
+      else if(item.post_type==3)
+      {
+        // !item.is_paid?navigation.navigate('SinglePost', {item:item}):handlePay(item.id)
+      }
+      else if(item.post_type==4)
+      {
+        // !item.is_paid?navigation.navigate('SinglePost', {item:item}):handlePay(item.id)
+      }
+      else if(item.post_type==5)
+      {
+        // !item.is_paid?navigation.navigate('SinglePost', {item:item}):handlePay(item.id)
+      }
+      else if(item.post_type==6)
+      {
+        !item.is_paid?navigation.navigate('AlbumImage', {
+          images: item?.album?item.album:[],
+          initialIndex: 0,
+        }):handlePay(item.id)
+      }
+    };
+
+
     if(isLoading)
     {
       return ( 
@@ -203,7 +242,7 @@ const GenesisScreen = ({route}) => {
                 <View style={[styles.videoFrame]}>
                   <TouchableOpacity 
                   style={styles.imageWrapper}
-                  onPress={() =>!item.is_paid?navigation.navigate('SinglePost', {item:item}):handlePay(item.id)}
+                  onPress={() =>handleViewPost(item)}
                   >
                       <Image source={{uri:item.image}} style={styles.image} />
                       <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
@@ -228,9 +267,9 @@ const GenesisScreen = ({route}) => {
               ) : (item.post_type==3) ? ( 
                 <View style={styles.imageWrapper}>
                   <View style={styles.imageContainer}>
-                    <Image source={{uri:item.image}} style={styles.image} />
-                    <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
-                    </View>
+                    <TouchableOpacity onPress={() =>handleViewPost(item)}>
+                      <Image source={{uri:item.image}} style={styles.image} />
+                    </TouchableOpacity>
                   </View>
                 </View>
               
@@ -249,12 +288,8 @@ const GenesisScreen = ({route}) => {
                         gradientType="orange"
                         borderRadius={5} 
                         fontSize={15}
-                        onPress={() =>
-                          navigation.navigate('AlbumImage', {
-                            images: item?.album?item.album:[],
-                            initialIndex: 0,
-                          })
-                        }
+                        
+                        onPress={() =>handleViewPost(item)}
                       />
                     </View>
                   </View> 
@@ -263,11 +298,7 @@ const GenesisScreen = ({route}) => {
               ) : (item.post_type==4) ? ( 
                 <View style={styles.pdfWrapper}>  
                   <TouchableOpacity 
-                onPress={() =>
-                        navigation.navigate('SinglePost', {
-                          item:item,
-                        })
-                      }>
+                  onPress={() =>handleViewPost(item)}>
                       <Pdf
                         title={item.name}
                         // fileName="tgc_learning_guide.pdf"
@@ -279,11 +310,7 @@ const GenesisScreen = ({route}) => {
 
               ) : (item.post_type==5) ? ( 
                 <TouchableOpacity 
-                onPress={() =>
-                        navigation.navigate('SinglePost', {
-                          item:item,
-                        })
-                      }>
+                onPress={() =>handleViewPost(item)}>
                   <Article
                     imageSource={{uri:item.image}}
                     data={item}
@@ -296,36 +323,63 @@ const GenesisScreen = ({route}) => {
             </React.Fragment>
             
             {(item.is_paid==1)?(
-              <Text style={[styles.paidStatus]}>Paid</Text>
+              <TouchableOpacity onPress={() =>handleViewPost(item)} style={[styles.paidStatus]}>
+                <GradientButton
+                  title="Pay"
+                  height="50"
+                  width="50%"
+                  gradientType="orange"
+                  color={COLORS.white}
+                  borderRadius={5}
+                  fontSize={15}
+                  fontWeight="500"
+                />
+              </TouchableOpacity>
             ):null
             }
 
+
+            
+
+
             <View style={styles.reactionContainer}>
               <TouchableOpacity style={styles.reactionButton} onPress={() => postLike(item.id,1,index)}>
-                <Icon name="heart" style={styles.reactionIcon} />
-                <Text style={styles.reactionCount}>{item.likes.heart?item.likes.heart:0}</Text>
+                <Icon name="heart" style={[styles.reactionIcon, { color: "#e0245e" }]} /> 
+                <Text style={styles.reactionCount}>{item.likes.heart ? item.likes.heart : 0}</Text>
               </TouchableOpacity>
 
               <TouchableOpacity style={styles.reactionButton} onPress={() => postLike(item.id,2,index)}>
-                <Icon name="thumbs-up" style={styles.reactionIcon} />
-                <Text style={styles.reactionCount}>{item.likes.thumbs?item.likes.thumbs:0}</Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity style={styles.reactionButton} onPress={() => postLike(item.id,3,index)}>
-                <Icon name="flame" style={styles.reactionIcon} />
-                <Text style={styles.reactionCount}>{item.likes.fire?item.likes.fire:0}</Text>
+                {/* <Icon name="thumbs-up" style={[styles.reactionIcon, { color: "#1877F2" }]} />  */}
+                <Text style={[styles.reactionIconText]}>👍</Text>
+                <Text style={styles.reactionCount}>{item.likes.thumbs ? item.likes.thumbs : 0}</Text>
               </TouchableOpacity>
 
               <TouchableOpacity style={styles.reactionButton} onPress={() => postLike(item.id,4,index)}>
-                <Icon name="happy" style={styles.reactionIcon} />
-                <Text style={styles.reactionCount}>{item.likes.smile?item.likes.smile:0}</Text>
+                {/* <Icon name="happy" style={[styles.reactionIcon, { color: "#f7b731" }]} />  */}
+                <Text style={[styles.reactionIconText]}>👏</Text>
+                <Text style={styles.reactionCount}>{item.likes.smile ? item.likes.smile : 0}</Text>
               </TouchableOpacity>
 
-              <TouchableOpacity style={styles.reactionButton} onPress={() => postLike(item.id,5,index)}>
-                <Icon name="sparkles" style={styles.reactionIcon} />
-                <Text style={styles.reactionCount}>{item.likes.sparkles?item.likes.sparkles:0}</Text>
+              <TouchableOpacity style={styles.reactionButton} onPress={() => postLike(item.id,3,index)}>
+                {/* <Icon name="flame" style={[styles.reactionIcon, { color: "#ff4500" }]} />  */}
+                <Text style={[styles.reactionIconText]}>🔥</Text>
+                <Text style={styles.reactionCount}>{item.likes.fire ? item.likes.fire : 0}</Text>
               </TouchableOpacity>
+
+
+              {/* <TouchableOpacity style={styles.reactionButton} onPress={() => postLike(item.id,5,index)}>
+                <Text style={[styles.reactionIconText]}>🥰</Text>
+                <Text style={styles.reactionCount}>{item.likes.sparkles ? item.likes.sparkles : 0}</Text>
+              </TouchableOpacity> */}
+
+              <TouchableOpacity style={styles.reactionButton} >
+                {/* <Icon name="sparkles" style={[styles.reactionIcon, { color: "#9b59b6" }]} />  */}
+                <Text style={[styles.reactionIconText]}>👁</Text>
+                <Text style={styles.reactionCount}>{item.views ? item.views : 0}</Text>
+              </TouchableOpacity>
+
             </View>
+
 
 
           </View>
@@ -474,32 +528,18 @@ const styles = StyleSheet.create({
     top: 10,
     backgroundColor: "red",
     color: "white",
-    fontSize: 12,
+    fontSize: 15,
     paddingVertical: 3,
     paddingHorizontal: 8,
     borderRadius: 6,
     overflow: "hidden",
+    
+  },
+  paidStatusText: {
+    color: "white",
+    fontWeight:'900'
   },
 
-  // reactionContainer: {
-  //   flexDirection: "row",
-  //   alignItems: "center",
-  //   justifyContent: "space-between",
-  //   paddingVertical: 8,
-  //   paddingHorizontal: 12,
-  //   borderTopWidth: 1,
-  //   borderTopColor: "#eee",
-  //   backgroundColor: "#fafafa",
-  //   columnGap: 12,
-  // },
-  // reactionIcon: {
-  //   fontSize: 22,
-  //   color: "#666",
-  //   padding: 6,
-  //   borderRadius: 50,
-  //   backgroundColor: "#f2f2f2",
-  //   overflow: "hidden",
-  // },
 
 
   reactionContainer: {
@@ -523,6 +563,9 @@ const styles = StyleSheet.create({
     fontSize: 20,
     color: "#555",
     marginRight: 4,
+  },
+  reactionIconText:{
+    marginRight:4
   },
   reactionCount: {
     fontSize: 14,
