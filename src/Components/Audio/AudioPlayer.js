@@ -7,12 +7,16 @@ import BACKGROUND_COLORS from '../../Constants/BackGroundColors';
 import Video from 'react-native-video';
 import formatTime from '../../Helper/formatTime';
 
+
+
+
 const AudioPlayer = ({
   id,
   playingId,
   setPlayingId,
   title = 'Unknown Title...',
-  artist = 'Unknown Artist',
+  artist = '',
+  description = '',
   chapterTitle,
   source,
   onEnd,
@@ -20,6 +24,8 @@ const AudioPlayer = ({
   const audioRef = useRef(null);
   const [duration, setDuration] = useState(0);
   const [currentTime, setCurrentTime] = useState(0);
+
+  
 
   const isPlaying = playingId === id;
 
@@ -69,20 +75,22 @@ const AudioPlayer = ({
         </TouchableOpacity>
 
         <View style={styles.middleSection}>
-          <Text style={styles.audioTitle}>{title}</Text>
-          <Text style={styles.artistName}>{artist}</Text>
+          <Text style={styles.audioTitle}>{title}</Text>          
           <Text style={styles.audioDuration}>
             {formatTime(currentTime)} / {formatTime(duration)}
           </Text>
+          {(artist)? (
+            <Text style={styles.artistName}>{artist}</Text>
+            ):null
+          }
+          
+
+          
+
         </View>
       </View>
 
-      <View style={styles.bottomSection}>
-        <Text style={styles.chapterTitle}>{chapterTitle}</Text>
-        <TouchableOpacity onPress={() => Linking.openURL(source.uri)}>
-          <FontAwesome name="download" size={25} color="#555" />
-        </TouchableOpacity>
-      </View>
+      
     </View>
   );
 };

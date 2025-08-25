@@ -212,9 +212,8 @@ const HomeScreen = () => {
           gradientType="yellow"
           borderRadius={5}
         />
-        <View style={styles.subscriber}>
-          {/* appSetting.total_subscribe */}
-          <Text style={styles.subscriberText}>900000</Text>
+        <View style={styles.subscriber}>          
+          <Text style={styles.subscriberText}>{appSetting.total_subscribe}</Text>
         </View>
         <GradientButton
           title="Latest News"

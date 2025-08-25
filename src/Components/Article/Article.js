@@ -12,9 +12,7 @@ const Article = ({ imageSource, data=[] }) => {
 
   return (
     <View style={styles.wrapper}>
-      <View style={styles.imageContainer}>
-        <Image style={styles.image} source={imageSource} />
-      </View>
+      
       <View style={styles.title}>
         <Text style={styles.titleText}>{data.name}</Text>
       </View>

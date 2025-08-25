@@ -1,4 +1,4 @@
-import { ScrollView, StyleSheet, View, RefreshControl, Image, Text, TouchableOpacity } from 'react-native';
+import { ScrollView, StyleSheet, View, RefreshControl, Image, Text, TouchableOpacity, Linking } from 'react-native';
 import React, { useState, useEffect, useCallback, useContext } from 'react';
 import TopBarPrimary from '../../Components/TopBar/TopBarPrimary.js';
 import GradiantButton from '../../Components/Button/GradientButton.js';
@@ -13,6 +13,11 @@ import Button from '../../Components/Button/Button.js';
 import SearchInput from '../../Components/Search/SearchInput.js';
 import BeforeFreeTrialModal from '../../Components/Modal/MemberLogin/BeforeFreeTrialModal.js';
 import Icon from 'react-native-vector-icons/Ionicons';
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
+
+import RenderHTML from 'react-native-render-html';
+import tagsStyles from '../../Constants/tagsStyles'
+import { useWindowDimensions } from 'react-native';
 
 import { GlobalContext } from '../../Components/GlobalContext';
 import PageLoding from '../../Components/PageLoding.js';
@@ -21,14 +26,20 @@ import Pdf from '../../Components/Pdf/Pdf.js';
 import AudioPlayer from '../../Components/Audio/AudioPlayer.js';
 import Article from '../../Components/Article/Article.js';
 import LogoutButton from '../../Components/LogoutButton.js';
+import PostPurchaseModal from '../../Components/Modal/MemberLogin/PostPurchaseModal.js';
 const urls=apiUrl();
 
 
 const GenesisScreen = ({route}) => {
   const navigation = useNavigation();
+  const { width } = useWindowDimensions();
   const {id, name, category_type,show_case} = route.params;
   const [search, setSearch] = useState('');
+  const [postId, setpostId] = useState('');
   const [playingId, setPlayingId] = useState(null);
+
+  
+
 
   const handleSearch = () => {
     setPage(0);
@@ -37,12 +48,15 @@ const GenesisScreen = ({route}) => {
   };
 
   const [BeforeFreeTrialModalVisible, setBeforeFreeTrialModalVisible] = useState(false);
+  const [PostPurchaseModalVisible, setPostPurchaseModalVisible] = useState(false);
   const handleOpenView = () => {
     if(show_case)
     {
       setBeforeFreeTrialModalVisible(true)
     }
   };
+
+  
 
  
   
@@ -55,6 +69,7 @@ const GenesisScreen = ({route}) => {
   const [isLoading, setisLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [data, setData] = useState([]); 
+  const [fileData, setfileData] = useState([]); 
   const onRefresh = useCallback(() => { 
     setPage(0);
     setRefreshing(true);
@@ -63,9 +78,10 @@ const GenesisScreen = ({route}) => {
   }, []);
 
     const fetchData = async () => { 
-      try {
-        console.log({page:page,id:id,category_type:category_type,show_case:show_case,search:search})
-        const response = await postData({page:page,id:id,category_type:category_type,show_case:show_case,search:search}, urls.postList, "GET", null, extraData, 1);
+      try { 
+        let fileDataLet = {page:page,id:id,category_type:category_type,show_case:show_case,search:search,name:name};
+        setfileData(fileDataLet);
+        const response = await postData(fileDataLet, urls.postList, "GET", null, extraData, 1);
         if(response.status==200)
         {
           // setData(response.data);
@@ -111,6 +127,12 @@ const GenesisScreen = ({route}) => {
     
     const handleViewPost = async (item) => { 
       
+      setpostId(item.id)
+      if(item.is_paid==1)
+      {
+        setPostPurchaseModalVisible(true);
+        return false;
+      }
       postViewData(item)
       if(item.post_type==1)
       {
@@ -151,7 +173,7 @@ const GenesisScreen = ({route}) => {
 
 
     const handlePay = async (id) => { 
-      navigation.navigate("SelectCountryScreen",{"type":2,"item_id":id})
+      navigation.navigate("SelectCountryScreen",{"type":2,"item_id":id,fileData:fileData})
     };
 
 
@@ -255,11 +277,12 @@ const GenesisScreen = ({route}) => {
                     <AudioPlayer
                         id={item.id}
                         chapterTitle={item?.chapter}
-                        source={{uri:item.audio}}
+                        source={{uri:item.audio}} 
                         setPlayingId={setPlayingId}
                         playingId={playingId}
                         title={item.name}
                         artist={item?.artist}
+                        description={item?.description}
                         onEnd={() => handleAudioEnd(item.id)}
                       />
                 </View>
@@ -281,16 +304,19 @@ const GenesisScreen = ({route}) => {
                       <View style={styles.imageTitleWrapper}>
                         <Text style={styles.imageTitle}>{item.name}</Text>
                       </View>
-                      <GradiantButton
-                        title="Album"
-                        height="31"
-                        width="25%"
-                        gradientType="orange"
-                        borderRadius={5} 
-                        fontSize={15}
-                        
-                        onPress={() =>handleViewPost(item)}
-                      />
+                        {(item?.album.length>0) ? ( 
+                          <GradiantButton
+                            title="Album"
+                            height="31"
+                            width="25%"
+                            gradientType="orange"
+                            borderRadius={5} 
+                            fontSize={15}                        
+                            onPress={() =>handleViewPost(item)}
+                          />
+                        ):null
+                        }
+
                     </View>
                   </View> 
                 </View>
@@ -299,6 +325,7 @@ const GenesisScreen = ({route}) => {
                 <View style={styles.pdfWrapper}>  
                   <TouchableOpacity 
                   onPress={() =>handleViewPost(item)}>
+                      <Image source={{uri:item.image}} style={styles.image} />
                       <Pdf
                         title={item.name}
                         // fileName="tgc_learning_guide.pdf"
@@ -311,24 +338,37 @@ const GenesisScreen = ({route}) => {
               ) : (item.post_type==5) ? ( 
                 <TouchableOpacity 
                 onPress={() =>handleViewPost(item)}>
-                  <Article
+                  <Image source={{uri:item.image}} style={styles.image} />
+                  {/* <Article
                     imageSource={{uri:item.image}}
                     data={item}
-                  />
+                  /> */}
                   </TouchableOpacity>
 
               ) : (
                 <Text>None</Text>
               )} 
             </React.Fragment>
-            
+
+            {(item.description)? (
+              <View style={styles.descriptionContainer}>
+                <RenderHTML
+                  contentWidth={width}
+                  source={{ html: item.description }}
+                  baseStyle={styles.description} 
+                  tagsStyles={tagsStyles}
+                />
+              </View>
+              ):null
+            }
+             
             {(item.is_paid==1)?(
-              <TouchableOpacity onPress={() =>handleViewPost(item)} style={[styles.paidStatus]}>
+              <TouchableOpacity onPress={() =>handlePay(item.id)} style={[styles.paidStatus]}>
                 <GradientButton
                   title="Pay"
-                  height="50"
-                  width="50%"
-                  gradientType="orange"
+                  height="30"
+                  width="50"
+                  gradientType="red"
                   color={COLORS.white}
                   borderRadius={5}
                   fontSize={15}
@@ -337,10 +377,6 @@ const GenesisScreen = ({route}) => {
               </TouchableOpacity>
             ):null
             }
-
-
-            
-
 
             <View style={styles.reactionContainer}>
               <TouchableOpacity style={styles.reactionButton} onPress={() => postLike(item.id,1,index)}>
@@ -365,19 +401,26 @@ const GenesisScreen = ({route}) => {
                 <Text style={[styles.reactionIconText]}>🔥</Text>
                 <Text style={styles.reactionCount}>{item.likes.fire ? item.likes.fire : 0}</Text>
               </TouchableOpacity>
+            </View>
 
 
-              {/* <TouchableOpacity style={styles.reactionButton} onPress={() => postLike(item.id,5,index)}>
-                <Text style={[styles.reactionIconText]}>🥰</Text>
-                <Text style={styles.reactionCount}>{item.likes.sparkles ? item.likes.sparkles : 0}</Text>
-              </TouchableOpacity> */}
+            <View style={styles.viewsWrapper}>
+              <View style={[styles.viewsWrapperIcon]}>
+                {(item.is_download==1)?(
+                  <TouchableOpacity onPress={() => Linking.openURL(item.audio)}>
+                    <FontAwesome name="download" size={25} color="#555" />
+                  </TouchableOpacity>
+                ):null
+                }
+              </View>
 
-              <TouchableOpacity style={styles.reactionButton} >
-                {/* <Icon name="sparkles" style={[styles.reactionIcon, { color: "#9b59b6" }]} />  */}
-                <Text style={[styles.reactionIconText]}>👁</Text>
-                <Text style={styles.reactionCount}>{item.views ? item.views : 0}</Text>
-              </TouchableOpacity>
-
+              <View style={[styles.viewsWrapperIcon]}>
+                <Icon name="eye-outline" size={18} color="#444" />
+                <Text style={styles.viewsText}>
+                  {item.views ? item.views : 0} views
+                </Text>
+              </View>
+                
             </View>
 
 
@@ -400,6 +443,12 @@ const GenesisScreen = ({route}) => {
       <BeforeFreeTrialModal
         visible={BeforeFreeTrialModalVisible}
         onClose={() => setBeforeFreeTrialModalVisible(false)}
+      />
+        
+      <PostPurchaseModal 
+        visible={PostPurchaseModalVisible}
+        onClose={() => setPostPurchaseModalVisible(false)}
+        handlePay={() => handlePay(postId)}
       />
         
 
@@ -463,6 +512,17 @@ const styles = StyleSheet.create({
     marginBottom: 40,
     width: "100%",
   },
+  descriptionContainer: {
+    backgroundColor: BACKGROUND_COLORS.white,
+    padding: 16,
+    paddingTop: 10,
+    borderRadius: 3,
+  },
+  description: {
+    fontSize: 15,
+    marginTop: 10,
+    color: '#555',
+  },
   itemContainer: {
     width: "100%",
     backgroundColor: "#fff",
@@ -524,15 +584,15 @@ const styles = StyleSheet.create({
 
   paidStatus: {
     position: "absolute",
-    right: 10,
-    top: 10,
-    backgroundColor: "red",
+    right: 0,
+    top: 3,
     color: "white",
     fontSize: 15,
     paddingVertical: 3,
     paddingHorizontal: 8,
     borderRadius: 6,
     overflow: "hidden",
+    zIndex:9
     
   },
   paidStatusText: {
@@ -572,7 +632,25 @@ const styles = StyleSheet.create({
     color: "#333",
     fontWeight: "500",
   },
-
+  viewsWrapper: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginTop: 4,
+    marginBottom: 5,
+    paddingHorizontal: 12,
+    textAlign:'right',
+    justifyContent:'space-between',
+  },
+  viewsWrapperIcon: {
+    flexDirection: "row",
+  },
+  viewsText: {
+    fontSize: 14,
+    marginLeft: 6,
+    color: "#444",
+    fontWeight: "500",
+    textAlign:'right'
+  },
 
   
 

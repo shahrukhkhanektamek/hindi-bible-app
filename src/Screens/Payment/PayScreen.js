@@ -26,7 +26,9 @@ const PayScreen = ({route}) => {
     let item_id = route.params?.item_id;
     if(!item_id) item_id = 0
 
-    console.log(typeO)
+    let fileData2 = route.params?.fileData;
+
+
 
   const [payment_type, setpayment_type] = useState(route.params.country);
   const [amount, setamount] = useState('00.00');
@@ -34,7 +36,7 @@ const PayScreen = ({route}) => {
   const [payableamount, setpayableamount] = useState('00.00');
 
   const [title, settitle] = useState('Wait...');
-  const [fromDate, setfromDate] = useState('Wait...');
+  const [fromDate, setfromDate] = useState('Wait...'); 
   const [toDate, settoDate] = useState('Wait...');
   
   const [type, settype] = useState(typeO);
@@ -47,7 +49,8 @@ const PayScreen = ({route}) => {
       const filedata = {
         "type":type,
         "item_id":item_id,
-        "payment_type":payment_type=='india'?1:2
+        "payment_type":payment_type=='india'?1:2,
+        "fileData":JSON.stringify(fileData2),
       };
       const response = await postData(filedata, urls.createTransaction,"GET", navigation,extraData);
       if(response.status==200)

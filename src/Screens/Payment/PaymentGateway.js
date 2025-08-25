@@ -16,7 +16,6 @@ const urls=apiUrl();
 const PaymentGatewayScreen = ({route}) => {
   const navigation = useNavigation();
   const {payment_type, data, type} = route.params;
-  console.log(data)
 
   const { extraData } = useContext(GlobalContext);
   const appSetting = extraData.appSetting;
@@ -62,10 +61,15 @@ const PaymentGatewayScreen = ({route}) => {
           });
         }
         else if(type==2)
-        {
+        {          
           navigation.reset({
             index: 0,
-            routes: [{ name: 'Home' }], 
+            routes: [
+              {
+                name: 'Post',
+                params: JSON.parse(response.data.fileData), 
+              },
+            ],
           });
         }
         else if(type==3)
@@ -77,7 +81,7 @@ const PaymentGatewayScreen = ({route}) => {
         }
       }  
     };
-    
+     
     
 
 

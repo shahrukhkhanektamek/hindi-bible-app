@@ -6,7 +6,7 @@ import BACKGROUND_COLORS from '../../Constants/BackGroundColors';
 const Pdf = ({ title, fileName, fileSize, fileUrl }) => {
   return (
     <View style={styles.pdfContainer}>
-      <FontAwesome name="file-pdf-o" size={35} color="red" />
+      <FontAwesome name="file-pdf-o" size={25} color="red" />
       <View style={styles.pdfInfo}>
         <Text style={styles.pdfTitle}>{title}</Text>
         {(fileName?

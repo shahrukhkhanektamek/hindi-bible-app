@@ -6,6 +6,7 @@ import {
     Dimensions,
     Image,
     RefreshControl,
+    TouchableOpacity,
   } from "react-native";
   import React, { useState, useEffect, useCallback, useContext } from 'react';
   import { useNavigation, useRoute } from "@react-navigation/native";
@@ -22,8 +23,11 @@ import {
   import { useWindowDimensions } from "react-native";
   import { GlobalContext } from "../../Components/GlobalContext";
   import WebView from "react-native-webview";
-  
 
+
+  import Icon from 'react-native-vector-icons/Ionicons';
+  import FontAwesome from 'react-native-vector-icons/FontAwesome';
+  import tagsStyles from '../../Constants/tagsStyles'
 
 
   
@@ -69,11 +73,23 @@ import {
         {
           setData(response.data);           
           setisLoading(false)
-        }
+        } 
       } catch (error) {
         console.error('Error fetching countries:', error);
       }
     };
+
+    const postLike = async (post_like_id, post_type) => { 
+      try {
+        const response = await postData({post_id:post_like_id,type:post_type}, urls.postLike, "POST", null, extraData,0,1);
+        if(response.status==200)
+        {
+          data.likes = response.data;
+        }
+      } catch (error) {
+        console.error('Error fetching countries:', error);
+      } 
+    }; 
 
     useEffect(() => {
       fetchData()
@@ -90,6 +106,8 @@ import {
 
 
     return (
+
+      <View style={{flex:1,paddingBottom:50}}>
         <ScrollView style={styles.container}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
         >
@@ -176,17 +194,17 @@ import {
                         mediaPlaybackRequiresUserAction={false}
                         />
                     ) : data.video_type == 3 ? (
-                        <WebView
-                        style={{ height: videoHeight, width: "100%" }}
-                        javaScriptEnabled={true}
-                        domStorageEnabled={true}
-                        allowsFullscreenVideo={true}
-                        source={{
-                            uri: `https://www.youtube.com/embed/${data.video}`,
-                        }}
-                        originWhitelist={['*']}
-                        mediaPlaybackRequiresUserAction={false}
-                        />
+                      <WebView
+                      style={{ height: videoHeight, width: "100%" }}
+                      javaScriptEnabled={true}
+                      domStorageEnabled={true}
+                      allowsFullscreenVideo={true}
+                      source={{
+                        uri: `https://www.youtube.com/embed/${data.video}?modestbranding=1&rel=0&controls=1&fs=1`,
+                      }}
+                      originWhitelist={['*']}
+                      mediaPlaybackRequiresUserAction={false}
+                    />
                     ) : data.video_type == 4 ? (
                         <GumletVideo videoId={data.video} />                        
                     ) : (
@@ -271,7 +289,38 @@ import {
             />
           </View>
         </View>
-      </ScrollView>
+
+
+
+
+       </ScrollView>
+
+       
+       <View style={styles.reactionContainer}>
+          <TouchableOpacity style={styles.reactionButton} onPress={() => postLike(data.id,1)}>
+            <Icon name="heart" style={[styles.reactionIcon, { color: "#e0245e" }]} /> 
+            <Text style={styles.reactionCount}>{data.likes.heart ? data.likes.heart : 0}</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={styles.reactionButton} onPress={() => postLike(data.id,2)}>
+            {/* <Icon name="thumbs-up" style={[styles.reactionIcon, { color: "#1877F2" }]} />  */}
+            <Text style={[styles.reactionIconText]}>👍</Text>
+            <Text style={styles.reactionCount}>{data.likes.thumbs ? data.likes.thumbs : 0}</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={styles.reactionButton} onPress={() => postLike(data.id,4)}>
+            {/* <Icon name="happy" style={[styles.reactionIcon, { color: "#f7b731" }]} />  */}
+            <Text style={[styles.reactionIconText]}>👏</Text>
+            <Text style={styles.reactionCount}>{data.likes.smile ? data.likes.smile : 0}</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={styles.reactionButton} onPress={() => postLike(data.id,3)}>
+            {/* <Icon name="flame" style={[styles.reactionIcon, { color: "#ff4500" }]} />  */}
+            <Text style={[styles.reactionIconText]}>🔥</Text>
+            <Text style={styles.reactionCount}>{data.likes.fire ? data.likes.fire : 0}</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
     );
   };
   
@@ -349,16 +398,64 @@ import {
       padding: 20,
       alignItems: "center",
     },
+
+
+    reactionContainer: {
+      flexDirection: "row",
+      alignItems: "center",
+      marginTop: 8,
+      justifyContent: "space-between",
+      paddingVertical: 8,
+      paddingHorizontal: 12,
+      gap: 12, // space between each reaction
+      position:'absolute',
+      bottom:0,
+      width:'100%',
+      backgroundColor:'white'
+    },
+    reactionButton: {
+      flexDirection: "row",
+      alignItems: "center",
+      backgroundColor: "#f1f1f1",
+      borderRadius: 20,
+      paddingVertical: 4,
+      paddingHorizontal: 8,
+    },
+    reactionIcon: {
+      fontSize: 20,
+      color: "#555",
+      marginRight: 4,
+    },
+    reactionIconText:{
+      marginRight:4
+    },
+    reactionCount: {
+      fontSize: 14,
+      color: "#333",
+      fontWeight: "500",
+    },
+    viewsWrapper: {
+      flexDirection: "row",
+      alignItems: "center",
+      marginTop: 4,
+      marginBottom: 5,
+      paddingHorizontal: 12,
+      textAlign:'right',
+      justifyContent:'space-between',
+    },
+    viewsWrapperIcon: {
+      flexDirection: "row",
+    },
+    viewsText: {
+      fontSize: 14,
+      marginLeft: 6,
+      color: "#444",
+      fontWeight: "500",
+      textAlign:'right'
+    },
+  
+
+
+
   });
   
-  const tagsStyles = {
-    a: {
-      color: 'blue',
-      textDecorationLine: 'underline',
-    },
-    h2: {
-      fontSize:20,
-      marginTop:10,
-
-    },
-  };

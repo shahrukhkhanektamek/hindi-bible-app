@@ -7,7 +7,7 @@ import BACKGROUND_COLORS from '../../Constants/BackGroundColors.js';
 import LogoutButton from '../../Components/LogoutButton.js';
 const SelectCountryScreen = ({route}) => {
   const navigation = useNavigation();
-
+  let fileData = '';
   
   let type = route.params?.type;
   if(!type) type = 1;
@@ -15,6 +15,10 @@ const SelectCountryScreen = ({route}) => {
   let item_id = route.params?.item_id;
   if(!item_id) item_id = 1;
 
+  if(type==2)
+  {
+    fileData = route.params?.fileData;
+  }
   
   return (
     <View style={styles.container}>
@@ -44,7 +48,7 @@ const SelectCountryScreen = ({route}) => {
             fontSize={16}
             gradientType="green"
             borderRadius={5}
-            onPress={() => navigation.navigate('Pay',{country:'india',type:type,item_id:item_id})}
+            onPress={() => navigation.navigate('Pay',{country:'india',type:type,item_id:item_id,fileData:fileData})}
           />
         </View>
         <View style={styles.button}>
@@ -55,7 +59,7 @@ const SelectCountryScreen = ({route}) => {
             fontSize={16}
             gradientType="orange"
             borderRadius={5}
-            onPress={() => navigation.navigate('Pay',{country:'international',type:type,item_id:item_id})}
+            onPress={() => navigation.navigate('Pay',{country:'international',type:type,item_id:item_id,fileData:fileData})}
           />
         </View>
       </View>
