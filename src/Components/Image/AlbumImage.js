@@ -3,10 +3,11 @@ import React, { useState } from 'react';
 import { View, Image, Text, TouchableOpacity, StyleSheet, Dimensions } from 'react-native';
 import Icon from 'react-native-vector-icons/Feather';
 import BACKGROUND_COLORS from '../../Constants/BackGroundColors';
-
+import { useNavigation } from '@react-navigation/native';
 const { width, height } = Dimensions.get('window');
 
 const AlbumImage = ({ route }) => {
+  const navigation = useNavigation();
   const { images, initialIndex } = route.params;
   const [index, setIndex] = useState(initialIndex);
 
@@ -24,7 +25,9 @@ const AlbumImage = ({ route }) => {
 
   return (
     <View style={styles.container}>
-      <Image source={{uri:images[index].image}} style={styles.image} />
+      <TouchableOpacity onPress={()=> navigation.navigate('SingleImage', {image:images[index].image})}>
+        <Image source={{uri:images[index].image}} style={styles.image} />
+      </TouchableOpacity>
       <Text style={styles.title}>{images[index].title}</Text>
 
       <View style={styles.navigation}>

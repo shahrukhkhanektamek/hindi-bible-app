@@ -67,9 +67,9 @@ const PayScreen = ({route}) => {
         {
           if(payment_type=='india')
           {
-            setamount('Rs. '+response.data.amount);
-            setgst('Rs. '+response.data.amount);
-            setpayableamount('Rs. '+response.data.amount);
+            setamount('₹ '+response.data.amount);
+            setgst('₹ '+response.data.amount);
+            setpayableamount('₹ '+response.data.amount);
           }
           else
           {

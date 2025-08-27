@@ -41,6 +41,7 @@ const UsernamePasswordScreen = ({route}) => {
       "email":data.email,
       "country":data.selectedCountry,
       "show_case":data.show_case,
+      "image":data.image,
     };
     const response = await postData(filedata, urls.registerOtpSend,"POST", navigation,extraData);
     if(response.status==200)

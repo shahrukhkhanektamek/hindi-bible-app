@@ -1,28 +1,24 @@
-// AlbumViewerScreen.js
-import React, { useState } from 'react';
-import { View, Modal, Dimensions, StyleSheet } from 'react-native';
+// SingleImage.js
+import React from 'react';
+import { View, StyleSheet } from 'react-native';
 import ImageViewer from 'react-native-image-zoom-viewer';
 import BACKGROUND_COLORS from '../../Constants/BackGroundColors';
 
-const { width, height } = Dimensions.get('window'); 
-
 const SingleImage = ({ route }) => {
-  const { images, initialIndex } = route.params;
-  const [index, setIndex] = useState(initialIndex);
+  const { image } = route.params; // sirf ek image aayegi
 
-  // Convert your image array into format required by ImageViewer
-  const imageUrls = images.map(img => ({
-    url: img.image, // full image url
-    props: {},      // can add props if needed
-  }));
+  const imageUrls = [
+    {
+      url: image, // single url
+      props: {},
+    },
+  ];
 
-  return ( 
+  return (
     <View style={styles.container}>
       <ImageViewer
         imageUrls={imageUrls}
-        index={index}
         enableSwipeDown={true}
-        onChange={i => setIndex(i)}
         backgroundColor={BACKGROUND_COLORS.black}
         saveToLocalByLongPress={false}
       />

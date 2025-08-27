@@ -15,9 +15,11 @@ import GradiantButton from '../../Button/GradientButton';
 import { useNavigation } from '@react-navigation/native';
 import COLORS from '../../../Constants/Colors';
 
-const AfterRegistrationModal = ({ visible, onClose }) => {
+const AfterRegistrationModal = ({ visible, onClose, userPackage  }) => {
   const navigation = useNavigation();
   const [agreeTerms, setAgreeTerms] = useState(false);
+
+
 
   return (
     <Modal
@@ -25,6 +27,7 @@ const AfterRegistrationModal = ({ visible, onClose }) => {
       transparent={true}
       visible={visible}
       onRequestClose={onClose}
+      
     >
       <TouchableWithoutFeedback onPress={onClose}>
         <View style={styles.overlay}>
@@ -33,9 +36,9 @@ const AfterRegistrationModal = ({ visible, onClose }) => {
               <View style={styles.middleSection}>
                 
                 <View style={styles.secondSection}>
-                  <Text style={styles.message}>Aapka Account Bna Hua hai </Text>
-                  <Text style={{ color: COLORS.goldenYellow, fontSize: 16, marginBottom: 3 }}>YOUR PACKAGE PERIOD</Text>
-                  <Text style={{ color: COLORS.white, fontSize: 16 }}>26-03-2025 - 26-03-2026</Text>
+                  <Text style={styles.message}>Aapka Account Bna Hua hai. Neeche click kr ke login kriye </Text>
+                  {/* <Text style={{ color: COLORS.goldenYellow, fontSize: 16, marginBottom: 3 }}>YOUR PACKAGE PERIOD</Text> */}
+                  {/* <Text style={{ color: COLORS.white, fontSize: 16 }}>11 - 26-03-2026</Text> */}
                 </View>
                 
                 

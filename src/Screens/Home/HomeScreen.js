@@ -48,6 +48,7 @@ const HomeScreen = () => {
   const [isLatestNews, setisLatestNews] = useState(false);
   const [NewDate, setNewDate] = useState('');
   const [NewsId, setNewsId] = useState('');
+  const [Package, setPackage] = useState();
 
 
     const [page, setPage] = useState(0);
@@ -57,7 +58,7 @@ const HomeScreen = () => {
       // setPage(0);
       setRefreshing(true);
       setRefreshing(false); 
-      fetchSettingData2(page);
+      fetchSettingData2(page); 
     }, []);
     const fetchSettingData2 = async () => { 
       try { 
@@ -67,9 +68,11 @@ const HomeScreen = () => {
           setappSetting(JSON.parse(storage.getString('appSetting')));
           setNewDate(response.data.latestNews.add_date_time)
           setNewsId(response.data.latestNews.id)
-
+          setPackage(response.data.package)
+          
+          
         
-          if(String(response.data.latestNews.id)!=storage.getString('latestNews'))
+          if(String(response.data.latestNews.id)!=storage.getString('latestNews')) 
           {
             setisLatestNews(true)
           }
@@ -80,8 +83,14 @@ const HomeScreen = () => {
             {
               navigation.reset({
                 index: 0,
-                routes: [{ name: 'SelectCountryScreen' }], 
+                routes: [
+                  {
+                    name: 'SelectCountryScreen',
+                    params: {type:1}, 
+                  },
+                ],
               });
+
             }
           }
         }
@@ -334,7 +343,7 @@ const HomeScreen = () => {
               title="Menu"
               height="50"
               width="50%"
-              gradientType="orange"
+              gradientType="menu"
               color={COLORS.white}
               borderRadius={5}
               fontSize={15}
@@ -403,6 +412,7 @@ const HomeScreen = () => {
       <AfterRegistrationModal
         visible={isAfterRegisterModalVisible}
         onClose={() => setIsAfterRegisterModalVisible(false)}
+        package={Package}
       />
 
       <FreeTrialRuningModal
@@ -418,6 +428,7 @@ const HomeScreen = () => {
       <PackageExpireModal
         visible={isPackageExpireModalVisible}
         onClose={() => setIsPackageExpireModalVisible(false)}
+        appSetting={appSetting}
       />
     </ScrollView>
   );

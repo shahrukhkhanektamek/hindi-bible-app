@@ -1,14 +1,55 @@
 /* eslint-disable react-native/no-inline-styles */
 import { View, StyleSheet, Text, ScrollView } from 'react-native';
-import React from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import TopBarPrimary from '../../Components/TopBar/TopBarPrimary.js';
 import GradiantButton from '../../Components/Button/GradientButton.js';
 import { useNavigation } from '@react-navigation/native';
 import COLORS from '../../Constants/Colors.js';
 import BACKGROUND_COLORS from '../../Constants/BackGroundColors.js';
 
+
+import { GlobalContext } from '../../Components/GlobalContext';
+import { postData, apiUrl } from '../../Components/api.js';
+const urls=apiUrl();
+import PageLoading from '../../Components/PageLoding.js';
+
+
 const YourContributionHomeScreen = () => {
   const navigation = useNavigation();
+  const { extraData } = useContext(GlobalContext);
+
+
+  const [isLoading, setisLoading] = useState(true); 
+  const fetchData = async () => { 
+      try {
+        const response = await postData({}, urls.getProfile, "GET", navigation, extraData, 1);
+        if(response.status==200)
+        {
+            if(response.data.payment_mode==1) 
+            {
+              navigation.navigate('YourContribution',{"payment_type":"india"})
+            }
+            else
+            {
+              navigation.navigate('YourContribution',{"payment_type":"international"})
+            }
+          // setisLoading(false)
+        }
+      } catch (error) {
+        console.error('Error fetching countries:', error);
+      }
+    };
+    useEffect(() => {
+      fetchData()
+    },[]) 
+    if (isLoading) {
+      return (
+          <PageLoading />          
+      );
+    }
+
+
+
   return (
     <ScrollView style={styles.container}>
       <View style={styles.topBar}>
