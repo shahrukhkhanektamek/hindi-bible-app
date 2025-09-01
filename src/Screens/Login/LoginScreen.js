@@ -8,6 +8,11 @@ import { useNavigation } from '@react-navigation/native';
 import COLORS from '../../Constants/Colors.js';
 import BACKGROUND_COLORS from '../../Constants/BackGroundColors.js';
 
+
+import DeviceChange from '../../Components/Modal/MemberLogin/DviceChangeAlertModal';
+import DviceChangeHour from '../../Components/Modal/MemberLogin/DviceChangeHourAlertModal';
+
+
 import { GlobalContext } from '../../Components/GlobalContext';
 import { postData, apiUrl } from '../../Components/api';
 const urls=apiUrl();
@@ -20,8 +25,11 @@ const LoginScreen = () => {
   const [passwordVisible, setPasswordVisible] = useState(false);
 
 
+  const [isDeviceChangeModalVisible, setIsDeviceChangeModalVisible] = useState(false);
+  const [isDeviceChangeHourModalVisible, setIsDeviceChangeHourModalVisible] = useState(false);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState(''); 
+  const [responseData, setresponseData] = useState(''); 
 
 
   // extraData = Object.assign(extraData, {"user":{
@@ -30,17 +38,54 @@ const LoginScreen = () => {
   // },});
 
   const handleLogin = async () => {
-  if (!username || !password) {
-    Alert.alert('Error', 'Please enter username and password');
-    return;
-  }
-  const filedata = {
-    "username":username,
-    "password":password
+    if (!username || !password) {
+      Alert.alert('Error', 'Please enter username and password');
+      return;
+    }
+    const filedata = {
+      "username":username,
+      "password":password
+    };
+    const response = await postData(filedata, urls.login,"POST", navigation,extraData);
+    setresponseData(response.data);
+    if(response.action!='login')
+    {
+      if(response.status==403)
+      {
+        setIsDeviceChangeModalVisible(true)
+      }
+      else
+      {
+        setIsDeviceChangeHourModalVisible(true)
+      }
+    }
   };
-  const response = await postData(filedata, urls.login,"POST", navigation,extraData);
 
+
+  const handleProceed = async () => {
+    
+    const filedata = {
+      "username":username,
+      "password":password
+    };
+    const response = await postData(filedata, urls.proceedLogin,"POST", navigation,extraData);
+    setresponseData(response.data);
+    if(response.status==200)
+    {
+      setIsDeviceChangeModalVisible(false)
+      navigation.reset({
+            index: 0,
+            routes: [{ name: 'Home' }], 
+          }); 
+    }
+    else
+    {
+
+    }
   };
+
+
+
 
 
 
@@ -102,6 +147,23 @@ const LoginScreen = () => {
           onPress={handleLogin}
         />
       </View>
+
+
+      <DeviceChange
+        visible={isDeviceChangeModalVisible}
+        onClose={() => setIsDeviceChangeModalVisible(false)}
+        proceed={handleProceed}
+      />
+
+
+      <DviceChangeHour
+        visible={isDeviceChangeHourModalVisible}
+        onClose={() => setIsDeviceChangeHourModalVisible(false)}
+        data={responseData}
+      />
+
+
+
     </ScrollView>
   );
 };

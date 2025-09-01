@@ -32,6 +32,7 @@ export const apiUrl = () => {
     "sendOtp":`${mainUrl}send-otp`,
     "submitOtp":`${mainUrl}submit-otp`,
     "createPassword":`${mainUrl}create-password`,
+    "proceedLogin":`${mainUrl}proceed-login`,
     
     "country":`${commurl}country`,
     "package":`${commurl}package`,
@@ -182,22 +183,14 @@ const responseCheck = async (response, navigation, extraData, messageAlert) => {
 
           case "appSetting":
           appSettingStore(result);
-          // if(result.data.package.status==0 || result.data.package.status==2)
-          // {
-          //   navigation.reset({
-          //     index: 0,
-          //     routes: [{ name: 'SelectCountryScreen' }], 
-          //   });
-          //   return result;
-          // }
-          // else
-          // {
-          //   navigation.reset({
-          //     index: 0,
-          //     routes: [{ name: 'Home' }], 
-          //   });
-          //   return result;
-          // }
+          if(result.data.is_login==0)
+          {
+            extraData.setuserDetail(null);
+            extraData.setToken(null);
+            storage.delete('token');
+            storage.delete('user');
+          }
+
           return result;
 
           
@@ -254,6 +247,8 @@ const responseCheck = async (response, navigation, extraData, messageAlert) => {
           showSuccessMessage(result.message, extraData, 0, messageAlert);
         } else if (result.action === "check_login") {
           return result;
+        }else if (result.action === "noalert") {
+          return result;
         } else {
           showSuccessMessage(result.message, extraData, 0, messageAlert);
         }
@@ -273,6 +268,9 @@ const responseCheck = async (response, navigation, extraData, messageAlert) => {
       else if (result.status === 419) {
         return result;
         refreshScreen();
+      } 
+      else if (result.status === 403) {
+        return result;
       } 
       else {
         showSuccessMessage(response.message, extraData, 0);
