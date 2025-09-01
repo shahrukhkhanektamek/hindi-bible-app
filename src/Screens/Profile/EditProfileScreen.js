@@ -31,6 +31,7 @@ const EditProfileScreen = () => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [imageUri, setImageUri] = useState(null);
+  const [image, setimage] = useState(null);
   const [selectedCountry, setSelectedCountry] = useState();
 
 
@@ -45,6 +46,7 @@ const EditProfileScreen = () => {
       "phone":mobile,
       "email":email,
       "country":selectedCountry,
+      "image":image,
     };
     const response = await postData(filedata, urls.updateProfile,"POST", navigation,extraData);
 
@@ -63,13 +65,15 @@ const EditProfileScreen = () => {
       quality: 1,
     };
 
-    launchImageLibrary(options, (response) => {
+    launchImageLibrary(options, async (response) => {
       if (response.didCancel) {
         console.log('User canceled image picker');
       } else if (response.errorCode) {
         console.log('ImagePicker Error: ', response.errorMessage);
       } else {
+        const image64 = await convertToBase64(imageUri);
         setImageUri(response.assets[0].uri);
+        setimage(image64);
       };
     });
   };
@@ -96,6 +100,7 @@ const EditProfileScreen = () => {
           setName(response.data.name)
           setEmail(response.data.email)
           setSelectedCountry(response.data.country);
+          setImageUri(response.data.image)
           setisLoading(false)
         }
       } catch (error) {

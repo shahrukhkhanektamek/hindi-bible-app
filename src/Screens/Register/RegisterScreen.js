@@ -15,7 +15,7 @@ import Coutries from '../../Components/CountryPicker.js';
 
 
 import { GlobalContext } from '../../Components/GlobalContext';
-import { postData, apiUrl } from '../../Components/api';
+import { postData, apiUrl, convertToBase64 } from '../../Components/api';
 const urls=apiUrl();
 
 
@@ -33,6 +33,7 @@ const RegisterScreen = ({route}) => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [imageUri, setImageUri] = useState(null);
+  const [image, setimage] = useState(null);
   const [selectedCountry, setSelectedCountry] = useState();
 
 
@@ -48,6 +49,7 @@ const RegisterScreen = ({route}) => {
       "email":email,
       "country":selectedCountry,
       "show_case":show_case,
+      "image":image,
     };
 
     navigation.navigate("UsernamePassword",{"data":filedata});
@@ -72,13 +74,15 @@ const RegisterScreen = ({route}) => {
       quality: 1,
     };
 
-    launchImageLibrary(options, (response) => {
+    launchImageLibrary(options, async (response) => {
       if (response.didCancel) {
         console.log('User canceled image picker');
       } else if (response.errorCode) {
         console.log('ImagePicker Error: ', response.errorMessage);
       } else {
+        const image64 = await convertToBase64(imageUri);
         setImageUri(response.assets[0].uri);
+        setimage(image64);
       };
     });
   };

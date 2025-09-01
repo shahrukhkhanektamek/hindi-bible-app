@@ -9,7 +9,7 @@ const storage = new MMKV();
 
  
     
-export const apiUrl = () => { 
+export const apiUrl = () => {  
 
   // const apiUrl = 'http://192.168.16.224/projects/codediffusion/hindibible/api/'; 
   // const apiUrl = 'https://digitalnamo.com/azmal/2025/april/hindibible/api/'; 
@@ -78,7 +78,7 @@ export const postData = async (filedata, url, method, navigation, extraData, loa
     systemVersion: DeviceInfo.getSystemVersion(), 
     buildNumber: DeviceInfo.getBuildNumber(),
     bundleId: DeviceInfo.getBundleId(),
-    appVersion: DeviceInfo.getVersion(),  
+    appVersion: DeviceInfo.getVersion(),   
     readableVersion: DeviceInfo.getReadableVersion(),
     deviceName: await DeviceInfo.getDeviceName(),
     uniqueId: deviceId,

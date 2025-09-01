@@ -26,6 +26,7 @@ const GRADIENT_COLORS = {
 
   purple: ['#A34FC2', '#8D3AAF', '#6F1E92'],
   lightPurple: ['#E1BEE7', '#CE93D8', '#BA68C8'],
+  menu: ['#3669c3', '#3669c3', '#3669c3'],
 };
 
 export default GRADIENT_COLORS;

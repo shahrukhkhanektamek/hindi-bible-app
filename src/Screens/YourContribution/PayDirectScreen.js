@@ -1,13 +1,47 @@
-import { Image, ScrollView, StyleSheet, Text, View } from 'react-native';
-import React from 'react';
+import { Alert, Image, Linking, ScrollView, StyleSheet, Text, View } from 'react-native';
+import React, { useContext } from 'react';
 import TopBarPrimary from '../../Components/TopBar/TopBarPrimary.js';
 import GradiantButton from '../../Components/Button/GradientButton.js';
 import { useNavigation } from '@react-navigation/native';
 import BACKGROUND_COLORS from '../../Constants/BackGroundColors.js';
 import COLORS from '../../Constants/Colors.js';
 
+import { GlobalContext } from '../../Components/GlobalContext';
+
 const PayDirectScreen = () => {
   const navigation = useNavigation();
+
+  const { extraData } = useContext(GlobalContext);
+  const appSetting = extraData.appSetting;
+  const userDetail = extraData.userDetail;
+  const setappSetting = extraData.setappSetting;
+
+
+
+  const openWhatsapp = async (phone, message) => {
+    let url = `whatsapp://send?phone=${phone}&text=${encodeURIComponent(message)}`;
+
+    Linking.canOpenURL(url)
+      .then(supported => {
+        if (!supported) {
+          Alert.alert('WhatsApp not installed!');
+        } else {
+          return Linking.openURL(url);
+        }
+      })
+      .catch(err => console.error('An error occurred', err));  
+   };
+
+   const openEmail = async (email, subject, body) => {
+    let url = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+
+    Linking.openURL(url).catch(err => console.error('An error occurred', err));
+   };
+
+  const openUPIPayment = (upiId, name) => {
+    const url = `upi://pay?pa=${upiId}&pn=${encodeURIComponent(name)}&cu=INR`;
+    Linking.openURL(url).catch(err => console.error("Error: ", err));
+  };
 
   return (
     <ScrollView style={styles.container}>
@@ -28,11 +62,11 @@ const PayDirectScreen = () => {
       </View>
 
       <View style={styles.payDirectContainer}>
-        <Text style={[styles.text]}>KRIPAYA PAYMENT KE BAAD HAME SCREENSHOT BHEJ DIJIYE WHATSAPP PAR 7838989070</Text>
+        <Text style={[styles.text]}>KRIPAYA PAYMENT KE BAAD HAME SCREENSHOT BHEJ DIJIYE WHATSAPP PAR <Text onPress={() => openWhatsapp(appSetting.payment_detail.mobile, 'Hello!')}>+{appSetting.payment_detail.mobile}</Text></Text>
       </View>
 
       <View style={styles.scannerContainer}>
-        <Image style={styles.scanner} source={require('../../Assets/scanner.png')} />
+        <Image style={styles.scanner} source={{uri:appSetting.payment_detail.qr_code}} />
       </View>
 
       <View style={styles.accountContainer}>
@@ -42,28 +76,41 @@ const PayDirectScreen = () => {
 
         <View style={styles.detailRow}>
           <Text style={styles.label}>Bank Name:</Text>
-          <Text style={styles.value}>State Bank of India</Text>
+          <Text style={styles.value}>{appSetting.payment_detail.bank_name}</Text>
         </View>
 
         <View style={styles.detailRow}>
           <Text style={styles.label}>Account Holder:</Text>
-          <Text style={styles.value}>John Doe</Text>
+          <Text style={styles.value}>{appSetting.payment_detail.account_holder}</Text>
         </View>
 
         <View style={styles.detailRow}>
           <Text style={styles.label}>Account Number:</Text>
-          <Text style={styles.value}>1234567890123</Text>
+          <Text style={styles.value}>{appSetting.payment_detail.account_number}</Text>
         </View>
 
         <View style={styles.detailRow}>
           <Text style={styles.label}>IFSC Code:</Text>
-          <Text style={styles.value}>SBIN0001234</Text>
+          <Text style={styles.value}>{appSetting.payment_detail.ifsc}</Text>
         </View>
 
         <View style={styles.detailRow}>
           <Text style={styles.label}>Branch:</Text>
-          <Text style={styles.value}>Connaught Place, New Delhi</Text>
+          <Text style={styles.value}>{appSetting.payment_detail.branch}</Text>
         </View>
+
+        <View style={styles.detailRow}>
+          <Text style={styles.label}>BIC Code:</Text>
+          <Text style={styles.value}>{appSetting.payment_detail.bic_code}</Text>
+        </View>
+
+        
+        <View style={styles.detailRow}>
+          <Text style={styles.label}>UPI:</Text>
+          <Text style={styles.value}><Text onPress={() => openUPIPayment(appSetting.payment_detail.upi, 'Contribution!')}>{appSetting.payment_detail.upi}</Text></Text>
+        </View>
+
+
       </View>
     </ScrollView>
   );

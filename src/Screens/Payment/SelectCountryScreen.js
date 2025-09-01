@@ -1,12 +1,20 @@
 import { StyleSheet, View } from 'react-native';
-import React, { useState } from 'react';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 import TopBarPrimary from '../../Components/TopBar/TopBarPrimary.js';
 import GradiantButton from '../../Components/Button/GradientButton.js';
 import { useNavigation } from '@react-navigation/native';
 import BACKGROUND_COLORS from '../../Constants/BackGroundColors.js';
 import LogoutButton from '../../Components/LogoutButton.js';
+
+import { GlobalContext } from '../../Components/GlobalContext';
+import { postData, apiUrl } from '../../Components/api.js';
+const urls=apiUrl();
+import PageLoading from '../../Components/PageLoding.js';
+
 const SelectCountryScreen = ({route}) => {
   const navigation = useNavigation();
+  const { extraData } = useContext(GlobalContext);
+
   let fileData = '';
   
   let type = route.params?.type;
@@ -19,6 +27,43 @@ const SelectCountryScreen = ({route}) => {
   {
     fileData = route.params?.fileData;
   }
+
+
+
+  
+  const [isLoading, setisLoading] = useState(true); 
+  const fetchData = async () => { 
+      try {
+        const response = await postData({}, urls.getProfile, "GET", navigation, extraData, 1);
+        if(response.status==200)
+        {
+            if(response.data.payment_mode==1) 
+            {
+              navigation.navigate('Pay',{country:'india',type:type,item_id:item_id,fileData:fileData});
+            }
+            else
+            {
+              navigation.navigate('Pay',{country:'international',type:type,item_id:item_id,fileData:fileData});
+            }
+          // setisLoading(false)
+        }
+      } catch (error) {
+        console.error('Error fetching countries:', error);
+      }
+    };
+    useEffect(() => {
+      fetchData()
+    },[]) 
+    if (isLoading) {
+      return (
+          <PageLoading />          
+      );
+    }
+
+ 
+
+
+ 
   
   return (
     <View style={styles.container}>

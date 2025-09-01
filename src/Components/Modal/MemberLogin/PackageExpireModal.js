@@ -15,7 +15,7 @@ import GradiantButton from '../../Button/GradientButton';
 import { useNavigation } from '@react-navigation/native';
 import COLORS from '../../../Constants/Colors';
 
-const PackageExpireModal = ({ visible, onClose }) => {
+const PackageExpireModal = ({ visible, onClose, appSetting }) => {
   const navigation = useNavigation();
   const [agreeTerms, setAgreeTerms] = useState(false);
 
@@ -33,13 +33,13 @@ const PackageExpireModal = ({ visible, onClose }) => {
               <Text style={styles.message}>Total Fees & Viewing Period</Text>
               <View style={styles.middleSection}>
                 <View style={styles.firstSection}>
-                  <Text style={{ color: COLORS.darkRed, fontSize: 20, fontWeight: '500', marginBottom: 5 }}>RS.300</Text>
+                  <Text style={{ color: COLORS.darkRed, fontSize: 20, fontWeight: '500', marginBottom: 5 }}>{appSetting.detail.fees_string}</Text>
                   <Text style={{ fontSize: 16 }}>1 YEAER FEES</Text>
                   <Text style={{ fontSize: 16 }}>( 1 वर्ष की फीस )</Text>
                 </View>
                 <View style={styles.secondSection}>
                   <Text style={{ color: COLORS.goldenYellow, fontSize: 16, marginBottom: 3 }}>YOUR PACKAGE PERIOD</Text>
-                  <Text style={{ color: COLORS.white, fontSize: 16 }}>26-03-2025 - 26-03-2026</Text>
+                  <Text style={{ color: COLORS.white, fontSize: 16 }}>{appSetting.package.package.start_date} - {appSetting.package.package.end_date}</Text>
                 </View>
                 <View style={styles.checkboxContainer}>
                   <TouchableOpacity
@@ -52,7 +52,7 @@ const PackageExpireModal = ({ visible, onClose }) => {
                 </View>
               </View>
               <View style={styles.buttonBottom}>
-                <GradiantButton
+                {/* <GradiantButton
                   title="1 Day Free Trial"
                   height="35"
                   width="50%"
@@ -65,11 +65,11 @@ const PackageExpireModal = ({ visible, onClose }) => {
                     onClose();
                     navigation.navigate('Register');
                   }}
-                />
+                /> */}
                 <GradiantButton
                   title="Pay"
                   height="35"
-                  width="30%"
+                  width="100%"
                   gradientType="green"
                   borderRadius={5}
                   onPress={() => {
@@ -77,7 +77,7 @@ const PackageExpireModal = ({ visible, onClose }) => {
                       return alert('Please agree to the Terms & Conditions');
                     }
                     onClose();
-                    navigation.navigate('Register');
+                    navigation.navigate('SelectCountryScreen',{type:1});
                   }}
                 />
               </View>

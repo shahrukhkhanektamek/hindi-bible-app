@@ -144,7 +144,7 @@ const GenesisScreen = ({route}) => {
       }
       else if(item.post_type==3)
       {
-        // !item.is_paid?navigation.navigate('SinglePost', {item:item}):handlePay(item.id)
+        !item.is_paid?navigation.navigate('SingleImage', {image:item.image}):handlePay(item.id)
       }
       else if(item.post_type==4)
       {
