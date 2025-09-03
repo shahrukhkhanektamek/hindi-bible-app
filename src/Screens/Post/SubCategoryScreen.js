@@ -96,7 +96,7 @@ const BibleStudyScreen = ({route}) => {
           gradientType="blue"
           borderRadius={5}
           fontSize={15}
-          onPress={() => navigation.navigate('Main')}
+          onPress={() => navigation.navigate('Category')}
         />
         {!show_case?(
           <LogoutButton />

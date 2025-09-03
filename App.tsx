@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useContext } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { navigationRef } from './src/Components/NavigationService';
 import StackNavigation from './src/Navigation/StactNavigation.js';
@@ -6,12 +6,26 @@ import { GlobalProvider } from './src/Components/GlobalContext';
 import { AppState, TouchableWithoutFeedback, View } from 'react-native';
 import { MMKV } from 'react-native-mmkv';
 
+import { useNavigation } from '@react-navigation/native';
+import { GlobalContext } from './src/Components/GlobalContext';
+import { postData, apiUrl } from './src/Components/api';
+const urls=apiUrl();
+
 // ✅ MMKV instance
 const storage = new MMKV();
 
 const App = () => {
   const timeoutRef = useRef(null);
   const [timeoutSeconds, setTimeoutSeconds] = useState(20); // default 5 sec
+
+  
+  // const navigation = useNavigation(); 
+      
+        // const { extraData } = useContext(GlobalContext);
+        // const appSetting = extraData.appSetting; 
+        // const userDetail = extraData.userDetail;
+  
+
 
   // Inactivity function
   const onInactivity = () => {
@@ -35,13 +49,15 @@ const App = () => {
 
   // API call se timeout lena
   const fetchTimeoutFromAPI = async () => {
-    try {
-      // Example API (replace with yours)
-      const response = await fetch("https://example.com/api/get-timeout");
-      const data = await response.json();
-      if (data?.timeout) {
-        setTimeoutSeconds(data.timeout);
-      }
+    try { 
+      
+      // const response = await postData([], urls.logout,"GET", navigation,extraData);
+      // if(response.status==200)
+      // {
+      //   setTimeoutSeconds(response.data?.timeout);
+      // }
+             
+
     } catch (error) {
       console.error("Failed to fetch timeout:", error);
     }

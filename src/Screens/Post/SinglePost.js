@@ -45,7 +45,7 @@ import {
     const route = useRoute();
     const navigation = useNavigation();
     const { width } = useWindowDimensions();
-    const { item} = route.params || {};
+    const { item, name} = route.params || {};
   
     const { extraData } = useContext(GlobalContext);
     const appSetting = extraData.appSetting;
@@ -53,17 +53,17 @@ import {
     const videoHeight = (Dimensions.get("window").width * 9) / 16;
     
 
-
+    const data = item;
     
   const [page, setPage] = useState(0);
-  const [isLoading, setisLoading] = useState(true);
+  const [isLoading, setisLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
-  const [data, setData] = useState([]);
+  // const [data, setData] = useState([]);
   const onRefresh = useCallback(() => {
     // setPage(0);
     setRefreshing(true);
     setRefreshing(false);
-    fetchData(page);
+    // fetchData(page);
   }, []);
 
   const fetchData = async () => { 
@@ -92,7 +92,7 @@ import {
     }; 
 
     useEffect(() => {
-      fetchData()
+      // fetchData()
     },[])
     if(isLoading)
     {
@@ -134,7 +134,7 @@ import {
             gradientType="blue"
             borderRadius={5}
             fontSize={15}
-            onPress={() => navigation.navigate("Main")}
+            onPress={() => navigation.navigate("Category")}
           />
           <GradiantButton
             title="Log Out"
@@ -158,7 +158,7 @@ import {
         {/* Main Action Button */}
         <View style={styles.button}>
           <Button
-            title={data.name}
+            title={name}
             height="40"
             width="43%"
             fontSize={15}
@@ -169,8 +169,7 @@ import {
   
         {/* Content Section */}
         <View style={styles.videoWrapper}>
-        
-          
+                 
             {/* Video Type */}
             {data.post_type == 1 ? ( 
                 <View>
@@ -268,7 +267,7 @@ import {
   
           <View style={styles.descriptionContainer}>
             <Button
-              title="Description"
+              title="VIDEO DESCRIPTION"
               height="30"
               width="55%"
               borderRadius={3}
@@ -281,6 +280,19 @@ import {
               baseStyle={styles.description}
               tagsStyles={tagsStyles}
             />
+            
+          </View>
+
+            <View style={styles.descriptionContainer}>
+            <Button
+              title="MINISTRY INFORMATION"
+              height="30"
+              width="70%"
+              borderRadius={3}
+              color={COLORS.white}
+              backgroundColor="#fb5017"              
+            />
+            
             <RenderHTML
               contentWidth={width}
               source={{ html: data.full_description }}
@@ -288,6 +300,7 @@ import {
               tagsStyles={tagsStyles}
             />
           </View>
+
         </View>
 
 

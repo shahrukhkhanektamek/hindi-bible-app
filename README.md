@@ -8,10 +8,20 @@ npx react-native bundle --platform android --dev false --entry-file index.js --b
 npm i @react-native-picker/picker @react-navigation/elements @react-navigation/native @react-navigation/native-stack react-native-device-info react-native-fs react-native-image-picker react-native-linear-gradient react-native-mmkv react-native-safe-area-context react-native-screens react-native-splash-screen react-native-vector-icons react-native-video react-native-webview
 
 
+adb kill-server
+adb start-server
+adb devices
 
+// office
 adb devices
 adb tcpip 5555
 adb connect 192.168.1.29:5555
+
+
+// vivo
+adb devices
+adb tcpip 5555
+adb connect 192.168.1.32:5555
 
 
 mkdir -p android/app/src/main/assets

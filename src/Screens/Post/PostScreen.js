@@ -136,11 +136,11 @@ const GenesisScreen = ({route}) => {
       postViewData(item)
       if(item.post_type==1)
       {
-        !item.is_paid?navigation.navigate('SinglePost', {item:item}):handlePay(item.id)
+        !item.is_paid?navigation.navigate('SinglePost', {item:item,name:name}):handlePay(item.id)
       }
       else if(item.post_type==2)
       {
-        // !item.is_paid?navigation.navigate('SinglePost', {item:item}):handlePay(item.id)
+        // !item.is_paid?navigation.navigate('SinglePost', {item:item,name:name}):handlePay(item.id)
       }
       else if(item.post_type==3)
       {
@@ -148,11 +148,11 @@ const GenesisScreen = ({route}) => {
       }
       else if(item.post_type==4)
       {
-        // !item.is_paid?navigation.navigate('SinglePost', {item:item}):handlePay(item.id)
+        // !item.is_paid?navigation.navigate('SinglePost', {item:item,name:name}):handlePay(item.id)
       }
       else if(item.post_type==5)
       {
-        // !item.is_paid?navigation.navigate('SinglePost', {item:item}):handlePay(item.id)
+        // !item.is_paid?navigation.navigate('SinglePost', {item:item,name:name}):handlePay(item.id)
       }
       else if(item.post_type==6)
       {
@@ -163,6 +163,11 @@ const GenesisScreen = ({route}) => {
       }
     };
 
+    const convertGoogleDriveLink = (url) => {
+      url = "https://drive.google.com/file/d/1p8U4Cp-vE5JZ6Sa6aLeaRtzT4MCJHD70/view?usp=sharing";
+      const match = url.match(/[-\w]{25,}/);
+      return match ? `https://drive.google.com/uc?export=download&id=${match[0]}` : url;
+    };
 
     if(isLoading)
     {
@@ -222,7 +227,7 @@ const GenesisScreen = ({route}) => {
           gradientType="blue"
           borderRadius={5}
           fontSize={15}
-          onPress={() => navigation.navigate('Main')}
+          onPress={() => navigation.navigate('Category')}
         />
         {!show_case?(
           <LogoutButton />
@@ -265,19 +270,19 @@ const GenesisScreen = ({route}) => {
                   <TouchableOpacity 
                   style={styles.imageWrapper}
                   onPress={() =>handleViewPost(item)}
-                  >
-                      <Image source={{uri:item.image}} style={styles.image} />
-                      <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
-                      </View>
+                  >                    
+                    <Image source={{uri:item.image}} style={styles.image} />
+                    <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
+                    </View>
                   </TouchableOpacity>
                 </View>
               ) : (item.post_type==2) ? ( 
                 
-                <View style={styles.pdfWrapper}>        
+                <View style={styles.pdfWrapper}>
                     <AudioPlayer
                         id={item.id}
                         chapterTitle={item?.chapter}
-                        source={{uri:item.audio}} 
+                        source={{uri:convertGoogleDriveLink(item.audio)}} 
                         setPlayingId={setPlayingId}
                         playingId={playingId}
                         title={item.name}
@@ -350,7 +355,7 @@ const GenesisScreen = ({route}) => {
               )} 
             </React.Fragment>
 
-            {(item.description)? (
+            {(item.description && item.post_type!=1)? (
               <View style={styles.descriptionContainer}>
                 <RenderHTML
                   contentWidth={width}
@@ -550,6 +555,7 @@ const styles = StyleSheet.create({
     width: "100%",
     height: 200,
     borderRadius: 0,
+    resizeMode:'stretch'
   },
   imageContainer: {
     width: "100%",
@@ -605,7 +611,7 @@ const styles = StyleSheet.create({
   reactionContainer: {
     flexDirection: "row",
     alignItems: "center",
-    marginTop: 8,
+    marginTop: 5,
     justifyContent: "space-between",
     paddingVertical: 8,
     paddingHorizontal: 12,

@@ -75,7 +75,7 @@ const OldTestamentScreen = ({route}) => {
           width="25%"
           gradientType="blue"
           borderRadius={5}
-          onPress={() => navigation.navigate('Main')}
+          onPress={() => navigation.navigate('Category')}
         />
         <GradiantButton
           title="Home"
