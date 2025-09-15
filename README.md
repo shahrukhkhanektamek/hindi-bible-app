@@ -24,6 +24,11 @@ adb tcpip 5555
 adb connect 192.168.1.32:5555
 
 
+taskkill /F /IM node.exe
+taskkill /F /IM php.exe
+taskkill /F /IM code.exe
+
+
 mkdir -p android/app/src/main/assets
 cd android
 ./gradlew clean

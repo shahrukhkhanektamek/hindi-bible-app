@@ -343,7 +343,7 @@ const HomeScreen = () => {
               title="Menu"
               height="50"
               width="50%"
-              gradientType="menu"
+              gradientType="purple"
               color={COLORS.white}
               borderRadius={5}
               fontSize={15}
