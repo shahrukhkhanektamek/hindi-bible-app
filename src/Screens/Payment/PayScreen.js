@@ -67,15 +67,15 @@ const PayScreen = ({route}) => {
         {
           if(payment_type=='india')
           {
-            setamount('₹ '+response.data.amount);
-            setgst('₹ '+response.data.amount);
-            setpayableamount('₹ '+response.data.amount);
+            setamount('₹ '+response.data.cost);
+            setgst('₹ '+response.data.gst);
+            setpayableamount('₹ '+response.data.payable_price);
           }
           else
           {
-            setamount('$'+response.data.amount);
-            setgst('$'+response.data.amount);
-            setpayableamount('$'+response.data.amount);
+            setamount('$'+response.data.cost_international);
+            setgst('$'+response.data.gst_international);
+            setpayableamount('$'+response.data.payable_price_international);
           }
           settitle(response.data.name);
           setfromDate(response.data.from_date); 
@@ -150,9 +150,12 @@ const PayScreen = ({route}) => {
             ):(
               <Text style={[styles.textStyle, { color: COLORS.darkRed, fontWeight: '700',fontSize:25 }]}>Fees: {amount}</Text>
             )}
-
-            <Text style={[styles.textStyle, { color: COLORS.black }]}>ONE YEAR FEES</Text>
-            <Text style={[styles.textStyle, { color: COLORS.black }]}>एक वर्ष की फीस</Text>
+            {(typeO==1)?(
+              <>
+                <Text style={[styles.textStyle, { color: COLORS.black }]}>ONE YEAR FEES</Text>
+                <Text style={[styles.textStyle, { color: COLORS.black }]}>एक वर्ष की फीस</Text>
+              </>
+            ):(null)}
           </View>
           <View style={styles.textBox2}>
             <Text style={[styles.textStyle, { color: COLORS.goldenYellow }]}>{title}</Text>

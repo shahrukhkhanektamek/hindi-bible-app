@@ -334,7 +334,7 @@ const HomeScreen = () => {
       </View>
 
       
-
+ 
       {
         (userDetail)? 
         <>
@@ -346,7 +346,7 @@ const HomeScreen = () => {
               gradientType="purple"
               color={COLORS.white}
               borderRadius={5}
-              fontSize={15}
+              fontSize={15} 
               fontWeight="500"
               onPress={() => navigation.navigate('Category')}
               // onPress={() => setIsBeforeRegisterModalVisible(true)}

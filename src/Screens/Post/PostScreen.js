@@ -27,6 +27,7 @@ import AudioPlayer from '../../Components/Audio/AudioPlayer.js';
 import Article from '../../Components/Article/Article.js';
 import LogoutButton from '../../Components/LogoutButton.js';
 import PostPurchaseModal from '../../Components/Modal/MemberLogin/PostPurchaseModal.js';
+import MyHTMLViewer from '../../Components/HTMLViewer.js';
 const urls=apiUrl();
 
 
@@ -164,7 +165,7 @@ const GenesisScreen = ({route}) => {
     };
 
     const convertGoogleDriveLink = (url) => {
-      url = "https://drive.google.com/file/d/1p8U4Cp-vE5JZ6Sa6aLeaRtzT4MCJHD70/view?usp=sharing";
+      // url = "https://drive.google.com/file/d/1p8U4Cp-vE5JZ6Sa6aLeaRtzT4MCJHD70/view?usp=sharing";
       const match = url.match(/[-\w]{25,}/);
       return match ? `https://drive.google.com/uc?export=download&id=${match[0]}` : url;
     };
@@ -347,7 +348,7 @@ const GenesisScreen = ({route}) => {
                   {/* <Article
                     imageSource={{uri:item.image}}
                     data={item}
-                  /> */}
+                  /> */} 
                   </TouchableOpacity>
 
               ) : (
@@ -357,11 +358,9 @@ const GenesisScreen = ({route}) => {
 
             {(item.description && item.post_type!=1)? (
               <View style={styles.descriptionContainer}>
-                <RenderHTML
-                  contentWidth={width}
-                  source={{ html: item.description }}
-                  baseStyle={styles.description} 
-                  tagsStyles={tagsStyles}
+                
+                <MyHTMLViewer  
+                  htmlContent ={item.description}
                 />
               </View>
               ):null
