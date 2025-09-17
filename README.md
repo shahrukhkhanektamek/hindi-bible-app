@@ -16,13 +16,13 @@ adb devices
 adb devices
 adb tcpip 5555
 adb connect 192.168.1.29:5555
-adb connect 192.168.1.41:5555
 
 
 // vivo
 adb devices
 adb tcpip 5555
 adb connect 192.168.1.32:5555
+adb connect 192.168.1.41:5555
 
 
 taskkill /F /IM node.exe

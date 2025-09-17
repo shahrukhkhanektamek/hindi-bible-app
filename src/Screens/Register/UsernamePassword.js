@@ -21,12 +21,8 @@ const UsernamePasswordScreen = ({route}) => {
   const navigation = useNavigation(); 
   const [passwordVisible, setPasswordVisible] = useState(false);
 
-
   const [username, setUsername] = useState('');
-  const [password, setPassword] = useState(''); 
-
-
- 
+  const [password, setPassword] = useState('');  
 
   const handleRegister = async () => {
     // if (!name || !email) {
@@ -39,7 +35,7 @@ const UsernamePasswordScreen = ({route}) => {
       "name":data.name,
       "phone":data.phone,
       "email":data.email,
-      "country":data.selectedCountry,
+      "country":data.country,
       "show_case":data.show_case,
       "image":data.image,
     };

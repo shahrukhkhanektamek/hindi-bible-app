@@ -1,9 +1,12 @@
 import React, { useEffect, useRef, useState, useContext } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
+
+import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
+
 import { navigationRef } from './src/Components/NavigationService';
 import StackNavigation from './src/Navigation/StactNavigation.js';
 import { GlobalProvider } from './src/Components/GlobalContext';
-import { AppState, TouchableWithoutFeedback, View } from 'react-native';
+import { AppState, StatusBar, TouchableWithoutFeedback, View } from 'react-native';
 import { MMKV } from 'react-native-mmkv';
 
 import { useNavigation } from '@react-navigation/native';
@@ -18,13 +21,6 @@ const App = () => {
   const timeoutRef = useRef(null);
   const [timeoutSeconds, setTimeoutSeconds] = useState(20); // default 5 sec
 
-  
-  // const navigation = useNavigation(); 
-      
-        // const { extraData } = useContext(GlobalContext);
-        // const appSetting = extraData.appSetting; 
-        // const userDetail = extraData.userDetail;
-  
 
 
   // Inactivity function
@@ -97,15 +93,23 @@ const App = () => {
   }, [timeoutSeconds]);
 
   return (
-    <TouchableWithoutFeedback onPress={resetTimer}>
-      <View style={{ flex: 1 }}>
-        <NavigationContainer ref={navigationRef}>
-          <GlobalProvider>
-            <StackNavigation />
-          </GlobalProvider>
-        </NavigationContainer>
-      </View>
-    </TouchableWithoutFeedback>
+    <SafeAreaProvider>
+      <TouchableWithoutFeedback onPress={resetTimer}>
+        <SafeAreaView style={{ flex: 1 }} edges={['top', 'bottom']}>
+          
+          {/* 🔹 Top StatusBar Style */}
+          <StatusBar 
+            barStyle="dark-content"   // text/icons light ya dark (light-content / dark-content)
+          />
+
+          <NavigationContainer ref={navigationRef}>
+            <GlobalProvider>
+              <StackNavigation />
+            </GlobalProvider>
+          </NavigationContainer>
+        </SafeAreaView>
+      </TouchableWithoutFeedback>
+    </SafeAreaProvider>
   );
 };
 

@@ -97,10 +97,12 @@ const PaymentGatewayScreen = ({route}) => {
   return (
     <View style={styles.container}>
       <WebView
-        style={styles.webviewVideo} 
-        // javaScriptEnabled={true}
-        // domStorageEnabled={true}
+        style={styles.webviewVideo}
         source={{ uri: `${data.url}` }}
+        nestedScrollEnabled={true}
+        scalesPageToFit={true}
+        javaScriptEnabled={true}
+        domStorageEnabled={true}
       />
       <View style={styles.buttonContainer}>
       </View>

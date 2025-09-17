@@ -10,6 +10,7 @@ import COLORS from '../../Constants/Colors.js';
 
 import { GlobalContext } from '../../Components/GlobalContext';
 import { postData, apiUrl } from '../../Components/api';
+import LogoutButton from '../../Components/LogoutButton.js';
 const urls=apiUrl();
 
 
@@ -42,7 +43,6 @@ const PayScreen = ({route}) => {
   const [type, settype] = useState(typeO);
 
   
-
 
     const handleCreateTransaction = async () => {
       
@@ -124,16 +124,17 @@ const PayScreen = ({route}) => {
         <TopBarPrimary />
       </View>
 
-      <View style={[styles.button, { marginBottom: 30 }]}>
+      <View style={[styles.buttonTop, { marginBottom: 30 }]}>
         <GradiantButton
           title="Home"
-          height="35"
+          height="30"
           width="30%"
           fontSize={16}
           gradientType="yellow"
           borderRadius={5}
           onPress={() => navigation.navigate('Home')}
         />
+        <LogoutButton/>
       </View>
 
       <View style={styles.buttonContainer}>
@@ -216,6 +217,12 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginBottom: 5,
     color: COLORS.white,
+  },
+  buttonTop: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    alignItems: 'center',
+    marginVertical: 12,
   },
 });
 

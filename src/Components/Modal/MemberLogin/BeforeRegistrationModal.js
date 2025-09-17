@@ -65,6 +65,28 @@ const BeforeRegistrationModal = ({ visible, onClose }) => {
                   }}
                 />
               </View>
+              
+
+              <Text style={styles.message}>Agr apka account admin ne bnaya hai to app login kr skte ho.</Text>
+              <View style={styles.buttonBottom}>
+                <GradiantButton
+                  title="Login"
+                  height="35"
+                  width="100%"
+                  gradientType="blue"
+                  borderRadius={5}
+                  onPress={() => {
+                    onClose();
+                    navigation.navigate('Login');
+                  }}
+                />
+                
+              </View>
+
+
+
+
+
               <TouchableOpacity style={styles.crossIcon} onPress={onClose}>
                 <Icon name="close" size={24} color="#fff" />
               </TouchableOpacity>
