@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "784425628274",
+    "project_id": "hindi-bible-81c7c",
+    "storage_bucket": "hindi-bible-81c7c.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:784425628274:android:4a07769a9264586e9c08eb",
+        "android_client_info": {
+          "package_name": "com.hindibiblestudy"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBhAiUQISqk-PgYnDUZ5xmWY2TKhFvspvg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

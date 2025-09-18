@@ -12,6 +12,8 @@ import BACKGROUND_COLORS from '../../Constants/BackGroundColors.js';
 import DeviceChange from '../../Components/Modal/MemberLogin/DviceChangeAlertModal';
 import DviceChangeHour from '../../Components/Modal/MemberLogin/DviceChangeHourAlertModal';
 
+import { MMKV } from 'react-native-mmkv';
+const storage = new MMKV();
 
 import { GlobalContext } from '../../Components/GlobalContext';
 import { postData, apiUrl } from '../../Components/api';
@@ -44,7 +46,8 @@ const LoginScreen = () => {
     }
     const filedata = {
       "username":username,
-      "password":password
+      "password":password,
+      "firebase_token":storage.getString('firebaseToken')
     };
     const response = await postData(filedata, urls.login,"POST", navigation,extraData);
     setresponseData(response.data);
