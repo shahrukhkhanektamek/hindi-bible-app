@@ -6,7 +6,7 @@ import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { navigationRef } from './src/Components/NavigationService';
 import StackNavigation from './src/Navigation/StactNavigation.js';
 import { GlobalProvider } from './src/Components/GlobalContext';
-import { Alert, AppState, Platform, StatusBar, TouchableWithoutFeedback, View } from 'react-native';
+import { Alert, AppState, PermissionsAndroid, Platform, StatusBar, TouchableWithoutFeedback, View } from 'react-native';
 
 import messaging from '@react-native-firebase/messaging';
 import firebase from '@react-native-firebase/app';
@@ -111,30 +111,65 @@ const [notificationData, setNotificationData] = useState({ title: '', body: '' }
 
 
   useEffect(() => {
-  const requestNotificationPermission = async () => {
-    try {
-      if (Platform.OS === 'android' && Platform.Version >= 33) {
-        const result = await request(PERMISSIONS.ANDROID.POST_NOTIFICATIONS);
-        if (result === RESULTS.GRANTED) {
-          console.log('Notification permission granted');
-        } else if (result === RESULTS.DENIED) {
-          Alert.alert(
-            'Notification Permission',
-            'Notification permissions are required for the app to function properly. Please allow them in your settings.',
-          );
-        } else if (result === RESULTS.BLOCKED) {
-          Alert.alert(
-            'Notification Permission',
-            'Permission is permanently denied. Please enable it manually in Settings > App Info > Notifications.',
-          );
-        }
-      } else {
-        console.log('Notification permission not required for this Android version.');
-      }
-    } catch (error) {
-      console.error('Error requesting notification permission:', error);
+  // const requestNotificationPermission = async () => {
+  //   try {
+  //     if (Platform.OS === 'android' && Platform.Version >= 33) {
+  //       const result = await request(PERMISSIONS.ANDROID.POST_NOTIFICATIONS);
+  //       if (result === RESULTS.GRANTED) {
+  //         console.log('Notification permission granted');
+  //       } else if (result === RESULTS.DENIED) {
+  //         Alert.alert(
+  //           'Notification Permission',
+  //           'Notification permissions are required for the app to function properly. Please allow them in your settings.',
+  //         );
+  //       } else if (result === RESULTS.BLOCKED) {
+  //         Alert.alert(
+  //           'Notification Permission',
+  //           'Permission is permanently denied. Please enable it manually in Settings > App Info > Notifications.',
+  //         );
+  //       }
+  //     } else {
+  //       console.log('Notification permission not required for this Android version.');
+  //     }
+  //   } catch (error) {
+  //     console.error('Error requesting notification permission:', error);
+  //   }
+  // };
+
+
+  async function requestUserPermission() {
+    const authStatus = await messaging().requestPermission({
+      alert: true,
+      announcement: false,
+      badge: true,
+      carPlay: true,
+      provisional: false,
+      sound: true,
+    });
+  
+    const enabled =
+      authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
+      authStatus === messaging.AuthorizationStatus.PROVISIONAL;
+  
+    if (enabled) {
+      console.log('Notification permission granted:', authStatus);
+    } else {
+      Alert.alert("Permission Denied", "You won't receive notifications.");
     }
-  };
+  }
+
+
+  async function requestNotificationPermission() {
+    if (Platform.OS === 'android') {
+      if (Platform.Version >= 33) { // Android 13+
+        const granted = await PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS
+        );
+        return granted === PermissionsAndroid.RESULTS.GRANTED;
+      }
+      return true; // Android 12 aur niche ke liye direct allowed
+    }
+  }
   
 
   const initializeMessaging = async () => {
@@ -172,7 +207,8 @@ const [notificationData, setNotificationData] = useState({ title: '', body: '' }
     }
   }; 
  
-  // requestNotificationPermission();
+  requestNotificationPermission();
+  requestUserPermission();
   const unsubscribeMessaging = initializeMessaging();
 
   return () => {
