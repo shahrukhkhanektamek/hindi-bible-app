@@ -12,7 +12,7 @@ import BACKGROUND_COLORS from '../../Constants/BackGroundColors.js';
 import COLORS from '../../Constants/Colors.js';
 import Coutries from '../../Components/CountryPicker.js';
 import { GlobalContext } from '../../Components/GlobalContext';
-import { postData, apiUrl, convertToBase64 } from '../../Components/api';
+import { postData, apiUrl, convertToBase64, showErrorMessage } from '../../Components/api';
 
 const urls = apiUrl();
 
@@ -31,6 +31,36 @@ const RegisterScreen = ({ route }) => {
   const show_case = route.params?.show_case;
 
   const handleRegister = () => {
+
+    if(!name)
+    {
+      extraData.alert.setAlertMessage("Enter name!");
+      extraData.alert.setShowAlert(true);
+      extraData.alert.setAlertType(0);
+      return false;
+    }
+    else if(!selectedCountry)
+    {
+      extraData.alert.setAlertMessage("Select country!");
+      extraData.alert.setShowAlert(true);
+      extraData.alert.setAlertType(0);
+      return false;
+    }
+    else if(!mobile)
+    {
+      extraData.alert.setAlertMessage("Enter mobile no.!");
+      extraData.alert.setShowAlert(true);
+      extraData.alert.setAlertType(0);
+      return false;
+    }
+    else if(!email)
+    {
+      extraData.alert.setAlertMessage("Enter email!");
+      extraData.alert.setShowAlert(true);
+      extraData.alert.setAlertType(0);
+      return false;
+    }
+
     const filedata = {
       name,
       phone: mobile,

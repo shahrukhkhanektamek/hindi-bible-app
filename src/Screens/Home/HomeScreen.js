@@ -195,6 +195,7 @@ const HomeScreen = () => {
     );
   }
 
+  const videoHeight = (Dimensions.get("window").width * 9) / 16;
   return (
     <ScrollView style={styles.container}
     refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
@@ -275,22 +276,44 @@ const HomeScreen = () => {
       </View>
 
       <View style={styles.videoPlayer}>
-        
-        <WebView
+     
+          
+        {appSetting.intro_video.type == 1 ? (                        
+            <VideoPlayer
+            videoSource={appSetting.intro_video.video}
+            thumbnail={appSetting.intro_video.image}
+            frameSource={require('../../Assets/videoFrame.jpeg')}
+            />
+        ) : appSetting.intro_video.type == 2 ? (
+            <WebView
+            style={styles.webviewVideo}
+            javaScriptEnabled={true}
+            domStorageEnabled={true}
+            allowsFullscreenVideo={true}
+            source={{
+                uri: `${appSetting.intro_video.video_url}`,
+            }}
+            originWhitelist={['*']}
+            mediaPlaybackRequiresUserAction={false}
+            />
+        ) : appSetting.intro_video.type == 3 ? (
+          <WebView
           style={styles.webviewVideo}
           javaScriptEnabled={true}
           domStorageEnabled={true}
-          source={{ uri: `https://www.youtube.com/embed/${appSetting.intro_video.video}` }}
+          allowsFullscreenVideo={true}
+          source={{
+            uri: `https://www.youtube.com/embed/${appSetting.intro_video.video}?modestbranding=1&rel=0&controls=1&fs=1`,
+          }}
+          originWhitelist={['*']}
+          mediaPlaybackRequiresUserAction={false}
         />
-      
+        ) : appSetting.intro_video.type == 4 ? (
+            <GumletVideo videoId={appSetting.intro_video.video} />                        
+        ) : (
+            <Text style={{ color: COLORS.white }}>None</Text>
+        )}
 
-
-      
-          {/* <VideoPlayer 
-            videoSource={{uri: appSetting.intro_video}}
-            thumbnail={require('../../Assets/videoThumbnail.jpeg')}
-            frameSource={require('../../Assets/videoFrame.jpeg')}
-          /> */}
 
 
       </View>

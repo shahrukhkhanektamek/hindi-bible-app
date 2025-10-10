@@ -25,10 +25,21 @@ const UsernamePasswordScreen = ({route}) => {
   const [password, setPassword] = useState('');  
 
   const handleRegister = async () => {
-    // if (!name || !email) {
-    //   Alert.alert('Error', 'Please enter username and password');
-    //   return;
-    // }
+    
+    if(!username)
+    {
+      extraData.alert.setAlertMessage("Enter username!");
+      extraData.alert.setShowAlert(true);
+      extraData.alert.setAlertType(0);
+      return false;
+    }
+    else if(!password)
+    {
+      extraData.alert.setAlertMessage("Enter password!");
+      extraData.alert.setShowAlert(true);
+      extraData.alert.setAlertType(0);
+      return false;
+    }
     const filedata = {
       "username":username,
       "password":password,
