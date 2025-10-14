@@ -36,7 +36,7 @@ const DviceChangeAlertModal = ({ visible, onClose, proceed  }) => {
               <View style={styles.middleSection}>
                 
                 <View style={styles.secondSection}>
-                  <Text style={styles.message}>Aapka Account Kisi or device pr login hai agr aap is device pe login krna chahte ho to apko neeche diye gye Proceed button pe click krna padega or 3 ghnte tak wait krna padega uske baad aap is device pe login kroge to login ho jaega </Text>
+                  <Text style={styles.message}>Ek account ek hi device par chalega. Aapka account kisi aur device par already registered hai. Agar aap is device par log in karna chaahte hai to neeche diye PROCEED button par click kijiye. Tab aapka account pichhle device se unregistered ho jaayega aur 3 ghante ke baad is device par activate ho jaayega aur aap log in kar sakte hai</Text>
                 </View>
                 
                 

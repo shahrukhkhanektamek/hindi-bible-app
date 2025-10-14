@@ -184,10 +184,11 @@ const [notificationData, setNotificationData] = useState({ title: '', body: '' }
       // console.log('Subscribed to topic: allnoti2');
 
       const unsubscribeOnMessage = messaging().onMessage(async remoteMessage => {
-        // Alert.alert(
-        //   remoteMessage.notification?.title || 'Notification',
-        //   remoteMessage.notification?.body || 'You have a new message.',
-        // );
+        Alert.alert(
+          remoteMessage.notification?.title || 'Notification',
+          remoteMessage.notification?.body || 'You have a new message.',
+        );
+        
         console.log(remoteMessage)
         const unsubscribeOnMessage = messaging().onMessage(async remoteMessage => {
             setNotificationData({

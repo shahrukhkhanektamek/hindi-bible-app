@@ -4,7 +4,10 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import HomeScreen from '../Screens/Home/HomeScreen.js';
 import ContactUsScreen from '../Screens/ContactUs/ContactUsScreen.js';
+
 import LatestNewsScreen from '../Screens/LatestNews/LatestNewsScreen.js';
+import LatestNewsDetailScreen from '../Screens/LatestNews/LatestNewsDetailScreen.js';
+
 import RegisterScreen from '../Screens/Register/RegisterScreen.js';
 import UsernamePasswordScreen from '../Screens/Register/UsernamePassword.js';
 
@@ -129,7 +132,9 @@ const StackNavigation = () => (
 
     <Stack.Screen name="Home" component={HomeScreen} />
     <Stack.Screen name="ContactUs" component={ContactUsScreen} />
+
     <Stack.Screen name="LatestNews" component={LatestNewsScreen} />
+    <Stack.Screen name="LatestNewsDetail" component={LatestNewsDetailScreen} />
 
     <Stack.Screen name="MemberLogin" component={MemberLoginScreen} />
 

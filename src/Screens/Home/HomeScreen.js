@@ -13,11 +13,11 @@ import AfterRegistrationModal from '../../Components/Modal/MemberLogin/AfterRegi
 import FreeTrialRuningModal from '../../Components/Modal/MemberLogin/FreeTrialRuningModal.js';
 import FreeTrialExpireModal from '../../Components/Modal/MemberLogin/FreeTrialExpireModal.js';
 import PackageExpireModal from '../../Components/Modal/MemberLogin/PackageExpireModal.js';
-
+ 
 import Logout from '../../Components/Button/Logout';
 
 import PageLoding from '../../Components/PageLoding.js';
-import { postData, apiUrl } from '../../Components/api';
+import { postData, apiUrl } from '../../Components/api'; 
 const urls=apiUrl();
 
 import { MMKV } from 'react-native-mmkv';
@@ -49,16 +49,20 @@ const HomeScreen = () => {
   const [NewDate, setNewDate] = useState('');
   const [NewsId, setNewsId] = useState('');
   const [Package, setPackage] = useState();
+  const [videoKey, setVideoKey] = useState(0);
 
 
     const [page, setPage] = useState(0);
     const [isLoading, setisLoading] = useState(true);
     const [refreshing, setRefreshing] = useState(false);
-    const onRefresh = useCallback(() => {
-      // setPage(0);
-      setRefreshing(true);
-      setRefreshing(false); 
-      fetchSettingData2(page); 
+    const onRefresh = useCallback(async () => {
+      try {
+        setRefreshing(true);
+        setVideoKey(prev => prev + 1);
+        await fetchSettingData2();  // wait for data
+      } finally {
+        setRefreshing(false);  
+      }
     }, []);
     const fetchSettingData2 = async () => { 
       try { 
@@ -169,22 +173,22 @@ const HomeScreen = () => {
     };
 
 
-  useEffect(() => {
-    Animated.loop(
-      Animated.sequence([
-        Animated.timing(opacity, {
-          toValue: 0,
-          duration: 500,
-          useNativeDriver: true,
-        }),
-        Animated.timing(opacity, { 
-          toValue: 1,
-          duration: 500,
-          useNativeDriver: true,
-        }),
-      ])
-    ).start();
-  }, [opacity]);
+ useEffect(() => {
+  Animated.loop(
+    Animated.sequence([
+      Animated.timing(opacity, {
+        toValue: 0,
+        duration: 500,
+        useNativeDriver: true,
+      }),
+      Animated.timing(opacity, {
+        toValue: 1,
+        duration: 500,
+        useNativeDriver: true,
+      }),
+    ])
+  ).start();
+}, [opacity]);
 
   useEffect(() => {
     fetchSettingData2()
@@ -280,12 +284,14 @@ const HomeScreen = () => {
           
         {appSetting.intro_video.type == 1 ? (                        
             <VideoPlayer
+            key={videoKey}
             videoSource={appSetting.intro_video.video}
             thumbnail={appSetting.intro_video.image}
             frameSource={require('../../Assets/videoFrame.jpeg')}
             />
         ) : appSetting.intro_video.type == 2 ? (
             <WebView
+            key={videoKey}
             style={styles.webviewVideo}
             javaScriptEnabled={true}
             domStorageEnabled={true}
@@ -298,18 +304,19 @@ const HomeScreen = () => {
             />
         ) : appSetting.intro_video.type == 3 ? (
           <WebView
+          key={videoKey}
           style={styles.webviewVideo}
           javaScriptEnabled={true}
           domStorageEnabled={true}
           allowsFullscreenVideo={true}
           source={{
-            uri: `https://www.youtube.com/embed/${appSetting.intro_video.video}?modestbranding=1&rel=0&controls=1&fs=1`,
+            uri: `${appSetting.intro_video.video_url}`,
           }}
           originWhitelist={['*']}
           mediaPlaybackRequiresUserAction={false}
         />
         ) : appSetting.intro_video.type == 4 ? (
-            <GumletVideo videoId={appSetting.intro_video.video} />                        
+            <GumletVideo key={videoKey} videoId={appSetting.intro_video.video} />                        
         ) : (
             <Text style={{ color: COLORS.white }}>None</Text>
         )}
@@ -534,10 +541,11 @@ const styles = StyleSheet.create({
   },
   webviewVideo: {
     // height: (Dimensions.get('window').width * 9) / 16,
-    height:180,
+    height:170,
     width: '100%',
     width:'80%',
-    margin:'auto'
+    margin:'auto',
+    borderRadius:10,
   },
 });
 

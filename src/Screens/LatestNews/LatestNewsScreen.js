@@ -1,4 +1,4 @@
-import { ScrollView, StyleSheet, Text, View, RefreshControl } from 'react-native';
+import { ScrollView, StyleSheet, Text, View, RefreshControl, TouchableOpacity, Image } from 'react-native';
 import React, { useState, useEffect, useCallback, useContext } from 'react';
 import GradiantButton from '../../Components/Button/GradientButton.js';
 import { useNavigation } from '@react-navigation/native';
@@ -6,188 +6,195 @@ import BACKGROUND_COLORS from '../../Constants/BackGroundColors.js';
 import COLORS from '../../Constants/Colors.js';
 import TopBarPrimary from '../../Components/TopBar/TopBarPrimary.js';
 import VideoPlayer from '../../Components/Video/VideoPlayer.js';
-
-
-import RenderHTML from 'react-native-render-html';
-import { useWindowDimensions } from 'react-native';
-
+import WebView from 'react-native-webview';
 import { GlobalContext } from '../../Components/GlobalContext';
 import PageLoding from '../../Components/PageLoding.js';
 import { postData, apiUrl } from '../../Components/api';
-import WebView from 'react-native-webview';
-
-const urls=apiUrl();
 
 
+const urls = apiUrl();
 
 const LatestNewsScreen = () => {
   const navigation = useNavigation();
-  const { width } = useWindowDimensions();
+  const { extraData } = useContext(GlobalContext);
+  const { appSetting, userDetail } = extraData;
 
-    const { extraData } = useContext(GlobalContext);
-  const appSetting = extraData.appSetting;
-  const userDetail = extraData.userDetail;
-
-
-  const [page, setPage] = useState(0);
-  const [isLoading, setisLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [data, setData] = useState([]);
+  const [videoKey, setVideoKey] = useState(0);
+
   const onRefresh = useCallback(() => {
-    // setPage(0);
+    setVideoKey(prev => prev + 1);
     setRefreshing(true);
     setRefreshing(false);
-    fetchData(page);
+    fetchData();
   }, []);
 
-  const fetchData = async () => { 
-      try {
-        const response = await postData({}, urls.NewsList, "GET", navigation, extraData, 1);
-        if(response.status==200)
-        {
-          setData(response.data);           
-          setisLoading(false)
-        }
-      } catch (error) {
-        console.error('Error fetching countries:', error);
-      } 
-    };
-
-    useEffect(() => {
-      fetchData()
-    },[])
-    if(isLoading)
-    {
-      return ( 
-        <PageLoding /> 
-      ); 
+  const fetchData = async () => {
+    try {
+      const response = await postData({}, urls.NewsList, "GET", navigation, extraData, 1);
+      if(response.status === 200) {
+        setData(response.data);
+        setIsLoading(false);
+      }
+    } catch (error) {
+      console.error('Error fetching news:', error);
     }
+  };
 
+  useEffect(() => {
+    fetchData();
+  }, []);
 
-
-
+  if(isLoading) return <PageLoding />;
 
   return (
-    <ScrollView style={styles.container} refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
+    <ScrollView 
+      style={styles.container} 
+      refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+    >
+      {/* Top Bar */}
       <View style={styles.topBar}>
         <TopBarPrimary />
       </View>
 
+      {/* Action Buttons */}
       <View style={styles.topSection}>
-        <GradiantButton
-          title="Log Out"
-          height="27"
-          width="25%"
-          gradientType="red"
-          borderRadius={5}
-          fontWeight={500}
-        />
+        
         <GradiantButton
           title="Home"
-          height="27"
-          width="25%"
+          height="36"
+          width="40%"
           gradientType="yellow"
-          borderRadius={5}
-          fontWeight={500}
+          borderRadius={8}
+          fontWeight="600"
           onPress={() => navigation.navigate('Home')}
         />
       </View>
 
-      
-      <View style={styles.videoContainer}>
-        <Text style={styles.heading}>Latest News</Text>
-        
-        {data.map((item) => (
-          <React.Fragment key={item.id}> 
-            <View style={styles.videoPlayer}>
+      {/* News List */}
+      {data.map((item, index) => (
+        <View style={styles.newsCard} key={index}>
+          {index === 0 && <Text style={styles.heading}>Latest News</Text>}
+
+          {/* Video */}
+          <View style={styles.videoWrapper}>
+            <TouchableOpacity 
+            onPress={() => navigation.navigate("LatestNewsDetail", {item})}
+          >
+              <Image 
+                source={{ uri: item.image }}
+                style={styles.imageStyle}
+                resizeMode="cover" 
+              />
+              </TouchableOpacity>
+            {/* {item.video_type === 1 ? (
+              <VideoPlayer
+                key={videoKey}
+                videoSource={item.video}
+                thumbnail={item.image}
+                frameSource={require('../../Assets/videoFrame.jpeg')}
+              />
+            ) : (
               <WebView
+                key={videoKey}
                 style={styles.webviewVideo}
-                javaScriptEnabled={true}
-                domStorageEnabled={true}
-                source={{ uri: `https://www.youtube.com/embed/${item.video}` }}
-              />             
-            </View> 
-            <Text style={[styles.title]}>{item.name}</Text>
-            <RenderHTML
-              contentWidth={width}
-              source={{ html: item.description }}
-              baseStyle={styles.description} 
-              tagsStyles={tagsStyles}
-            />
+                javaScriptEnabled
+                domStorageEnabled
+                allowsFullscreenVideo
+                source={{ uri: item.video_url }}
+                originWhitelist={['*']}
+                mediaPlaybackRequiresUserAction={false}
+              />
+            )} */}
+          </View>
 
-            <RenderHTML
-              contentWidth={width}
-              source={{ html: item.full_description }}
-              baseStyle={styles.description}
-              tagsStyles={tagsStyles}
-            />
-          </React.Fragment>
-        ))}
+          {/* News Title */}
+          <Text style={styles.title}>{item.name}</Text>
+          <Text style={[styles.title, {margin:0}]}>{item.dateString}</Text>
 
-          
- 
-
-      </View>
+          {/* Read More */}
+          <TouchableOpacity 
+            style={styles.readMoreButton}
+            onPress={() => navigation.navigate("LatestNewsDetail", {item})}
+          >
+            <Text style={styles.readMoreText}>Read More</Text>
+          </TouchableOpacity>
+        </View>
+      ))}
     </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
     backgroundColor: BACKGROUND_COLORS.primary,
-  },
-  title:{
-    color:'white',
-    fontSize:18,
-    marginTop:10
   },
   topBar: {
     marginTop: 25,
-    marginBottom: 20,
+    marginBottom: 10,
+    paddingHorizontal: 16,
   },
   topSection: {
-    marginTop: 10,
     flexDirection: 'row',
-    justifyContent: 'center',
-    columnGap: 16,
+    justifyContent: 'space-around',
+    marginBottom: 20,
   },
-  videoContainer: {
-    backgroundColor: BACKGROUND_COLORS.deepBrown,
+  imageStyle: {
+  width: '100%',
+  height: '100%',
+  borderRadius: 12,
+},
+  newsCard: {
+    backgroundColor: BACKGROUND_COLORS.white,
     marginHorizontal: 16,
-    marginTop: 20,
-    padding: 20,
-    borderRadius: 5,
-  },
-  videoPlayer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginTop: 20,
+    marginBottom: 20,
+    borderRadius: 12,
+    padding: 16,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   heading: {
     textAlign: 'center',
-    color: COLORS.white,
-    fontWeight: 500,
-    fontSize: 18,
+    fontSize: 20,
+    fontWeight: '700',
+    color: COLORS.black,
+    marginBottom: 12,
   },
-  description: {
-    color: COLORS.white,
-    fontSize: 14,
-    marginTop: 20,
+  videoWrapper: {
+    width: '100%',
+    height: 180,
+    borderRadius: 12,
+    overflow: 'hidden',
+    marginBottom: 12,
   },
   webviewVideo: {
-    // height: (Dimensions.get('window').width * 9) / 16,
-    height:180,
-    width:'100%',
-    margin:'auto'
+    width: '100%',
+    height: '100%',
+  },
+  title: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: COLORS.black,
+    marginBottom: 10,
+  },
+  readMoreButton: {
+    alignSelf: 'flex-start',
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+    backgroundColor: 'blue',
+    borderRadius: 6,
+  },
+  readMoreText: {
+    color: COLORS.white,
+    fontWeight: '600',
+    fontSize: 14,
   },
 });
-
-const tagsStyles = {
-  a: {
-    color: 'blue',
-    textDecorationLine: 'underline',
-  },
-};
 
 export default LatestNewsScreen;

@@ -36,7 +36,9 @@ const DviceChangeHourAlertModal = ({ visible, onClose, data  }) => {
               <View style={styles.middleSection}>
                 
                 <View style={styles.secondSection}>
-                  <Text style={styles.message}>Aapne apna device change kiya hai to aap {data?.login_date_time} login kr paoge </Text>
+                  <Text style={styles.message}>
+                    Aapne apna device change kiya hai. Kripaya 3 ghante baad log in kijiye {data?.login_date_time}
+                    </Text>
                 </View>
                 
                 

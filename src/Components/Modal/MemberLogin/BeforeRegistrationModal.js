@@ -67,7 +67,7 @@ const BeforeRegistrationModal = ({ visible, onClose }) => {
               </View>
               
 
-              <Text style={styles.message}>Agr apka account admin ne bnaya hai to app login kr skte ho.</Text>
+              <Text style={styles.message}>Agr apka account TGC Bible Study ne bnaya hai to app login kr skte ho.</Text>
               <View style={styles.buttonBottom}>
                 <GradiantButton
                   title="Login"
