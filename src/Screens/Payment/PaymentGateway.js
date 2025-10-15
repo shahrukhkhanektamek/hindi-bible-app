@@ -76,7 +76,12 @@ const PaymentGatewayScreen = ({route}) => {
         {
           navigation.reset({
             index: 0,
-            routes: [{ name: 'Home' }], 
+            routes: [
+              {
+                name: 'ContributionPaymentSuccess',
+                params: response.data, 
+              },
+            ],
           });
         }
       }  

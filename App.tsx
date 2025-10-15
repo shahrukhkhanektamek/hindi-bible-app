@@ -1,12 +1,13 @@
 import React, { useEffect, useRef, useState, useContext } from 'react';
-import { NavigationContainer } from '@react-navigation/native';
+import { NavigationContainer, useFocusEffect } from '@react-navigation/native';
 
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 
 import { navigationRef } from './src/Components/NavigationService';
 import StackNavigation from './src/Navigation/StactNavigation.js';
 import { GlobalProvider } from './src/Components/GlobalContext';
-import { Alert, AppState, PermissionsAndroid, Platform, StatusBar, TouchableWithoutFeedback, View } from 'react-native';
+import { Alert, AppState, KeyboardAvoidingView, Keyboard, PermissionsAndroid, Platform, StatusBar, TouchableWithoutFeedback, View, ScrollView } from 'react-native';
+
 
 import messaging from '@react-native-firebase/messaging';
 import firebase from '@react-native-firebase/app';
@@ -24,6 +25,7 @@ import { MMKV } from 'react-native-mmkv';
 import { useNavigation } from '@react-navigation/native';
 import { GlobalContext } from './src/Components/GlobalContext';
 import { postData, apiUrl } from './src/Components/api';
+import BACKGROUND_COLORS from './src/Constants/BackGroundColors.js';
 const urls=apiUrl();
 
 // ✅ MMKV instance
@@ -220,30 +222,80 @@ const [notificationData, setNotificationData] = useState({ title: '', body: '' }
 }, []);
 
 
+const [isKeyboardVisible, setKeyboardVisible] = useState(false);
+const [keyboardHeight, setKeyboardHeight] = useState(0);
+
+const intervalRef = useRef(null);
+
+useEffect(() => {
+  const showSub = Keyboard.addListener('keyboardDidShow', (event) => {
+    setKeyboardVisible(true);
+    console.log("🟢 Keyboard is open");
+    
+    // 🔹 Start interval only when keyboard is visible
+    if (!intervalRef.current) {
+      intervalRef.current = setInterval(() => {
+        // ⚡ Re-measure the height using current keyboard frame
+        Keyboard.dismiss; // optional, just to trigger layout recalculation
+        // Note: React Native does not provide direct API to get updated height,
+        // so we use the last known height + setKeyboardHeight again to trigger re-render
+        setKeyboardHeight(prev => prev); 
+        setKeyboardHeight(event.endCoordinates.height+10);
+        console.log(event);
+      }, 200);
+    }
+  });
+
+  const hideSub = Keyboard.addListener('keyboardDidHide', () => {
+    setKeyboardVisible(false);
+    setKeyboardHeight(0);
+    console.log("🔴 Keyboard is closed");
+
+    // 🔹 Stop interval when keyboard is hidden
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+      intervalRef.current = null;
+    }
+  });
+
+  return () => {
+    showSub.remove();
+    hideSub.remove();
+    if (intervalRef.current) clearInterval(intervalRef.current);
+  };
+}, []);
+  
+
+
 
  
   return (
     <SafeAreaProvider>
-      <TouchableWithoutFeedback onPress={resetTimer}>
-        <SafeAreaView style={{ flex: 1 }} edges={['top', 'bottom']}>
-          
-          {/* 🔹 Top StatusBar Style */}
-          <StatusBar 
-            barStyle="dark-content"   // text/icons light ya dark (light-content / dark-content)
-          />
+      
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+          <SafeAreaView style={{ flex: 1, }} edges={['top', 'bottom']}>
+            <StatusBar barStyle="dark-content" />
 
-          <NavigationContainer ref={navigationRef}>
-            <GlobalProvider>
-              <StackNavigation />
-            </GlobalProvider>
-          </NavigationContainer>
-        </SafeAreaView>
-      </TouchableWithoutFeedback>
-      <NotificationModal
-          modalVisible={modalVisible}
-          setModalVisible={setModalVisible}
-          notificationData={notificationData}
-        />
+            <NavigationContainer ref={navigationRef}>
+              <GlobalProvider>
+                {/* ScrollView wraps your navigation to handle keyboard for forms/screens */}
+                <ScrollView style={{flex:1,paddingBottom:keyboardHeight,backgroundColor:BACKGROUND_COLORS.primary}}
+                  contentContainerStyle={{ flexGrow: 1 }}
+                  keyboardShouldPersistTaps="handled" // important for forms
+                >
+                  <StackNavigation />
+                </ScrollView>
+              </GlobalProvider>
+            </NavigationContainer>
+
+            <NotificationModal
+              modalVisible={modalVisible}
+              setModalVisible={setModalVisible}
+              notificationData={notificationData}
+            />
+          </SafeAreaView>
+        </TouchableWithoutFeedback>
+      
     </SafeAreaProvider>
   );
 };

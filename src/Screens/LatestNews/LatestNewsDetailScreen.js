@@ -12,6 +12,7 @@ import Button from '../../Components/Button/Button.js';
 import WebView from 'react-native-webview';
 import VideoPlayer from '../../Components/Video/VideoPlayer.js';
 import GumletVideo from '../../Components/Video/GumletVideo.js';
+import LogoutButton from '../../Components/LogoutButton.js';
 
 const LatestNewsDetailScreen = () => {
   const navigation = useNavigation();
@@ -60,16 +61,17 @@ const LatestNewsDetailScreen = () => {
         
         <GradiantButton
           title="Home"
-          height="36"
+          height="30"
           width="25%"
           gradientType="yellow"
           borderRadius={8}
           fontWeight="600"
           onPress={() => navigation.navigate('Home')}
         />
+        <LogoutButton />
         <GradiantButton
           title="Back"
-          height="36"
+          height="30"
           width="25%"
           gradientType="purple"
           borderRadius={5}

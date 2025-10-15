@@ -6,8 +6,16 @@ import { useNavigation } from '@react-navigation/native';
 import BACKGROUND_COLORS from '../../Constants/BackGroundColors.js';
 import COLORS from '../../Constants/Colors.js';
 
-const PaymentSuccessScreen = () => {
+const PaymentSuccessScreen = ({route}) => {
   const navigation = useNavigation();
+  const {payment_type, transaction_id, amount, gst, final_amount} = route.params;
+  
+  const priceFormat = (value) => {
+    if(payment_type==1)
+      return `₹${parseFloat(value).toFixed(2)}`;
+    else
+      return '$'+`${parseFloat(value).toFixed(2)}`;
+  };
 
   return (
     <ScrollView style={styles.container}>
@@ -19,10 +27,10 @@ const PaymentSuccessScreen = () => {
         <View style={styles.infoContainer}>
           <Text style={styles.topText}>Thank You For Your Contribution To Our Ministry!</Text>
           <Text style={styles.topText}>हमारी सेवकाई में आपके योगदान के लिए धन्यवाद!</Text>
-          <Text style={styles.topText}>RS. 1.00</Text>
+          <Text style={styles.topText}>{priceFormat(final_amount)}</Text>
           <Text style={styles.bottomText}>Your contribution status is success.</Text>
           <Text style={styles.bottomText}>Transaction id</Text>
-          <Text style={styles.bottomText}>hgtt1234gft7890</Text>
+          <Text style={styles.bottomText}>{transaction_id}</Text>
           <View style={styles.homeButton}>
             <GradiantButton
               title="Home"

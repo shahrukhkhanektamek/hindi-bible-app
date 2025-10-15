@@ -30,6 +30,7 @@ import SinglePost from '../Screens/Post/SinglePost.js';
 import PayThruAppScreen from '../Screens/YourContribution/PayThruAppScreen.js';
 import PayNow from '../Screens/YourContribution/PayNow.js';
 import ConfirmPay from '../Screens/YourContribution/ConfirmPay.js';
+import ContributionPaymentSuccess from '../Screens/YourContribution/PaymentSuccess.js';
 
 
 import PaymentSuccessScreen from '../Screens/YourContribution/PaymentSuccess.js';
@@ -155,6 +156,7 @@ const StackNavigation = () => (
     <Stack.Screen name="PayThruApp" component={PayThruAppScreen} />
     <Stack.Screen name="PayNow" component={PayNow} />
     <Stack.Screen name="ConfirmPay" component={ConfirmPay} />
+    <Stack.Screen name="ContributionPaymentSuccess" component={ContributionPaymentSuccess} />
     <Stack.Screen name="PaymentSuccess" component={PaymentSuccessScreen} />
     <Stack.Screen name="SelectCountryScreen" component={SelectCountryScreen} />
     <Stack.Screen name="International" component={InternationalScreen} />

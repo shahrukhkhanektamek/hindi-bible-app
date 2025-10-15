@@ -21,32 +21,32 @@ const YourContributionHomeScreen = () => {
 
   const [isLoading, setisLoading] = useState(true); 
   const fetchData = async () => { 
-      try {
-        const response = await postData({}, urls.getProfile, "GET", navigation, extraData, 1);
-        if(response.status==200)
-        {
-            if(response.data.payment_mode==1) 
-            {
-              navigation.navigate('YourContribution',{"payment_type":"india"})
-            }
-            else
-            {
-              navigation.navigate('YourContribution',{"payment_type":"international"})
-            }
-          // setisLoading(false)
-        }
-      } catch (error) {
-        console.error('Error fetching countries:', error);
-      }
+      // try {
+      //   const response = await postData({}, urls.getProfile, "GET", navigation, extraData, 1);
+      //   if(response.status==200)
+      //   {
+      //       if(response.data.payment_mode==1) 
+      //       {
+      //         navigation.navigate('YourContribution',{"payment_type":"india"})
+      //       }
+      //       else
+      //       {
+      //         navigation.navigate('YourContribution',{"payment_type":"international"})
+      //       }
+      //     // setisLoading(false)
+      //   }
+      // } catch (error) {
+      //   console.error('Error fetching countries:', error);
+      // }
     };
     useEffect(() => {
       fetchData()
     },[]) 
-    if (isLoading) {
-      return (
-          <PageLoading />          
-      );
-    }
+    // if (isLoading) {
+    //   return (
+    //       <PageLoading />          
+    //   );
+    // }
 
 
 

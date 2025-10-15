@@ -10,6 +10,7 @@ import WebView from 'react-native-webview';
 import { GlobalContext } from '../../Components/GlobalContext';
 import PageLoding from '../../Components/PageLoding.js';
 import { postData, apiUrl } from '../../Components/api';
+import LogoutButton from '../../Components/LogoutButton.js';
 
 
 const urls = apiUrl();
@@ -64,13 +65,24 @@ const LatestNewsScreen = () => {
         
         <GradiantButton
           title="Home"
-          height="36"
-          width="40%"
+          height="30"
+          width="25%"
           gradientType="yellow"
           borderRadius={8}
           fontWeight="600"
           onPress={() => navigation.navigate('Home')}
         />
+        <LogoutButton />
+        <GradiantButton
+          title="Back"
+          height="30"
+          width="25%"
+          gradientType="purple"
+          borderRadius={5}
+          fontSize={15}
+          onPress={() => navigation.goBack()}
+        />
+
       </View>
 
       {/* News List */}
