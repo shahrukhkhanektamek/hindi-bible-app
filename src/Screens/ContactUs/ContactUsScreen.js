@@ -1,5 +1,5 @@
 /* eslint-disable react-native/no-inline-styles */
-import { View, StyleSheet, Text, ScrollView, Linking, Alert } from 'react-native';
+import { View, StyleSheet, Text, ScrollView, Linking, Alert, TouchableOpacity } from 'react-native';
 import React, {useContext} from 'react';
 import TopBarPrimary from '../../Components/TopBar/TopBarPrimary.js';
 import GradiantButton from '../../Components/Button/GradientButton.js';
@@ -42,6 +42,7 @@ const ContactUsScreen = () => {
 
   return (
     <ScrollView style={styles.container}>
+      <TouchableOpacity activeOpacity={1}>
       <View style={styles.topBar}>
         <TopBarPrimary />
       </View>
@@ -86,6 +87,7 @@ const ContactUsScreen = () => {
           onPress={() => navigation.navigate('Feedback')}
         />
       </View>
+      </TouchableOpacity>
     </ScrollView>
   );
 };

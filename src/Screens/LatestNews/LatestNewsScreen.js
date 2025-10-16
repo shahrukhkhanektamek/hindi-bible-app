@@ -55,6 +55,8 @@ const LatestNewsScreen = () => {
       style={styles.container} 
       refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
     >
+      <TouchableOpacity activeOpacity={1}>
+
       {/* Top Bar */}
       <View style={styles.topBar}>
         <TopBarPrimary />
@@ -135,6 +137,7 @@ const LatestNewsScreen = () => {
           </TouchableOpacity>
         </View>
       ))}
+      </TouchableOpacity>
     </ScrollView>
   );
 };

@@ -60,6 +60,7 @@ export const apiUrl = () => {
     "homeDetail":`${mainUrl}home-detail`,
     "createTransaction":`${mainUrl}create-transaction`,
     "transactionStatus":`${mainUrl}check-transaction-status`,
+    "getLastTransaction":`${mainUrl}get-last-transaction`,
     
 
   };

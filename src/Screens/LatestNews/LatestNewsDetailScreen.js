@@ -1,4 +1,4 @@
-import { ScrollView, StyleSheet, Text, View, Image, useWindowDimensions } from 'react-native';
+import { ScrollView, StyleSheet, Text, View, Image, useWindowDimensions, TouchableOpacity } from 'react-native';
 import React, { useContext, useState } from 'react';
 import GradiantButton from '../../Components/Button/GradientButton.js';
 import { useNavigation, useRoute } from '@react-navigation/native';
@@ -53,6 +53,7 @@ const LatestNewsDetailScreen = () => {
 
   return (
     <ScrollView style={styles.container}>
+      <TouchableOpacity activeOpacity={1}>
       <View style={styles.topBar}>
         <TopBarPrimary />
       </View>
@@ -117,6 +118,7 @@ const LatestNewsDetailScreen = () => {
           tagsStyles={tagsStyles}
         />
       </View>
+      </TouchableOpacity>
     </ScrollView>
   );
 };

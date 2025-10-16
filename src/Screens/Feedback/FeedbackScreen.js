@@ -1,7 +1,7 @@
 /* eslint-disable react-native/no-inline-styles */
 /* eslint-disable no-extra-semi */
 import React, { useState, useContext } from 'react';
-import { Text, TextInput, StyleSheet, Alert, ScrollView, View } from 'react-native';
+import { Text, TextInput, StyleSheet, Alert, ScrollView, View, TouchableOpacity } from 'react-native';
 import GradiantButton from '../../Components/Button/GradientButton';
 import { useNavigation } from '@react-navigation/native';
 import TopBarPrimary from '../../Components/TopBar/TopBarPrimary';
@@ -90,6 +90,7 @@ const FeedbackScreen = () => {
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
+      <TouchableOpacity activeOpacity={1}>
       <View style={styles.topBar}>
         <TopBarPrimary />
       </View>
@@ -191,6 +192,7 @@ const FeedbackScreen = () => {
           </View>
         </View>
       </View>
+      </TouchableOpacity>
     </ScrollView>
   );
 };

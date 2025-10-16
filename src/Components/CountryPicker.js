@@ -42,7 +42,7 @@ const CountryPicker = ({ selectedCountry, setSelectedCountry, setCountryCode }) 
   
 
       // console.log(data) 
-      data.forEach(item => {
+      data.forEach(item => { 
         if(item.id==selectedCountry)
         {
           setSelectedCountryName(item.name);

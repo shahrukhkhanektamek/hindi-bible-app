@@ -204,6 +204,10 @@ const HomeScreen = () => {
     <ScrollView style={styles.container}
     refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
     >
+      <TouchableOpacity
+      activeOpacity={1}
+      >
+
       <View style={styles.topBar}>
         <TopBarPrimary />
       </View>
@@ -460,6 +464,10 @@ const HomeScreen = () => {
         onClose={() => setIsPackageExpireModalVisible(false)}
         appSetting={appSetting}
       />
+
+
+      </TouchableOpacity>
+
     </ScrollView>
   );
 };
