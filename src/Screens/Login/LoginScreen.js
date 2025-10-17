@@ -1,6 +1,6 @@
 /* eslint-disable react-native/no-inline-styles */
 import { StyleSheet, Text, View, TextInput, TouchableOpacity, ScrollView } from 'react-native';
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import Icon from 'react-native-vector-icons/Ionicons';
 import TopBarPrimary from '../../Components/TopBar/TopBarPrimary.js';
 import GradiantButton from '../../Components/Button/GradientButton.js';
@@ -17,6 +17,8 @@ const storage = new MMKV();
 
 import { GlobalContext } from '../../Components/GlobalContext';
 import { postData, apiUrl } from '../../Components/api';
+import DeviceInfo from 'react-native-device-info';
+import { logoutDevice } from '../../Components/Socket/socketService.js';
 const urls=apiUrl();
 
 const LoginScreen = () => {
@@ -32,6 +34,14 @@ const LoginScreen = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState(''); 
   const [responseData, setresponseData] = useState(''); 
+
+
+  const [deviceId, setdeviceId] = useState();
+  const getDeviceId = async () => { const deviceIdTemp = await DeviceInfo.getUniqueId(); setdeviceId(deviceIdTemp); }
+  useEffect(() => {
+    getDeviceId()
+    
+  }, []);
 
 
   // extraData = Object.assign(extraData, {"user":{
@@ -66,7 +76,6 @@ const LoginScreen = () => {
 
 
   const handleProceed = async () => {
-    
     const filedata = {
       "username":username,
       "password":password
@@ -76,10 +85,11 @@ const LoginScreen = () => {
     if(response.status==200)
     {
       setIsDeviceChangeModalVisible(false)
+      logoutDevice(response.data.oldDeviceId);
       navigation.reset({
-            index: 0,
-            routes: [{ name: 'Home' }], 
-          }); 
+        index: 0,
+        routes: [{ name: 'Home' }], 
+      }); 
     }
     else
     {

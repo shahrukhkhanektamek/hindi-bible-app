@@ -12,12 +12,12 @@ const urls=apiUrl();
 
 const Logout = () => {
 
-    const navigation = useNavigation(); 
+    const navigation = useNavigation();   
     
       const { extraData } = useContext(GlobalContext);
       const appSetting = extraData.appSetting;
       const userDetail = extraData.userDetail;
-
+ 
 
         const handleLogout = async () => { 
             const response = await postData([], urls.logout,"GET", navigation,extraData);

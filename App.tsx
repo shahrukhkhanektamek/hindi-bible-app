@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState, useContext } from 'react';
 import { NavigationContainer, useFocusEffect } from '@react-navigation/native';
 
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
+import DeviceInfo from 'react-native-device-info';
 
 import { navigationRef } from './src/Components/NavigationService';
 import StackNavigation from './src/Navigation/StactNavigation.js';
@@ -10,15 +11,16 @@ import { Alert, AppState, KeyboardAvoidingView, Keyboard, PermissionsAndroid, Pl
 
 
 import messaging from '@react-native-firebase/messaging';
-import firebase from '@react-native-firebase/app';
+import firebase from '@react-native-firebase/app'; 
 import { request, PERMISSIONS, RESULTS } from 'react-native-permissions';
  
-
+ 
 import NotificationModal from './src/Components/Modal/NotificationModal';
 
-import { connectSocket, disconnectSocket, getSocket } from './src/utils/socket.js';
 
 
+
+ 
 
 import { MMKV } from 'react-native-mmkv';
 
@@ -26,18 +28,25 @@ import { useNavigation } from '@react-navigation/native';
 import { GlobalContext } from './src/Components/GlobalContext';
 import { postData, apiUrl } from './src/Components/api';
 import BACKGROUND_COLORS from './src/Constants/BackGroundColors.js';
+import SocketJs from './src/Components/Socket/SocketJs.js';
+
 const urls=apiUrl();
 
 // ✅ MMKV instance
 const storage = new MMKV();
 
-const App = () => {
-  const timeoutRef = useRef(null);
+const App = () => { 
+
+  
+
+  const timeoutRef = useRef(null); 
   const [timeoutSeconds, setTimeoutSeconds] = useState(20); // default 5 sec
   const [canGoBack, setCanGoBack] = useState(false);
+  const [deviceId, setdeviceId] = useState();
 
   const [modalVisible, setModalVisible] = useState(false);
-const [notificationData, setNotificationData] = useState({ title: '', body: '' });
+   const [notificationData, setNotificationData] = useState({ title: '', body: '' });
+   
 
 
   // Inactivity function
@@ -265,29 +274,16 @@ useEffect(() => {
   };
 }, []);
 
-
-
-const deviceId = "device_abc_123";
-// const [modalVisible, setModalVisible] = useState(false);
-const [incomingData, setIncomingData] = useState(null);
-
-useEffect(() => {
-  const socket = connectSocket({ deviceId });
-
-  socket.on(deviceId, (data) => {
-    setIncomingData(data);
-    // setModalVisible(true);
-    // playSound();
-  });
-
-  return () => {
-    // stopSound();
-    disconnectSocket();
-  };
-}, []);
+ 
+  
+ 
 
 
   
+const getDeviceId = async () => { const deviceIdTemp = await DeviceInfo.getUniqueId(); setdeviceId(deviceIdTemp); }
+useEffect(() => {
+  getDeviceId()
+}, []);
 
 // useEffect(() => {
 //   FlagSecure.activate(); // disable screenshot & screen recording
@@ -309,21 +305,23 @@ useEffect(() => {
                 {/* ScrollView wraps your navigation to handle keyboard for forms/screens */}
                 <ScrollView style={{flex:1,paddingBottom:keyboardHeight,backgroundColor:BACKGROUND_COLORS.primary}}
                   contentContainerStyle={{ flexGrow: 1 }}
-                  keyboardShouldPersistTaps="handled" // important for forms
+                  keyboardShouldPersistTaps="handled" 
                 >
                   <StackNavigation />
                 </ScrollView>
-              </GlobalProvider>
-            </NavigationContainer>
 
-            <NotificationModal
-              modalVisible={modalVisible}
-              setModalVisible={setModalVisible}
-              notificationData={notificationData}
-            />
+              <NotificationModal
+                modalVisible={modalVisible} 
+                setModalVisible={setModalVisible}
+                notificationData={notificationData}
+                />
+                <SocketJs/>
+              </GlobalProvider>
+              </NavigationContainer>
+            
           </SafeAreaView>
         </TouchableWithoutFeedback>
-      
+       
     </SafeAreaProvider>
   );
 };

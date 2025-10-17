@@ -9,12 +9,12 @@ const storage = new MMKV();
 
  
      
+export const socketUrl = 'http://192.168.1.61:3003';
 export const apiUrl = () => {   
-
-  // const apiUrl = 'http://192.168.1.61/projects/codediffusion/hindibible/api/'; 
+  const apiUrl = 'http://192.168.1.61/projects/codediffusion/hindibible/api/'; 
   // const apiUrl = 'https://developershahrukh.in/demo/codediffusion/hindibible/api/'; 
   // const apiUrl = 'https://digitalnamo.com/azmal/2025/april/hindibible/api/'; 
-  const apiUrl = 'http://192.168.1.17/projects/hindibible/api/'; 
+  // const apiUrl = 'http://192.168.1.17/projects/hindibible/api/'; 
 
       
   const commurl = apiUrl;    
@@ -70,7 +70,7 @@ export const apiUrl = () => {
  
 export const postData = async (filedata, url, method, navigation, extraData, loaderShowHide=null, messageAlert=null) => {
 
-  // console.log(navigation)
+  // console.log('navigation')
   // return false;
   const deviceId = await DeviceInfo.getUniqueId();
   const deviceInfo = JSON.stringify({

@@ -50,40 +50,39 @@ export const GlobalProvider = ({ children }) => {
   const fetchAppSettingData = async () => { 
     try {
       const response = await postData({}, urls.appSetting, "GET", navigation, extraData);
-      setappSetting(JSON.parse(storage.getString('appSetting')));
-      if(storage.getString('user')) setuserDetail(JSON.parse(storage.getString('user'))); 
-      if(storage.getString('toekn')) setToken(JSON.parse(storage.getString('token'))); 
-      // setpaymentList(response.payment_setting);
-      
-      const paymentList = response.data.payment_setting;
-      
 
-      // Step 1: parse data JSON safely
-      const parsedList = paymentList.map(item => ({
-          ...item,
-          data: (() => {
-            try {
-              return JSON.parse(item.data);
-            } catch (e) {
-              return item.data;
-            }
-          })()
-        }));
-      
-        // Step 2: convert into object using `name` as key
-        const paymentByName = parsedList.reduce((acc, item) => {
-          acc[item.name] = item;
-          return acc;
-        }, {});
 
-        setpaymentDetail(paymentByName);
-      
-      
-      //   // ✅ Example usage
-      // console.log(paymentByName.PayPal); // shows Payumoney data
-      // console.log(paymentByName.Razorpay);  // shows Razorpay data
-      // // console.log(paymentByName.PayPal.data.key); // get nested key from parsed data
+      if(response.status==200)
+      {
+        setappSetting(JSON.parse(storage.getString('appSetting')));
+        if(storage.getString('user')) setuserDetail(JSON.parse(storage.getString('user'))); 
+        if(storage.getString('toekn')) setToken(JSON.parse(storage.getString('token'))); 
+        // setpaymentList(response.payment_setting);
+        
+        const paymentList = response.data.payment_setting;
+        
 
+        // Step 1: parse data JSON safely
+        const parsedList = paymentList.map(item => ({
+            ...item,
+            data: (() => {
+              try {
+                return JSON.parse(item.data);
+              } catch (e) {
+                return item.data;
+              }
+            })()
+          }));
+        
+          // Step 2: convert into object using `name` as key
+          const paymentByName = parsedList.reduce((acc, item) => {
+            acc[item.name] = item;
+            return acc;
+          }, {});
+
+          setpaymentDetail(paymentByName);
+      }
+      
 
 
       setisLoading(false)
