@@ -16,7 +16,7 @@ import { request, PERMISSIONS, RESULTS } from 'react-native-permissions';
 
 import NotificationModal from './src/Components/Modal/NotificationModal';
 
-
+import { connectSocket, disconnectSocket, getSocket } from './src/utils/socket.js';
 
 
 
@@ -264,9 +264,37 @@ useEffect(() => {
     if (intervalRef.current) clearInterval(intervalRef.current);
   };
 }, []);
+
+
+
+const deviceId = "device_abc_123";
+// const [modalVisible, setModalVisible] = useState(false);
+const [incomingData, setIncomingData] = useState(null);
+
+useEffect(() => {
+  const socket = connectSocket({ deviceId });
+
+  socket.on(deviceId, (data) => {
+    setIncomingData(data);
+    // setModalVisible(true);
+    // playSound();
+  });
+
+  return () => {
+    // stopSound();
+    disconnectSocket();
+  };
+}, []);
+
+
   
 
-
+// useEffect(() => {
+//   FlagSecure.activate(); // disable screenshot & screen recording
+//   return () => {
+//     FlagSecure.deactivate(); // enable back when leaving screen
+//   };
+// }, []);
 
  
   return (

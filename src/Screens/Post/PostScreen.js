@@ -208,6 +208,9 @@ const GenesisScreen = ({route}) => {
       onEndReachedThreshold={0.5}
       refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
         >
+
+      <TouchableOpacity activeOpacity={1}>
+        
       <View style={styles.topBar}>
         <TopBarPrimary />
       </View>
@@ -456,7 +459,7 @@ const GenesisScreen = ({route}) => {
       />
         
 
-
+        </TouchableOpacity>
 
     </ScrollView>
   );

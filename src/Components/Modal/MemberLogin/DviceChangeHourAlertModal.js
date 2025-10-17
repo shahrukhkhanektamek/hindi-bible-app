@@ -41,12 +41,19 @@ const DviceChangeHourAlertModal = ({ visible, onClose, data  }) => {
                     </Text>
                 </View>
                 
+                <GradiantButton
+                  title="OK"
+                  height="35"
+                  width="100%"
+                  gradientType="green"
+                  borderRadius={5}
+                  onPress={() => {
+                    onClose();
+                  }}
+                />
                 
               </View>
               
-              <TouchableOpacity style={styles.crossIcon} onPress={onClose}>
-                <Icon name="close" size={20} color="#fff" />
-              </TouchableOpacity>
             </View>
           </TouchableWithoutFeedback>
         </View>

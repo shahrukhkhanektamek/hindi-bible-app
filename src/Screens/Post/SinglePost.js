@@ -111,6 +111,7 @@ import {
         <ScrollView style={styles.container}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
         >
+        <TouchableOpacity activeOpacity={1}>
         {/* Top Bar */}
         <View style={styles.topBar}>
           <TopBarPrimary />
@@ -304,7 +305,7 @@ import {
         </View>
 
 
-
+        </TouchableOpacity>
 
        </ScrollView>
 
