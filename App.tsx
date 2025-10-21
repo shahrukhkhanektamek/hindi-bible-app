@@ -1,3 +1,4 @@
+import PrivacySnapshot from 'react-native-privacy-snapshot';
 import React, { useEffect, useRef, useState, useContext } from 'react';
 import { NavigationContainer, useFocusEffect } from '@react-navigation/native';
 
@@ -13,7 +14,7 @@ import { Alert, AppState, KeyboardAvoidingView, Keyboard, PermissionsAndroid, Pl
 import messaging from '@react-native-firebase/messaging';
 import firebase from '@react-native-firebase/app'; 
 import { request, PERMISSIONS, RESULTS } from 'react-native-permissions';
- 
+
  
 import NotificationModal from './src/Components/Modal/NotificationModal';
 
@@ -137,7 +138,7 @@ const App = () => {
   //         Alert.alert(
   //           'Notification Permission',
   //           'Permission is permanently denied. Please enable it manually in Settings > App Info > Notifications.',
-  //         );
+  //         ); 
   //       }
   //     } else {
   //       console.log('Notification permission not required for this Android version.');
@@ -285,12 +286,27 @@ useEffect(() => {
   getDeviceId()
 }, []);
 
-// useEffect(() => {
-//   FlagSecure.activate(); // disable screenshot & screen recording
-//   return () => {
-//     FlagSecure.deactivate(); // enable back when leaving screen
-//   };
-// }, []);
+
+
+
+useEffect(() => {
+  if (Platform.OS === 'ios' && PrivacySnapshot) {
+    // Enable snapshot protection
+    PrivacySnapshot.enabled(true);
+
+    const subscription = AppState.addEventListener('change', (state) => {
+      if (state === 'background') {
+        PrivacySnapshot.enabled(true);  // hide preview in app switcher
+      } else {
+        PrivacySnapshot.enabled(false);
+      }
+    });
+
+    return () => subscription.remove();
+  }
+}, []);
+
+
 
  
   return (
