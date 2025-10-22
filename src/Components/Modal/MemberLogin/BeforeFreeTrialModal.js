@@ -13,7 +13,7 @@ import GradiantButton from '../../Button/GradientButton';
 import { useNavigation } from '@react-navigation/native';
 import COLORS from '../../../Constants/Colors';
 
-const BeforeFreeTrialModal = ({ visible, onClose }) => {
+const BeforeFreeTrialModal = ({ visible, onClose, params }) => {
   const navigation = useNavigation();
 
   return (
@@ -50,7 +50,7 @@ const BeforeFreeTrialModal = ({ visible, onClose }) => {
                   borderRadius={5}
                   onPress={() => {
                     onClose();
-                    navigation.navigate('Login');
+                    navigation.navigate('Category', params);
                   }}
                 />
                 <GradiantButton

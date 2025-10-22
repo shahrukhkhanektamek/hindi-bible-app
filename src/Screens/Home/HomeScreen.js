@@ -83,7 +83,11 @@ const HomeScreen = () => {
           setisLoading(false);
           if(response.data.is_login==1)
           {
-            if(response.data.package.status==0 || response.data.package.status==2)
+            if(response.data.free_trial==1)
+            {
+              
+            }
+            else if(response.data.package.status==0 || response.data.package.status==2)
             {
               navigation.reset({
                 index: 0,

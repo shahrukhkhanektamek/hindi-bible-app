@@ -1,7 +1,7 @@
 import { ScrollView, StyleSheet, Text, View, RefreshControl, TouchableOpacity, Image } from 'react-native';
 import React, { useState, useEffect, useCallback, useContext } from 'react';
 import GradiantButton from '../../Components/Button/GradientButton.js';
-import { useNavigation } from '@react-navigation/native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import BACKGROUND_COLORS from '../../Constants/BackGroundColors.js';
 import COLORS from '../../Constants/Colors.js';
 import TopBarPrimary from '../../Components/TopBar/TopBarPrimary.js';
@@ -48,6 +48,12 @@ const LatestNewsScreen = () => {
     fetchData();
   }, []);
 
+  useFocusEffect(
+    useCallback(() => {
+      fetchData(); // when returning from details screen
+    }, [])
+  );
+
   if(isLoading) return <PageLoding />;
 
   return (
@@ -74,7 +80,13 @@ const LatestNewsScreen = () => {
           fontWeight="600"
           onPress={() => navigation.navigate('Home')}
         />
+        {
+        (userDetail)? 
         <LogoutButton />
+        :
+          <Text></Text>
+        }
+
         <GradiantButton
           title="Back"
           height="30"
@@ -100,28 +112,9 @@ const LatestNewsScreen = () => {
               <Image 
                 source={{ uri: item.image }}
                 style={styles.imageStyle}
-                resizeMode="cover" 
+                resizeMode="contain" 
               />
               </TouchableOpacity>
-            {/* {item.video_type === 1 ? (
-              <VideoPlayer
-                key={videoKey}
-                videoSource={item.video}
-                thumbnail={item.image}
-                frameSource={require('../../Assets/videoFrame.jpeg')}
-              />
-            ) : (
-              <WebView
-                key={videoKey}
-                style={styles.webviewVideo}
-                javaScriptEnabled
-                domStorageEnabled
-                allowsFullscreenVideo
-                source={{ uri: item.video_url }}
-                originWhitelist={['*']}
-                mediaPlaybackRequiresUserAction={false}
-              />
-            )} */}
           </View>
 
           {/* News Title */}

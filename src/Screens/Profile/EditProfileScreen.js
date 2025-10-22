@@ -175,6 +175,7 @@ const EditProfileScreen = () => {
           <TextInput style={styles.input} keyboardType="email-address"
           value={email}
           onChangeText={setEmail}
+          autoCapitalize="none"
            />
         </View>
 

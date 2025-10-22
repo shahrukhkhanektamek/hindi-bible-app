@@ -1,10 +1,11 @@
 import {
   StyleSheet, Text, View, TextInput, ScrollView,
-  TouchableOpacity, Image, KeyboardAvoidingView, Platform
+  TouchableOpacity, Image, KeyboardAvoidingView, Platform, Modal
 } from 'react-native';
 import React, { useState, useContext } from 'react';
 import { useNavigation } from '@react-navigation/native';
-import { launchImageLibrary } from 'react-native-image-picker';
+import { launchImageLibrary, launchCamera } from 'react-native-image-picker';
+import Icon from 'react-native-vector-icons/Ionicons';
 
 import TopBarPrimary from '../../Components/TopBar/TopBarPrimary.js';
 import GradiantButton from '../../Components/Button/GradientButton.js';
@@ -27,34 +28,30 @@ const RegisterScreen = ({ route }) => {
   const [selectedCountry, setSelectedCountry] = useState();
   const [imageUri, setImageUri] = useState(null);
   const [image, setImage] = useState(null);
+  const [modalVisible, setModalVisible] = useState(false); // modal state
 
   const show_case = route.params?.show_case;
 
   const handleRegister = () => {
-
-    if(!name)
-    {
+    if(!name) {
       extraData.alert.setAlertMessage("Enter name!");
       extraData.alert.setShowAlert(true);
       extraData.alert.setAlertType(0);
       return false;
     }
-    else if(!selectedCountry)
-    {
+    else if(!selectedCountry) {
       extraData.alert.setAlertMessage("Select country!");
       extraData.alert.setShowAlert(true);
       extraData.alert.setAlertType(0);
       return false;
     }
-    else if(!mobile)
-    {
+    else if(!mobile) {
       extraData.alert.setAlertMessage("Enter mobile no.!");
       extraData.alert.setShowAlert(true);
       extraData.alert.setAlertType(0);
       return false;
     }
-    else if(!email)
-    {
+    else if(!email) {
       extraData.alert.setAlertMessage("Enter email!");
       extraData.alert.setShowAlert(true);
       extraData.alert.setAlertType(0);
@@ -72,143 +69,183 @@ const RegisterScreen = ({ route }) => {
     navigation.navigate("UsernamePassword", { data: filedata });
   };
 
-  const pickImage = () => {
+  // Image picker function
+  const pickImage = (fromCamera = false) => {
     const options = { mediaType: 'photo', maxWidth: 1000, maxHeight: 1000, quality: 1 };
-    launchImageLibrary(options, async (response) => {
-      if (!response.didCancel && !response.errorCode) {
+    
+    const callback = async (response) => {
+      if (!response.didCancel && !response.errorCode && response.assets && response.assets.length > 0) {
         const uri = response.assets[0].uri;
         setImageUri(uri);
         const image64 = await convertToBase64(uri);
         setImage(image64);
       }
-    });
+    };
+
+    if (fromCamera) {
+      launchCamera(options, callback);
+    } else {
+      launchImageLibrary(options, callback);
+    }
+    setModalVisible(false);
   };
 
   return (
     <KeyboardAvoidingView
       style={{ flex: 1 }}
       behavior={Platform.OS === "ios" ? "padding" : "height"}
-      keyboardVerticalOffset={Platform.OS === "ios" ? 100 : 0} // header ki height ke hisab se adjust
+      keyboardVerticalOffset={Platform.OS === "ios" ? 100 : 0}
     >
       <ScrollView
         style={styles.container}
         contentContainerStyle={{ flexGrow: 1 }}
         keyboardShouldPersistTaps="handled"
       >
-        <View style={styles.topBar}>
-          <TopBarPrimary />
-        </View>
+        <TouchableOpacity activeOpacity={1}>
+          <View style={styles.topBar}>
+            <TopBarPrimary />
+          </View>
 
-        <View style={styles.button}>
-          <GradiantButton
-            title="Home"
-            height="35"
-            width="30%"
-            fontSize={16}
-            gradientType="yellow"
-            borderRadius={5}
-            onPress={() => navigation.navigate('Home')}
-          />
-        </View>
-
-        <View style={styles.formContainer}>
-          {/* Name */}
-          <View style={styles.inputGroup}>
-            <Text style={styles.label}>Your Name (आपका नाम)</Text>
-            <TextInput
-              style={styles.input}
-              value={name}
-              onChangeText={setName}
+          <View style={styles.button}>
+            <GradiantButton
+              title="Home"
+              height="35"
+              width="30%"
+              fontSize={16}
+              gradientType="yellow"
+              borderRadius={5}
+              onPress={() => navigation.navigate('Home')}
             />
           </View>
 
-          {/* Country */}
-          <View style={styles.inputGroup}>
-            <Text style={styles.label}>Rahne Ka Desh - Residing Country</Text>
-            <View style={styles.mobileInputContainer}>
-              <Coutries
-                style={styles.pickerFullWidth}
-                selectedCountry={selectedCountry}
-                setSelectedCountry={setSelectedCountry}
-                setCountryCode={setCountryCode}
-              />
-            </View>
-          </View>
-
-          {/* Mobile */}
-          <View style={styles.inputGroup}>
-            <Text style={styles.label}>Mobile (मोबाइल)</Text>
-            <View style={styles.mobileInputContainer}>
-              <View style={styles.pickerWrapper}>
-                <Text style={styles.pl5}>+{countryCode}</Text>
-              </View>
+          <View style={styles.formContainer}>
+            {/* Name */}
+            <View style={styles.inputGroup}>
+              <Text style={styles.label}>Your Name (आपका नाम)</Text>
               <TextInput
-                style={styles.mobileInput}
-                keyboardType="phone-pad"
-                value={mobile}
-                onChangeText={setMobile}
+                style={styles.input}
+                value={name}
+                onChangeText={setName}
               />
             </View>
+
+            {/* Country */}
+            <View style={styles.inputGroup}>
+              <Text style={styles.label}>Rahne Ka Desh - Residing Country</Text>
+              <View style={styles.mobileInputContainer}>
+                <Coutries
+                  style={styles.pickerFullWidth}
+                  selectedCountry={selectedCountry}
+                  setSelectedCountry={setSelectedCountry}
+                  setCountryCode={setCountryCode}
+                />
+              </View>
+            </View>
+
+            {/* Mobile */}
+            <View style={styles.inputGroup}>
+              <Text style={styles.label}>Mobile (मोबाइल)</Text>
+              <View style={styles.mobileInputContainer}>
+                <View style={styles.pickerWrapper}>
+                  <Text style={styles.pl5}>+{countryCode}</Text>
+                </View>
+                <TextInput
+                  style={styles.mobileInput}
+                  keyboardType="phone-pad"
+                  value={mobile}
+                  onChangeText={setMobile}
+                />
+              </View>
+            </View>
+
+            {/* Email */}
+            <View style={styles.inputGroup}>
+              <Text style={styles.label}>Email (ईमेल)</Text>
+              <TextInput
+                style={styles.input}
+                keyboardType="email-address"
+                autoCapitalize="none"
+                value={email}
+                onChangeText={setEmail}
+              />
+            </View>
+
+            {/* Image Picker */}
+            <View style={[styles.inputGroup, { marginBottom: 0 }]}>
+              <TouchableOpacity onPress={() => setModalVisible(true)}>
+                <View style={styles.imageUploadContent}>
+                  <Image
+                    source={require('../../Assets/profile-icon.png')}
+                    style={styles.profileIcon}
+                  />
+                  <Text style={styles.buttonText}>Set Profile Photo (Optional)</Text>
+                </View>
+              </TouchableOpacity>
+              {imageUri && (
+                <View style={styles.image}>
+                  <Image source={{ uri: imageUri }} style={styles.selectedImage} />
+                </View>
+              )}
+            </View>
+
+            {/* Modal */}
+            <Modal
+              transparent
+              animationType="slide"
+              visible={modalVisible}
+              onRequestClose={() => setModalVisible(false)}
+            >
+              <TouchableOpacity
+                style={styles.modalOverlay}
+                activeOpacity={1}
+                onPressOut={() => setModalVisible(false)}
+              >
+                <View style={styles.modalContent}>
+                  {/* Close Button */}
+                  <TouchableOpacity
+                    style={styles.modalCloseButton}
+                    onPress={() => setModalVisible(false)}
+                  >
+                    <Icon name="close" size={24} color="#000" />
+                  </TouchableOpacity>
+
+                  <TouchableOpacity style={styles.modalButton} onPress={() => pickImage(true)}>
+                    <Icon name="camera-outline" size={24} color="#000" style={{ marginRight: 10 }} />
+                    <Text style={styles.modalButtonText}>Camera</Text>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity style={styles.modalButton} onPress={() => pickImage(false)}>
+                    <Icon name="image-outline" size={24} color="#000" style={{ marginRight: 10 }} />
+                    <Text style={styles.modalButtonText}>Gallery</Text>
+                  </TouchableOpacity>
+                </View>
+              </TouchableOpacity>
+            </Modal>
+
+
           </View>
 
-          {/* Email */}
-          <View style={styles.inputGroup}>
-            <Text style={styles.label}>Email (ईमेल)</Text>
-            <TextInput
-              style={styles.input}
-              keyboardType="email-address"
-              value={email}
-              onChangeText={setEmail}
+          <View style={[styles.button, { marginBottom: 50 }]}>
+            <GradiantButton
+              title="NEXT"
+              height="35"
+              width="30%"
+              fontSize={16}
+              gradientType="orange"
+              borderRadius={5}
+              onPress={handleRegister}
             />
           </View>
-
-          {/* Image */}
-          <View style={[styles.inputGroup, { marginBottom: 0 }]}>
-            <TouchableOpacity onPress={pickImage}>
-              <View style={styles.imageUploadContent}>
-                <Image
-                  source={require('../../Assets/profile-icon.png')}
-                  style={styles.profileIcon}
-                />
-                <Text style={styles.buttonText}>Set Profile Photo (Optional)</Text>
-              </View>
-            </TouchableOpacity>
-            {imageUri && (
-              <View style={styles.image}>
-                <Image source={{ uri: imageUri }} style={styles.selectedImage} />
-              </View>
-            )}
-          </View>
-        </View>
-
-        <View style={[styles.button, { marginBottom: 50 }]}>
-          <GradiantButton
-            title="NEXT"
-            height="35"
-            width="30%"
-            fontSize={16}
-            gradientType="orange"
-            borderRadius={5}
-            onPress={handleRegister}
-          />
-        </View>
+        </TouchableOpacity>
       </ScrollView>
     </KeyboardAvoidingView>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: BACKGROUND_COLORS.primary,
-  },
-  topBar: {
-    marginTop: 25,
-    marginBottom: 16,
-  },
-  button: {
-    alignItems: 'center',
-  },
+  container: { flex: 1, backgroundColor: BACKGROUND_COLORS.primary },
+  topBar: { marginTop: 25, marginBottom: 16 },
+  button: { alignItems: 'center' },
   formContainer: {
     backgroundColor: BACKGROUND_COLORS.skyBlue,
     borderWidth: 1,
@@ -217,76 +254,30 @@ const styles = StyleSheet.create({
     marginVertical: 20,
     marginHorizontal: 20,
   },
-  inputGroup: {
-    marginBottom: 20,
-  },
-  label: {
-    color: COLORS.white,
-    fontSize: 14,
-    fontWeight: '400',
-    marginBottom: 5,
-    textAlign: 'center',
-  },
-  input: {
-    backgroundColor: BACKGROUND_COLORS.white,
-    borderRadius: 5,
-    padding: 10,
-    fontSize: 16,
-    color: COLORS.black,
-    height: 50,
-  },
-  mobileInputContainer: {
-    flexDirection: 'row',
-    backgroundColor: BACKGROUND_COLORS.white,
-    borderRadius: 5,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  pickerWrapper: {
-    width: 100,
-    borderRightWidth: 1,
-    borderRightColor: '#ccc',
-  },
-  pickerFullWidth: {
-    height: 50,
-    width: '100%',
-  },
-  mobileInput: {
-    flex: 1,
-    padding: 10,
-    fontSize: 16,
-    color: COLORS.black,
-  },
-  buttonText: {
-    color: COLORS.white,
-    fontSize: 14,
-    fontWeight: '400',
-  },
-  image: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-  },
-  selectedImage: {
-    width: 200,
-    height: 200,
-    marginTop: 30,
-    borderRadius: 10,
-    resizeMode: 'contain',
-  },
-  imageUploadContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  profileIcon: {
-    width: 50,
-    height: 50,
-    resizeMode: 'cover',
-    borderRadius: 16,
-    marginRight: 10,
-  },
-  pl5: {
-    paddingLeft: 10,
-  },
+  inputGroup: { marginBottom: 20 },
+  label: { color: COLORS.white, fontSize: 14, fontWeight: '400', marginBottom: 5, textAlign: 'center' },
+  input: { backgroundColor: BACKGROUND_COLORS.white, borderRadius: 5, padding: 10, fontSize: 16, color: COLORS.black, height: 50 },
+  mobileInputContainer: { flexDirection: 'row', backgroundColor: BACKGROUND_COLORS.white, borderRadius: 5, alignItems: 'center', justifyContent: 'center' },
+  pickerWrapper: { width: 100, borderRightWidth: 1, borderRightColor: '#ccc' },
+  pickerFullWidth: { height: 50, width: '100%' },
+  mobileInput: { flex: 1, padding: 10, fontSize: 16, color: COLORS.black },
+  buttonText: { color: COLORS.white, fontSize: 14, fontWeight: '400' },
+  image: { flexDirection: 'row', justifyContent: 'center' },
+  selectedImage: { width: 200, height: 200, marginTop: 30, borderRadius: 10, resizeMode: 'contain' },
+  imageUploadContent: { flexDirection: 'row', alignItems: 'center' },
+  profileIcon: { width: 50, height: 50, resizeMode: 'cover', borderRadius: 16, marginRight: 10 },
+  pl5: { paddingLeft: 10 },
+  modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'flex-end' },
+  modalContent: { backgroundColor: '#fff', padding: 20, borderTopRightRadius: 16, borderTopLeftRadius: 16 },
+  modalButton: { flexDirection: 'row', alignItems: 'center', paddingVertical: 15 },
+  modalButtonText: { fontSize: 16, color: '#000' },
+  modalCloseButton: {
+  position: 'absolute',
+  top: 10,
+  right: 10,
+  zIndex: 1,
+  padding: 5,
+},
 });
 
 export default RegisterScreen;

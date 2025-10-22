@@ -1,8 +1,8 @@
-import { ScrollView, StyleSheet, View, RefreshControl } from 'react-native';
+import { ScrollView, StyleSheet, View, RefreshControl, TouchableOpacity } from 'react-native';
 import React, { useState, useEffect, useCallback, useContext } from 'react';
 import TopBarPrimary from '../../Components/TopBar/TopBarPrimary.js';
 import GradiantButton from '../../Components/Button/GradientButton.js';
-import { useNavigation } from '@react-navigation/native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import BACKGROUND_COLORS from '../../Constants/BackGroundColors.js';
 import Button from '../../Components/Button/Button.js';
 import LogoutButton from '../../Components/LogoutButton.js';
@@ -36,6 +36,12 @@ const MainScreen = ({route}) => {
       setRefreshing(false); 
       fetchData(page);
     }, []);
+
+    useFocusEffect(
+      useCallback(() => {
+        fetchData(); // when returning from details screen
+      }, [])
+    );
  
     const fetchData = async () => { 
         try {
@@ -71,6 +77,8 @@ const MainScreen = ({route}) => {
     <ScrollView style={styles.container}
     refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
     >
+      <TouchableOpacity activeOpacity={1}>
+
       <View style={styles.topBar}>
         <TopBarPrimary />
       </View>
@@ -84,7 +92,7 @@ const MainScreen = ({route}) => {
           fontSize={15}
           onPress={() => navigation.navigate('Home')}
         />
-        {!show_case?(
+        {userDetail?(
           <LogoutButton />
         ):null
         }
@@ -192,6 +200,7 @@ const MainScreen = ({route}) => {
         
         
       </View>
+      </TouchableOpacity>
     </ScrollView>
   );
 };

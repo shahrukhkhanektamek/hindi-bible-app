@@ -1,8 +1,8 @@
-import { ScrollView, StyleSheet, View, RefreshControl } from 'react-native';
+import { ScrollView, StyleSheet, View, RefreshControl, TouchableOpacity } from 'react-native';
 import React, { useState, useEffect, useCallback, useContext } from 'react';
 import TopBarPrimary from '../../Components/TopBar/TopBarPrimary.js';
 import GradiantButton from '../../Components/Button/GradientButton.js';
-import { useNavigation } from '@react-navigation/native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import BACKGROUND_COLORS from '../../Constants/BackGroundColors.js';
 import Button from '../../Components/Button/Button.js';
 
@@ -54,6 +54,11 @@ const BibleStudyScreen = ({route}) => {
     useEffect(() => {
       fetchData()
     },[])
+    useFocusEffect(
+      useCallback(() => {
+        fetchData(); // when returning from details screen
+      }, [])
+    );
     if(isLoading)
     {
       return ( 
@@ -76,6 +81,7 @@ const BibleStudyScreen = ({route}) => {
     <ScrollView style={styles.container}
     refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
     >
+      <TouchableOpacity activeOpacity={1}>
       <View style={styles.topBar}>
         <TopBarPrimary />
       </View>
@@ -96,9 +102,9 @@ const BibleStudyScreen = ({route}) => {
           gradientType="blue"
           borderRadius={5}
           fontSize={15}
-          onPress={() => navigation.navigate('Category')}
+          onPress={() => navigation.navigate('Category', route.params)}
         />
-        {!show_case?(
+        {userDetail?(
           <LogoutButton />
         ):null
         }
@@ -149,6 +155,7 @@ const BibleStudyScreen = ({route}) => {
 
         
       </View>
+      </TouchableOpacity>
     </ScrollView>
   );
 };

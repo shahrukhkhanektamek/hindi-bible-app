@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { View, Text, TextInput, TouchableOpacity, FlatList, Modal, ActivityIndicator, StyleSheet } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, FlatList, Modal, ActivityIndicator, StyleSheet, Keyboard } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { useNavigation } from '@react-navigation/native';
 import { GlobalContext } from './GlobalContext';
@@ -72,9 +72,15 @@ const CountryPicker = ({ selectedCountry, setSelectedCountry, setCountryCode }) 
 
   // ✅ Country select karna
   const handleSelect = (country) => {
+    // Pehle keyboard dismiss karo
+    Keyboard.dismiss();
+
+    // Fir country select karo
     setSelectedCountryName(country.name);
     setSelectedCountry(country.id);
     setCountryCode(country.phonecode);
+
+    // Modal close karo
     setModalVisible(false);
   };
   
@@ -115,9 +121,12 @@ const CountryPicker = ({ selectedCountry, setSelectedCountry, setCountryCode }) 
                 data={filteredCountries}
                 keyExtractor={(item) => item.id}
                 renderItem={({ item }) => (
-                  <TouchableOpacity onPress={() => handleSelect(item)} 
-                    style={{ padding: 10, borderBottomWidth: 1, borderBottomColor: '#ddd' }}>
-                    <Text>{item.flag} {item.name} </Text>
+                  <TouchableOpacity
+                    activeOpacity={0.7}
+                    onPress={() => handleSelect(item)}
+                    style={{ padding: 10, borderBottomWidth: 1, borderBottomColor: '#ddd' }}
+                  >
+                    <Text>{item.flag} {item.name}</Text>
                   </TouchableOpacity>
                 )}
               />

@@ -97,6 +97,15 @@ const FeedbackScreen = () => {
 
       <View style={styles.button}>
         <GradiantButton
+          title="Home"
+          height="35"
+          width="25%"
+          gradientType="yellow"
+          borderRadius={5}
+          fontSize={16}
+          onPress={() => navigation.navigate('Home')}
+        />
+        <GradiantButton
           title="Back"
           height="35"
           width="25%"
@@ -165,7 +174,7 @@ const FeedbackScreen = () => {
 
       <View style={styles.bottomContainer}>
         <View style={styles.officeContainer}> 
-          <Text style={styles.heading}>Our Offices</Text>
+          <Text style={styles.heading}>Our Office</Text>
           <View style={styles.infoRow}>
             <Icon name="phone" size={24} color="#64B5DB" style={styles.icon} />
             <Text style={styles.infoText}><Text style={{ fontSize: 14, fontWeight: 600 }}>Phone:</Text> <Text onPress={() => openWhatsapp(appSetting.payment_detail.mobile, 'Hello!')}>+{appSetting.payment_detail.mobile}</Text> (WhatsApp/SMS only)</Text>
@@ -207,9 +216,10 @@ const styles = StyleSheet.create({
   },
   button: {
     flexDirection: 'row',
-    justifyContent: 'flex-end',
-    marginRight: 20,
+    justifyContent: 'space-evenly',
+    // marginRight: 20,
   },
+  
   formContainer: {
     backgroundColor: BACKGROUND_COLORS.deepBrown,
     borderRadius: 5,

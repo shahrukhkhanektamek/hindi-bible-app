@@ -118,6 +118,7 @@ const EditUsernamePasswordScreen = () => {
               secureTextEntry={!passwordVisible}
               value={password}
               onChangeText={setPassword}
+              autoCapitalize="none"
             />
             <TouchableOpacity style={styles.showButton} onPress={() => setPasswordVisible(!passwordVisible)}>
               <Icon name={passwordVisible ? 'eye' : 'eye-off'} size={25} color={COLORS.black} />

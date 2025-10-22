@@ -1,9 +1,9 @@
 /* eslint-disable react-native/no-inline-styles */
-import { ScrollView, StyleSheet, View, RefreshControl } from 'react-native';
+import { ScrollView, StyleSheet, View, RefreshControl, TouchableOpacity } from 'react-native';
 import React, { useState, useEffect, useCallback, useContext } from 'react';
 import TopBarPrimary from '../../Components/TopBar/TopBarPrimary.js';
 import GradiantButton from '../../Components/Button/GradientButton.js';
-import { useNavigation } from '@react-navigation/native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import BACKGROUND_COLORS from '../../Constants/BackGroundColors.js';
 import Button from '../../Components/Button/Button.js';
 
@@ -52,6 +52,11 @@ const OldTestamentScreen = ({route}) => {
     useEffect(() => {
       fetchData()
     },[])
+    useFocusEffect(
+      useCallback(() => {
+        fetchData(); // when returning from details screen
+      }, [])
+    );
     if(isLoading)
     {
       return ( 
@@ -65,6 +70,7 @@ const OldTestamentScreen = ({route}) => {
     <ScrollView style={styles.container}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
     >
+      <TouchableOpacity activeOpacity={1}>
       <View style={styles.topBar}>
         <TopBarPrimary />
       </View>
@@ -75,7 +81,7 @@ const OldTestamentScreen = ({route}) => {
           width="25%"
           gradientType="blue"
           borderRadius={5}
-          onPress={() => navigation.navigate('Category')}
+          onPress={() => navigation.navigate('Category', route.params)}
         />
         <GradiantButton
           title="Home"
@@ -85,7 +91,7 @@ const OldTestamentScreen = ({route}) => {
           borderRadius={5}
           onPress={() => navigation.navigate('Home')}
         />
-        {!show_case?(
+        {userDetail?(
           <LogoutButton />
         ):null
         }
@@ -133,6 +139,7 @@ const OldTestamentScreen = ({route}) => {
         </View>
 
       </View>
+      </TouchableOpacity>
     </ScrollView>
   );
 };

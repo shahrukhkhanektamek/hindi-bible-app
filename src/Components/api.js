@@ -129,8 +129,8 @@ const responseCheck = async (response, navigation, extraData, messageAlert) => {
     if(response.status==200 || response.status==400 || response.status==401) 
     {
       result = await response.json();      
-    } 
-    else{
+    }  
+    else{ 
       result = response; 
     }
     console.log("Response:", result); 
@@ -152,7 +152,14 @@ const responseCheck = async (response, navigation, extraData, messageAlert) => {
           storeLoginToken(result);
           extraData.setuserDetail(JSON.stringify(result?.data));
           extraData.setToken(result?.token);
-
+          if(result.data.free_trial==1)
+          {
+            navigation.reset({
+              index: 0,
+              routes: [{ name: 'Category' }], 
+            });
+            return result;
+          }
           if(result.package.status==0 || result.package.status==2)
           {
             navigation.reset({
@@ -165,7 +172,7 @@ const responseCheck = async (response, navigation, extraData, messageAlert) => {
           {
             navigation.reset({
               index: 0,
-              routes: [{ name: 'Home' }], 
+              routes: [{ name: 'Category' }], 
             });
             return result;
           }
@@ -203,7 +210,7 @@ const responseCheck = async (response, navigation, extraData, messageAlert) => {
           extraData.setToken(result?.token);
           navigation.reset({
             index: 0,
-            routes: [{ name: 'Home' }], 
+            routes: [{ name: 'Category' }], 
           });
           return result;
           

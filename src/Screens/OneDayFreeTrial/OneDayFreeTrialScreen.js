@@ -5,6 +5,7 @@ import GradiantButton from '../../Components/Button/GradientButton.js';
 import { useNavigation } from '@react-navigation/native';
 import COLORS from '../../Constants/Colors.js';
 import BACKGROUND_COLORS from '../../Constants/BackGroundColors.js';
+import Icon from 'react-native-vector-icons/FontAwesome';
 
 const OneDayFreeTrialScreen = () => {
   const navigation = useNavigation();
@@ -30,6 +31,7 @@ const OneDayFreeTrialScreen = () => {
         <View style={styles.section}>
           <Text style={styles.title}>Show Case</Text>
           <Text style={styles.text}>Sabhi years ka uploaded content dekhne ke liye neeche show case button par click kare.</Text>
+          <Icon name="long-arrow-down" style={{textAlign:'center',marginTop:20}} size={40} color="yellow" />
         </View>
       </View>
 
@@ -65,6 +67,7 @@ const styles = StyleSheet.create({
     backgroundColor: BACKGROUND_COLORS.darkRed,
     margin: 20,
     padding: 20,
+    paddingBottom:0,
     borderRadius: 5,
   },
   section: {

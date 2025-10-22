@@ -16,40 +16,56 @@ import LogoutButton from '../../Components/LogoutButton.js';
 
 const LatestNewsDetailScreen = () => {
   const navigation = useNavigation();
+
+  const { extraData } = useContext(GlobalContext);
+    const { appSetting, userDetail } = extraData;
+
   const route = useRoute();
   const { item } = route.params;  // single news item
   const { width } = useWindowDimensions();
   const [videoKey, setVideoKey] = useState(0);
 
   const renderVideo = () => {
-    switch (item.video_type) {
-      case 1: // Local or direct video
-        return (
-          <VideoPlayer
-            key={videoKey}
-            videoSource={item.video}
-            thumbnail={item.image}
-          />
-        );
-      case 2: // WebView video type
-      case 3:
-        return (
-          <WebView
-            key={videoKey}
-            style={styles.webviewVideo}
-            javaScriptEnabled
-            domStorageEnabled
-            allowsFullscreenVideo
-            mediaPlaybackRequiresUserAction={false}
-            source={{ uri: item.video_url }}
-          />
-        );
-      case 4: // Gumlet video
-        return <GumletVideo key={videoKey} videoId={item.video} />;
-      default:
-        return <Image source={{ uri: item.image }} style={styles.imageStyle} />;
-    }
-  };
+  switch (item.video_type) {
+    case 1: // Local or direct video
+      return (
+        <VideoPlayer
+          key={videoKey}
+          videoSource={item.video}
+          thumbnail={item.image}
+        />
+      );
+
+    case 2: // WebView-based video
+    case 3:
+      return (
+        <WebView
+          key={videoKey}
+          style={styles.webviewVideo}
+          javaScriptEnabled
+          domStorageEnabled
+          allowsFullscreenVideo
+          mediaPlaybackRequiresUserAction={false}
+          allowsInlineMediaPlayback={true}
+          originWhitelist={['*']}
+          source={{ uri: item.video_url }}
+          onMessage={(event) => handleWebMessage(event)}
+        />
+      );
+
+    case 4: // Gumlet video
+      return <GumletVideo key={videoKey} videoId={item.video} />;
+
+    default:
+      return (
+        <Image
+          source={{ uri: item.image }}
+          style={styles.imageStyle}
+        />
+      );
+  }
+};
+
 
   return (
     <ScrollView style={styles.container}>
@@ -69,7 +85,12 @@ const LatestNewsDetailScreen = () => {
           fontWeight="600"
           onPress={() => navigation.navigate('Home')}
         />
+        {
+        (userDetail)? 
         <LogoutButton />
+        :
+          <Text></Text>
+        }
         <GradiantButton
           title="Back"
           height="30"

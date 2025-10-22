@@ -2,7 +2,7 @@ import { ScrollView, StyleSheet, View, RefreshControl, Image, Text, TouchableOpa
 import React, { useState, useEffect, useCallback, useContext } from 'react';
 import TopBarPrimary from '../../Components/TopBar/TopBarPrimary.js';
 import GradiantButton from '../../Components/Button/GradientButton.js';
-import { useNavigation } from '@react-navigation/native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import BACKGROUND_COLORS from '../../Constants/BackGroundColors.js';
 import Video from '../../Components/Video/Video.js';
 
@@ -50,12 +50,7 @@ const GenesisScreen = ({route}) => {
 
   const [BeforeFreeTrialModalVisible, setBeforeFreeTrialModalVisible] = useState(false);
   const [PostPurchaseModalVisible, setPostPurchaseModalVisible] = useState(false);
-  const handleOpenView = () => {
-    if(show_case)
-    {
-      setBeforeFreeTrialModalVisible(true)
-    }
-  };
+ 
 
   
 
@@ -66,6 +61,7 @@ const GenesisScreen = ({route}) => {
   const userDetail = extraData.userDetail;
 
 
+  const [postKey, setpostKey] = useState(0);
   const [page, setPage] = useState(0);
   const [isLoading, setisLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -73,6 +69,8 @@ const GenesisScreen = ({route}) => {
   const [fileData, setfileData] = useState([]); 
   const onRefresh = useCallback(() => { 
     setPage(0);
+    setpostKey(prev => prev + 1);
+    setPlayingId(0)
     setRefreshing(true);
     setRefreshing(false);
     fetchData();
@@ -119,8 +117,14 @@ const GenesisScreen = ({route}) => {
       fetchData()
     },[page])
     const handleLoadMore = () => {
-      setPage(page + 1);      
+      setPage(page + 1);       
     };
+
+    useFocusEffect(
+      useCallback(() => {
+        fetchData(); // when returning from details screen
+      }, [])
+    );
 
     useEffect(() => {
       // postViewData()
@@ -128,6 +132,13 @@ const GenesisScreen = ({route}) => {
     
     const handleViewPost = async (item) => { 
       
+      if(show_case)
+      {
+        setBeforeFreeTrialModalVisible(true)
+        console.log(show_case)
+        return false;
+      }
+
       setpostId(item.id)
       if(item.is_paid==1)
       {
@@ -164,10 +175,16 @@ const GenesisScreen = ({route}) => {
       }
     };
 
-    const convertGoogleDriveLink = (url) => {
+    const convertGoogleDriveLink = (url) => { 
       // url = "https://drive.google.com/file/d/1p8U4Cp-vE5JZ6Sa6aLeaRtzT4MCJHD70/view?usp=sharing";
+      // const match = url.match(/[-\w]{25,}/);
+      // return match ? `https://drive.google.com/uc?export=media&id=${match[0]}` : url;
+
+      if(!url) return '';
       const match = url.match(/[-\w]{25,}/);
-      return match ? `https://drive.google.com/uc?export=download&id=${match[0]}` : url;
+      return match ? `https://drive.google.com/uc?export=media&id=${match[0]}` : url;
+      // return 'https://youtu.be/1miXSfMU2JE?si=BTzHcbuAxDd2EQDU';
+
     };
 
     if(isLoading)
@@ -231,9 +248,9 @@ const GenesisScreen = ({route}) => {
           gradientType="blue"
           borderRadius={5}
           fontSize={15}
-          onPress={() => navigation.navigate('Category')}
+          onPress={() => navigation.navigate('Category', route.params)}
         />
-        {!show_case?(
+        {userDetail?(
           <LogoutButton />
         ):null
         }
@@ -270,7 +287,9 @@ const GenesisScreen = ({route}) => {
           <View style={[styles.itemContainer]} key={item.id}>
             <React.Fragment >
               {(item.post_type==1) ? ( 
-                <View style={[styles.videoFrame]}>
+                <View style={[styles.videoFrame]}
+                key={postKey}
+                >
                   <TouchableOpacity 
                   style={styles.imageWrapper}
                   onPress={() =>handleViewPost(item)}
@@ -284,6 +303,7 @@ const GenesisScreen = ({route}) => {
                 
                 <View style={styles.pdfWrapper}>
                     <AudioPlayer
+                        key={postKey}
                         id={item.id}
                         chapterTitle={item?.chapter}
                         source={{uri:convertGoogleDriveLink(item.audio)}} 
@@ -297,7 +317,7 @@ const GenesisScreen = ({route}) => {
                 </View>
               
               ) : (item.post_type==3) ? ( 
-                <View style={styles.imageWrapper}>
+                <View style={styles.imageWrapper} key={postKey}>
                   <View style={styles.imageContainer}>
                     <TouchableOpacity onPress={() =>handleViewPost(item)}>
                       <Image source={{uri:item.image}} style={styles.image} />
@@ -306,7 +326,7 @@ const GenesisScreen = ({route}) => {
                 </View>
               
               ) : (item.post_type==6) ? ( 
-                <View style={styles.imageWrapper}>
+                <View style={styles.imageWrapper} key={postKey}>
                   <View style={styles.imageContainer}>
                     <Image source={{uri:item.image}} style={styles.image} />
                     <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
@@ -331,7 +351,7 @@ const GenesisScreen = ({route}) => {
                 </View>
 
               ) : (item.post_type==4) ? ( 
-                <View style={styles.pdfWrapper}>  
+                <View style={styles.pdfWrapper} key={postKey}>  
                   <TouchableOpacity 
                   onPress={() =>handleViewPost(item)}>
                       <Image source={{uri:item.image}} style={styles.image} />
@@ -346,7 +366,7 @@ const GenesisScreen = ({route}) => {
 
               ) : (item.post_type==5) ? ( 
                 <TouchableOpacity 
-                onPress={() =>handleViewPost(item)}>
+                onPress={() =>handleViewPost(item)} key={postKey}> 
                   <Image source={{uri:item.image}} style={styles.image} />
                   {/* <Article
                     imageSource={{uri:item.image}}
@@ -361,7 +381,7 @@ const GenesisScreen = ({route}) => {
 
             {(item.description && item.post_type!=1)? (
               <View style={styles.descriptionContainer}>
-                
+                {/* <Text>{item.description}</Text> */}
                 <MyHTMLViewer  
                   htmlContent ={item.description}
                 />
@@ -369,7 +389,7 @@ const GenesisScreen = ({route}) => {
               ):null
             }
              
-            {(item.is_paid==1)?(
+            {(item.is_paid==1 && userDetail)?(
               <TouchableOpacity onPress={() =>handlePay(item.id)} style={[styles.paidStatus]}>
                 <GradientButton
                   title="Pay"
@@ -450,6 +470,7 @@ const GenesisScreen = ({route}) => {
       <BeforeFreeTrialModal
         visible={BeforeFreeTrialModalVisible}
         onClose={() => setBeforeFreeTrialModalVisible(false)}
+        params={route.params}
       />
         
       <PostPurchaseModal 

@@ -1,143 +1,194 @@
 /* eslint-disable no-extra-semi */
-import React, { useEffect, useRef, useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Linking } from 'react-native';
-import Icon from 'react-native-vector-icons/MaterialIcons';
-import FontAwesome from 'react-native-vector-icons/FontAwesome';
-import BACKGROUND_COLORS from '../../Constants/BackGroundColors';
-import Video from 'react-native-video';
-import formatTime from '../../Helper/formatTime';
-
-
-
+import React, { useEffect, useRef, useState } from "react";
+import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import Slider from "@react-native-community/slider";
+import Icon from "react-native-vector-icons/MaterialIcons";
+import Video from "react-native-video";
+import BACKGROUND_COLORS from "../../Constants/BackGroundColors";
+import formatTime from "../../Helper/formatTime";
 
 const AudioPlayer = ({
   id,
   playingId,
   setPlayingId,
-  title = 'Unknown Title...',
-  artist = '',
-  description = '',
-  chapterTitle,
+  title = "Unknown Title...",
+  artist = "",
   source,
   onEnd,
 }) => {
   const audioRef = useRef(null);
   const [duration, setDuration] = useState(0);
   const [currentTime, setCurrentTime] = useState(0);
-
-  
+  const [isSeeking, setIsSeeking] = useState(false);
+  const [seekTime, setSeekTime] = useState(0);
+  const [playbackRate, setPlaybackRate] = useState(1.0);
+  const [pausedTime, setPausedTime] = useState(0); // 👈 Added
 
   const isPlaying = playingId === id;
 
+  // 🧠 Detect if it's a video link (ignore video)
+  const isVideoUrl =
+    typeof source === "string" &&
+    (source.includes("youtube.com") ||
+      source.includes("youtu.be") ||
+      source.endsWith(".mp4") ||
+      source.endsWith(".mkv") ||
+      source.endsWith(".mov") ||
+      source.endsWith(".avi"));
+
+  const videoProps = isVideoUrl
+    ? { ignoreVideo: true }
+    : { audioOnly: true };
+
+  // 🧩 FIX: Resume from paused time, not reset
   useEffect(() => {
-    if (!isPlaying) {
-      setCurrentTime(0);
+    if (isPlaying && audioRef.current && pausedTime > 0) {
+      // Resume from where it was paused
+      audioRef.current.seek(pausedTime);
     }
   }, [isPlaying]);
 
   const togglePlayPause = () => {
     if (isPlaying) {
+      // Pausing
+      setPausedTime(currentTime); // Save current time
       setPlayingId(null);
     } else {
+      // Resuming
       setPlayingId(id);
-      // agar dubara same audio play kare to 0 se start ho
-      setTimeout(() => {
-        if (audioRef.current) {
-          audioRef.current.seek(0);
-        }
-      }, 100);
     }
   };
 
+  const toggleSpeed = () => {
+    if (playbackRate === 1) setPlaybackRate(1.5);
+    else if (playbackRate === 1.5) setPlaybackRate(2);
+    else setPlaybackRate(1);
+  };
+
+  const onSeekStart = () => setIsSeeking(true);
+  const onSeekComplete = (value) => {
+    setIsSeeking(false);
+    setCurrentTime(value);
+    setPausedTime(value);
+    audioRef.current.seek(value);
+  };
+  const onSliding = (value) => setSeekTime(value);
+
   return (
-    <View style={styles.audioWrapper}>
-      <View style={styles.topSection}>
-        <Video
-          key={isPlaying ? id + "-playing" : id + "-stopped"}  // 🔴 force remount
-          ref={audioRef}
-          source={source}
-          audioOnly={true}
-          paused={!isPlaying}
-          onLoad={(data) => setDuration(data.duration)}
-          onProgress={(data) => setCurrentTime(data.currentTime)}
-          onError={(e) => console.log('Audio Error:', e)}
-          onEnd={() => {
-            console.log('Audio Finished:', id);
-            if (onEnd) onEnd(id);
-          }}
-        />
-        <TouchableOpacity style={styles.leftSection} onPress={togglePlayPause}>
+    <View style={styles.container}>
+      {/* Hidden Audio Player */}
+      <Video
+        ref={audioRef}
+        source={typeof source === "string" ? { uri: source } : source}
+        paused={!isPlaying}
+        rate={playbackRate}
+        onLoad={(data) => setDuration(data.duration)}
+        onProgress={(data) => {
+          if (!isSeeking) setCurrentTime(data.currentTime);
+        }}
+        onEnd={() => {
+          if (onEnd) onEnd(id);
+          setPlayingId(null);
+          setCurrentTime(0);
+          setPausedTime(0);
+        }}
+        onError={(e) => console.log("Audio Error:", e)}
+        {...videoProps}
+      />
+
+      {/* Info Section */}
+      <View style={styles.infoRow}>
+        <TouchableOpacity onPress={togglePlayPause}>
           <Icon
-            name={isPlaying ? 'pause-circle-filled' : 'play-circle-filled'}
-            size={50}
-            color="#71b5e8"
+            name={isPlaying ? "pause-circle-filled" : "play-circle-filled"}
+            size={55}
+            color="#2196F3"
           />
         </TouchableOpacity>
 
-        <View style={styles.middleSection}>
-          <Text style={styles.audioTitle}>{title}</Text>          
-          <Text style={styles.audioDuration}>
-            {formatTime(currentTime)} / {formatTime(duration)}
+        <View style={styles.textSection}>
+          <Text style={styles.title} numberOfLines={1}>
+            {title}
           </Text>
-          {(artist)? (
-            <Text style={styles.artistName}>{artist}</Text>
-            ):null
-          }
-          
-
-          
-
+          {artist ? <Text style={styles.artist}>{artist}</Text> : null}
         </View>
+
+        <TouchableOpacity onPress={toggleSpeed} style={styles.speedButton}>
+          <Text style={styles.speedText}>{playbackRate}x</Text>
+        </TouchableOpacity>
       </View>
 
-      
+      {/* Progress Section */}
+      <View style={styles.progressSection}>
+        <Text style={styles.time}>{formatTime(currentTime)}</Text>
+        <Slider
+          style={styles.slider}
+          minimumValue={0}
+          maximumValue={duration}
+          value={isSeeking ? seekTime : currentTime}
+          minimumTrackTintColor="#2196F3"
+          maximumTrackTintColor="#ccc"
+          thumbTintColor="#2196F3"
+          onSlidingStart={onSeekStart}
+          onValueChange={onSliding}
+          onSlidingComplete={onSeekComplete}
+        />
+        <Text style={styles.time}>{formatTime(duration)}</Text>
+      </View>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  audioWrapper: {
+  container: {
     backgroundColor: BACKGROUND_COLORS.white,
-    padding: 5,
+    borderRadius: 10,
+    padding: 10,
+    // marginVertical: 5,
+    // elevation: 2,
   },
-  topSection: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+  infoRow: {
+    flexDirection: "row",
+    alignItems: "center",
   },
-  leftSection: {
-    padding: 0,
-  },
-  middleSection: {
+  textSection: {
     flex: 1,
     marginLeft: 10,
   },
-  rightSection: {
-    padding: 10,
-    paddingRight: 0,
-  },
-  bottomSection: {
-    flexDirection: 'row',
-    marginTop: 16,
-    justifyContent: 'space-between',
-    paddingHorizontal: 10,
-  },
-  audioTitle: {
+  title: {
     fontSize: 18,
-    fontWeight: '500',
-    color: '#4470bf',
+    fontWeight: "bold",
+    color: "#333",
   },
-  artistName: {
-    fontSize: 16,
-    color: '#333',
+  artist: {
+    fontSize: 15,
+    color: "#666",
   },
-  audioDuration: {
+  progressSection: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginTop: 5,
+  },
+  slider: {
+    flex: 1,
+    marginHorizontal: 8,
+  },
+  time: {
+    fontSize: 13,
+    color: "#555",
+    width: 45,
+    textAlign: "center",
+  },
+  speedButton: {
+    backgroundColor: "#2196F3",
+    borderRadius: 8,
+    paddingVertical: 4,
+    paddingHorizontal: 8,
+  },
+  speedText: {
+    color: "#fff",
     fontSize: 14,
-    color: '#999',
-  },
-  chapterTitle: {
-    fontSize: 14,
-    fontWeight: '500',
-    color: '#5d5cd7',
+    fontWeight: "bold",
   },
 });
 

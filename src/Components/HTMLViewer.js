@@ -21,17 +21,23 @@ export default function MyHTMLViewer({ htmlContent }) {
   };
 
   return (
+    // <RenderHTML
+    //   contentWidth={width}
+    //   source={{ html: htmlContent }}
+    //   baseStyle={styles.description} 
+    //   tagsStyles={tagsStyles}
+    //   renderersProps={{ 
+    //     a: {
+    //       onPress: handleLinkPress, // <-- yahan dena hoga
+    //     },
+    //   }}
+    // />
     <RenderHTML
-      contentWidth={width}
-      source={{ html: htmlContent }}
-      baseStyle={styles.description} 
-      tagsStyles={tagsStyles}
-      renderersProps={{ 
-        a: {
-          onPress: handleLinkPress, // <-- yahan dena hoga
-        },
-      }}
-    />
+          contentWidth={width}
+          source={{ html: htmlContent }}
+          baseStyle={styles.description}
+          tagsStyles={tagsStyles}
+        />
   );
 }
 

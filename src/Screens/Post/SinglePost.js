@@ -49,6 +49,7 @@ import {
   
     const { extraData } = useContext(GlobalContext);
     const appSetting = extraData.appSetting;
+    const userDetail = extraData.userDetail;
   
     const videoHeight = (Dimensions.get("window").width * 9) / 16;
     
@@ -135,16 +136,12 @@ import {
             gradientType="blue"
             borderRadius={5}
             fontSize={15}
-            onPress={() => navigation.navigate("Category")}
+            onPress={() => navigation.navigate('Category', route.params)}
           />
-          <GradiantButton
-            title="Log Out"
-            height="30"
-            width="20%"
-            gradientType="red"
-            borderRadius={5}
-            fontSize={15}
-          />
+          {userDetail?(
+            <LogoutButton />
+          ):null
+          }
           <GradiantButton
             title="Back"
             height="30"
