@@ -156,7 +156,7 @@ const getExchangeRate = async () => {
 
 
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView keyboardShouldPersistTaps="handled" style={styles.container}>
       <View style={styles.topBar}>
         <TopBarPrimary />
       </View>

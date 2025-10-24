@@ -24,7 +24,11 @@ const UsernamePasswordScreen = ({route}) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');  
 
-  const handleRegister = async () => {
+
+  
+
+
+  const handleRegister = async () => {   
     
     if(!username)
     {
@@ -61,7 +65,7 @@ const UsernamePasswordScreen = ({route}) => {
 
 
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView style={styles.container} keyboardShouldPersistTaps="handled" >
       <View style={styles.topBar}>
         <TopBarPrimary />
       </View>

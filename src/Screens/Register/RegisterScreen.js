@@ -32,8 +32,32 @@ const RegisterScreen = ({ route }) => {
 
   const show_case = route.params?.show_case;
 
+  const isValidEmail = (email) => {
+    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return regex.test(email);
+  };
+  const isValidPhone = (phone) => {
+    const regex = /^\+?[0-9]{6,15}$/; // +countrycode optional, 6–15 digits allowed
+    return regex.test(phone);
+  };
+
   const handleRegister = () => {
-    if(!name) {
+
+    if(!isValidEmail(email))
+    {
+      extraData.alert.setAlertMessage("Enter valid email!");
+      extraData.alert.setShowAlert(true);
+      extraData.alert.setAlertType(0);
+      return false;
+    }
+    else if(!isValidPhone(mobile))
+    {
+      extraData.alert.setAlertMessage("Enter valid mobile!");
+      extraData.alert.setShowAlert(true);
+      extraData.alert.setAlertType(0);
+      return false;
+    }
+    else if(!name) {
       extraData.alert.setAlertMessage("Enter name!");
       extraData.alert.setShowAlert(true);
       extraData.alert.setAlertType(0);

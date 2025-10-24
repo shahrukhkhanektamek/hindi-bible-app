@@ -118,6 +118,7 @@ const CountryPicker = ({ selectedCountry, setSelectedCountry, setCountryCode }) 
               <ActivityIndicator size="large" color="#000" />
             ) : (
               <FlatList style={[styles.options]}
+                keyboardShouldPersistTaps="handled"
                 data={filteredCountries}
                 keyExtractor={(item) => item.id}
                 renderItem={({ item }) => (

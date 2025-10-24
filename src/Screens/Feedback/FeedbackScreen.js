@@ -89,14 +89,14 @@ const FeedbackScreen = () => {
   };
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
+    <ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={styles.container}>
       <TouchableOpacity activeOpacity={1}>
       <View style={styles.topBar}>
         <TopBarPrimary />
       </View>
 
       <View style={styles.button}>
-        <GradiantButton
+        <GradiantButton 
           title="Home"
           height="35"
           width="25%"

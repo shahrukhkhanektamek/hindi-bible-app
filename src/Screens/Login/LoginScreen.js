@@ -1,5 +1,5 @@
 /* eslint-disable react-native/no-inline-styles */
-import { StyleSheet, Text, View, TextInput, TouchableOpacity, ScrollView } from 'react-native';
+import { StyleSheet, Text, View, TextInput, TouchableOpacity, ScrollView, Alert, TouchableWithoutFeedback, Keyboard } from 'react-native';
 import React, { useContext, useEffect, useState } from 'react';
 import Icon from 'react-native-vector-icons/Ionicons';
 import TopBarPrimary from '../../Components/TopBar/TopBarPrimary.js';
@@ -7,7 +7,6 @@ import GradiantButton from '../../Components/Button/GradientButton.js';
 import { useNavigation } from '@react-navigation/native';
 import COLORS from '../../Constants/Colors.js';
 import BACKGROUND_COLORS from '../../Constants/BackGroundColors.js';
-
 
 import DeviceChange from '../../Components/Modal/MemberLogin/DviceChangeAlertModal';
 import DviceChangeHour from '../../Components/Modal/MemberLogin/DviceChangeHourAlertModal';
@@ -19,91 +18,95 @@ import { GlobalContext } from '../../Components/GlobalContext';
 import { postData, apiUrl } from '../../Components/api';
 import DeviceInfo from 'react-native-device-info';
 import { logoutDevice } from '../../Components/Socket/socketService.js';
-const urls=apiUrl();
+const urls = apiUrl();
 
 const LoginScreen = () => {
-
   const { extraData } = useContext(GlobalContext);
+  const navigation = useNavigation();
 
-  const navigation = useNavigation(); 
   const [passwordVisible, setPasswordVisible] = useState(false);
-
-
   const [isDeviceChangeModalVisible, setIsDeviceChangeModalVisible] = useState(false);
   const [isDeviceChangeHourModalVisible, setIsDeviceChangeHourModalVisible] = useState(false);
   const [username, setUsername] = useState('');
-  const [password, setPassword] = useState(''); 
-  const [responseData, setresponseData] = useState(''); 
-
-
+  const [password, setPassword] = useState('');
+  const [rememberMe, setRememberMe] = useState(false);
+  const [responseData, setresponseData] = useState('');
   const [deviceId, setdeviceId] = useState();
-  const getDeviceId = async () => { const deviceIdTemp = await DeviceInfo.getUniqueId(); setdeviceId(deviceIdTemp); }
+
+  const getDeviceId = async () => {
+    const deviceIdTemp = await DeviceInfo.getUniqueId();
+    setdeviceId(deviceIdTemp);
+  };
+
   useEffect(() => {
-    getDeviceId()
-    
+    getDeviceId();
+
+    // ✅ Retrieve saved credentials from MMKV
+    const savedUsername = storage.getString('savedUsername');
+    const savedPassword = storage.getString('savedPassword');
+    const savedRemember = storage.getString('rememberMe');
+
+    if (savedRemember === 'true' && savedUsername && savedPassword) {
+      setUsername(savedUsername);
+      setPassword(savedPassword);
+      setRememberMe(true);
+    }
   }, []);
-
-
-  // extraData = Object.assign(extraData, {"user":{
-  //   "setUsername":setUsername,
-  //   "setPassword":setPassword,
-  // },});
 
   const handleLogin = async () => {
     if (!username || !password) {
       Alert.alert('Error', 'Please enter username and password');
       return;
     }
+
+    // ✅ Save credentials if rememberMe checked
+    if (rememberMe) {
+      storage.set('savedUsername', username);
+      storage.set('savedPassword', password);
+      storage.set('rememberMe', 'true');
+    } else {
+      storage.delete('savedUsername');
+      storage.delete('savedPassword');
+      storage.set('rememberMe', 'false');
+    }
+
     const filedata = {
-      "username":username,
-      "password":password,
-      "firebase_token":storage.getString('firebaseToken')
+      username: username,
+      password: password,
+      firebase_token: storage.getString('firebaseToken'),
     };
-    const response = await postData(filedata, urls.login,"POST", navigation,extraData);
+
+    const response = await postData(filedata, urls.login, 'POST', navigation, extraData);
     setresponseData(response.data);
-    if(response.action!='login')
-    {
-      if(response.status==403)
-      {
-        setIsDeviceChangeModalVisible(true)
-      }
-      else
-      {
-        setIsDeviceChangeHourModalVisible(true)
+
+    if (response.action != 'login') {
+      if (response.status == 403) {
+        setIsDeviceChangeModalVisible(true);
+      } else {
+        setIsDeviceChangeHourModalVisible(true);
       }
     }
   };
-
 
   const handleProceed = async () => {
     const filedata = {
-      "username":username,
-      "password":password
+      username: username,
+      password: password,
     };
-    const response = await postData(filedata, urls.proceedLogin,"POST", navigation,extraData);
+    const response = await postData(filedata, urls.proceedLogin, 'POST', navigation, extraData);
     setresponseData(response.data);
-    if(response.status==200)
-    {
-      setIsDeviceChangeModalVisible(false)
+    if (response.status == 200) {
+      setIsDeviceChangeModalVisible(false);
       logoutDevice(response.data.oldDeviceId);
       navigation.reset({
         index: 0,
-        routes: [{ name: 'Home' }], 
-      }); 
-    }
-    else
-    {
-
+        routes: [{ name: 'Home' }],
+      });
     }
   };
 
-
-
-
-
-
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView keyboardShouldPersistTaps="handled" style={[styles.container]}>
       <View style={styles.topBar}>
         <TopBarPrimary />
       </View>
@@ -121,7 +124,6 @@ const LoginScreen = () => {
       </View>
 
       <View style={styles.formContainer}>
-      {/* (अकाउंट बनाइये) */}
         <Text style={styles.formTitle}>Login Account </Text>
 
         <View style={styles.inputGroup}>
@@ -130,6 +132,7 @@ const LoginScreen = () => {
             style={styles.input}
             value={username}
             onChangeText={setUsername}
+            autoCapitalize="none"
           />
         </View>
 
@@ -143,11 +146,25 @@ const LoginScreen = () => {
               onChangeText={setPassword}
               autoCapitalize="none"
             />
-            <TouchableOpacity style={styles.showButton} onPress={() => setPasswordVisible(!passwordVisible)}>
+            <TouchableOpacity
+              style={styles.showButton}
+              onPress={() => setPasswordVisible(!passwordVisible)}>
               <Icon name={passwordVisible ? 'eye' : 'eye-off'} size={25} color={COLORS.black} />
             </TouchableOpacity>
           </View>
         </View>
+
+        {/* ✅ Remember Me Checkbox */}
+        <TouchableOpacity
+          onPress={() => setRememberMe(!rememberMe)}
+          style={{ flexDirection: 'row', alignItems: 'center', marginTop: 10 }}>
+          <Icon
+            name={rememberMe ? 'checkbox-outline' : 'square-outline'}
+            size={22}
+            color={COLORS.white}
+          />
+          <Text style={{ color: COLORS.white, marginLeft: 8, fontSize: 14 }}>Remember Me</Text>
+        </TouchableOpacity>
       </View>
 
       <View style={[styles.button, { marginBottom: 20 }]}>
@@ -162,22 +179,17 @@ const LoginScreen = () => {
         />
       </View>
 
-
       <DeviceChange
         visible={isDeviceChangeModalVisible}
         onClose={() => setIsDeviceChangeModalVisible(false)}
         proceed={handleProceed}
       />
 
-
       <DviceChangeHour
         visible={isDeviceChangeHourModalVisible}
         onClose={() => setIsDeviceChangeHourModalVisible(false)}
         data={responseData}
       />
-
-
-
     </ScrollView>
   );
 };
