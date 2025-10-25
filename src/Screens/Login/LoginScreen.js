@@ -127,7 +127,7 @@ const LoginScreen = () => {
         <Text style={styles.formTitle}>Login Account </Text>
 
         <View style={styles.inputGroup}>
-          <Text style={styles.label}>USERNAME</Text>
+          <Text style={styles.label}>USERNAME <Text style={{color:COLORS.red}}>*</Text></Text>
           <TextInput
             style={styles.input}
             value={username}
@@ -137,7 +137,7 @@ const LoginScreen = () => {
         </View>
 
         <View style={styles.inputGroup}>
-          <Text style={styles.label}>PASSWORD</Text>
+          <Text style={styles.label}>PASSWORD <Text style={{color:COLORS.red}}>*</Text></Text>
           <View style={styles.passwordInputContainer}>
             <TextInput
               style={styles.input}

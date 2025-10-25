@@ -7,16 +7,18 @@ import TopBarPrimary from '../../Components/TopBar/TopBarPrimary.js';
 import COLORS from '../../Constants/Colors.js';
 import BACKGROUND_COLORS from '../../Constants/BackGroundColors.js';
 import VideoPlayer from '../../Components/Video/VideoPlayer.js';
-import Button from '../../Components/Button/Button.js'; 
+import Button from '../../Components/Button/Button.js';  
 import BeforeRegistrationModal from '../../Components/Modal/MemberLogin/BeforeRegistrationModal.js';
 import AfterRegistrationModal from '../../Components/Modal/MemberLogin/AfterRegistrationModal.js';
 import FreeTrialRuningModal from '../../Components/Modal/MemberLogin/FreeTrialRuningModal.js';
 import FreeTrialExpireModal from '../../Components/Modal/MemberLogin/FreeTrialExpireModal.js';
 import PackageExpireModal from '../../Components/Modal/MemberLogin/PackageExpireModal.js';
+
+import UniversalPlayer from '../../Components/Video/UniversalPlayer/UniversalPlayer';
  
 import Logout from '../../Components/Button/Logout';
 
-import PageLoding from '../../Components/PageLoding.js';
+import PageLoding from '../../Components/PageLoding.js'; 
 import { postData, apiUrl } from '../../Components/api'; 
 const urls=apiUrl();
 
@@ -177,31 +179,31 @@ const HomeScreen = () => {
     };
 
 
- useEffect(() => {
-  Animated.loop(
-    Animated.sequence([
-      Animated.timing(opacity, {
-        toValue: 0,
-        duration: 500,
-        useNativeDriver: true,
-      }),
-      Animated.timing(opacity, {
-        toValue: 1,
-        duration: 500,
-        useNativeDriver: true,
-      }),
-    ])
-  ).start();
-}, [opacity]);
+    useEffect(() => {
+      Animated.loop(
+        Animated.sequence([
+          Animated.timing(opacity, {
+            toValue: 0,
+            duration: 500,
+            useNativeDriver: true,
+          }),
+          Animated.timing(opacity, {
+            toValue: 1,
+            duration: 500,
+            useNativeDriver: true,
+          }),
+        ])
+      ).start();
+    }, [opacity]);
 
-  useEffect(() => {
-    fetchSettingData2()
-  },[])
-  if (isLoading) {
-    return (
-        <PageLoding />          
-    );
-  }
+    useEffect(() => {
+      fetchSettingData2()
+    },[])
+    if (isLoading) {
+      return (
+          <PageLoding />          
+      );
+    }
 
   const videoHeight = (Dimensions.get("window").width * 9) / 16;
   return (
@@ -280,19 +282,26 @@ const HomeScreen = () => {
           backgroundColor={BACKGROUND_COLORS.darkRed}
           color="#ffff00"
           borderRadius={5}
-          fontSize={15}
+          fontSize={15} 
           fontWeight="500"
           borderColor="#ffff00"
           borderWidth={4}
         />
       </View>
-
+ 
       <View style={styles.videoPlayer}>
-     
+           
+      <UniversalPlayer
+        key={videoKey}
+        style={styles.webviewVideo}
+        type={appSetting.intro_video.type}               // "youtube", "vimeo", "gumlet", "gdrive", "video", "audio"
+        source={appSetting.intro_video.video_url} // video ID or URL
+        thumbnail={appSetting.intro_video.image} // optional
+      />
           
-        {appSetting.intro_video.type == 1 ? (                        
+        {/* {appSetting.intro_video.type == 1 ? (                        
             <VideoPlayer
-            key={videoKey}
+            key={videoKey} 
             videoSource={appSetting.intro_video.video}
             thumbnail={appSetting.intro_video.image}
             frameSource={require('../../Assets/videoFrame.jpeg')}
@@ -327,7 +336,7 @@ const HomeScreen = () => {
             <GumletVideo key={videoKey} videoId={appSetting.intro_video.video} />                        
         ) : (
             <Text style={{ color: COLORS.white }}>None</Text>
-        )}
+        )} */}
 
 
 

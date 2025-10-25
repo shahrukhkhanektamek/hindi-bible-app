@@ -1,5 +1,5 @@
 /* eslint-disable react-native/no-inline-styles */
-import { StyleSheet, Text, View, TextInput, TouchableOpacity, ScrollView, RefreshControl } from 'react-native';
+import { StyleSheet, Text, View, TextInput, TouchableOpacity, ScrollView, RefreshControl, Alert } from 'react-native';
 import React, { useState, useEffect, useCallback, useContext } from 'react';
 import Icon from 'react-native-vector-icons/Ionicons';
 import TopBarPrimary from '../../Components/TopBar/TopBarPrimary.js';
@@ -30,10 +30,10 @@ const EditUsernamePasswordScreen = () => {
  
 
   const handleUpdate = async () => {
-    // if (!name || !email) {
-    //   Alert.alert('Error', 'Please enter username and password');
-    //   return;
-    // }
+    if (!username || !password) {
+      Alert.alert('Error', 'Please enter username and password');
+      return;
+    }
     const filedata = {
       "username":username,
       "password":password,
@@ -99,10 +99,10 @@ const EditUsernamePasswordScreen = () => {
 
       <View style={styles.formContainer}>
       {/* (अकाउंट बनाइये) */}
-        <Text style={styles.formTitle}>Edit Username & Password / (अकाउंट बनाइये)</Text>
+        <Text style={styles.formTitle}>Edit Username & Password / (अकाउंट बनाइये) </Text>
 
         <View style={styles.inputGroup}>
-          <Text style={styles.label}>USERNAME</Text>
+          <Text style={styles.label}>USERNAME <Text style={{color:COLORS.red}}>*</Text></Text>
           <TextInput
             style={styles.input}
             value={username}
@@ -111,7 +111,7 @@ const EditUsernamePasswordScreen = () => {
         </View>
 
         <View style={styles.inputGroup}>
-          <Text style={styles.label}>PASSWORD</Text>
+          <Text style={styles.label}>PASSWORD <Text style={{color:COLORS.red}}>*</Text></Text>
           <View style={styles.passwordInputContainer}>
             <TextInput
               style={styles.input}

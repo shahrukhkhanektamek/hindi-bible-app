@@ -145,7 +145,7 @@ const RegisterScreen = ({ route }) => {
           <View style={styles.formContainer}>
             {/* Name */}
             <View style={styles.inputGroup}>
-              <Text style={styles.label}>Your Name (आपका नाम)</Text>
+              <Text style={styles.label}>Your Name (आपका नाम) <Text style={{color:COLORS.red}}>*</Text> </Text>
               <TextInput
                 style={styles.input}
                 value={name}
@@ -155,7 +155,7 @@ const RegisterScreen = ({ route }) => {
 
             {/* Country */}
             <View style={styles.inputGroup}>
-              <Text style={styles.label}>Rahne Ka Desh - Residing Country</Text>
+              <Text style={styles.label}>Rahne Ka Desh - Residing Country <Text style={{color:COLORS.red}}>*</Text></Text>
               <View style={styles.mobileInputContainer}>
                 <Coutries
                   style={styles.pickerFullWidth}
@@ -168,7 +168,7 @@ const RegisterScreen = ({ route }) => {
 
             {/* Mobile */}
             <View style={styles.inputGroup}>
-              <Text style={styles.label}>Mobile (मोबाइल)</Text>
+              <Text style={styles.label}>Mobile (मोबाइल) <Text style={{color:COLORS.red}}>*</Text></Text>
               <View style={styles.mobileInputContainer}>
                 <View style={styles.pickerWrapper}>
                   <Text style={styles.pl5}>+{countryCode}</Text>
@@ -184,7 +184,7 @@ const RegisterScreen = ({ route }) => {
 
             {/* Email */}
             <View style={styles.inputGroup}>
-              <Text style={styles.label}>Email (ईमेल)</Text>
+              <Text style={styles.label}>Email (ईमेल) <Text style={{color:COLORS.red}}>*</Text></Text>
               <TextInput
                 style={styles.input}
                 keyboardType="email-address"
@@ -296,12 +296,12 @@ const styles = StyleSheet.create({
   modalButton: { flexDirection: 'row', alignItems: 'center', paddingVertical: 15 },
   modalButtonText: { fontSize: 16, color: '#000' },
   modalCloseButton: {
-  position: 'absolute',
-  top: 10,
-  right: 10,
-  zIndex: 1,
-  padding: 5,
-},
+    position: 'absolute',
+    top: 10,
+    right: 10,
+    zIndex: 1,
+    padding: 5,
+  },
 });
 
 export default RegisterScreen;

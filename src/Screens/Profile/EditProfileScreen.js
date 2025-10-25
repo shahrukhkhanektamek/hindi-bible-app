@@ -1,21 +1,21 @@
 /* eslint-disable no-extra-semi */
 /* eslint-disable quotes */
 /* eslint-disable react-native/no-inline-styles */
-import { StyleSheet, Text, View, TextInput, ScrollView, TouchableOpacity, Image, RefreshControl } from 'react-native';
+import { StyleSheet, Text, View, TextInput, ScrollView, TouchableOpacity, Image, RefreshControl, Modal } from 'react-native';
 import React, { useState, useEffect, useCallback, useContext } from 'react';
 import { Picker } from '@react-native-picker/picker';
 import TopBarPrimary from '../../Components/TopBar/TopBarPrimary.js';
 import GradiantButton from '../../Components/Button/GradientButton.js';
 import { useNavigation } from '@react-navigation/native';
-import { launchImageLibrary } from 'react-native-image-picker';
+import { launchImageLibrary, launchCamera } from 'react-native-image-picker';
 import BACKGROUND_COLORS from '../../Constants/BackGroundColors.js';
 import COLORS from '../../Constants/Colors.js';
-
+import Icon from 'react-native-vector-icons/Ionicons';
 import Coutries from '../../Components/CountryPicker.js';
 
 import PageLoding from '../../Components/PageLoding.js';
 import { GlobalContext } from '../../Components/GlobalContext.js';
-import { postData, apiUrl } from '../../Components/api.js';
+import { postData, apiUrl, convertToBase64 } from '../../Components/api.js';
 const urls=apiUrl();
 
 
@@ -31,7 +31,8 @@ const EditProfileScreen = () => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [imageUri, setImageUri] = useState(null);
-  const [image, setimage] = useState(null);
+  const [image, setImage] = useState(null);
+  const [modalVisible, setModalVisible] = useState(false); // modal state
   const [selectedCountry, setSelectedCountry] = useState();
 
 
@@ -57,25 +58,25 @@ const EditProfileScreen = () => {
 
 
 
-  const pickImage = () => {
-    const options = {
-      mediaType: 'photo',
-      maxWidth: 1000,
-      maxHeight: 1000,
-      quality: 1,
+  // Image picker function
+  const pickImage = (fromCamera = false) => {
+    const options = { mediaType: 'photo', maxWidth: 1000, maxHeight: 1000, quality: 1 };
+    
+    const callback = async (response) => {
+      if (!response.didCancel && !response.errorCode && response.assets && response.assets.length > 0) {
+        const uri = response.assets[0].uri;
+        setImageUri(uri);
+        const image64 = await convertToBase64(uri);
+        setImage(image64);
+      }
     };
 
-    launchImageLibrary(options, async (response) => {
-      if (response.didCancel) {
-        console.log('User canceled image picker');
-      } else if (response.errorCode) {
-        console.log('ImagePicker Error: ', response.errorMessage);
-      } else {
-        const image64 = await convertToBase64(imageUri);
-        setImageUri(response.assets[0].uri);
-        setimage(image64);
-      };
-    });
+    if (fromCamera) {
+      launchCamera(options, callback);
+    } else {
+      launchImageLibrary(options, callback);
+    }
+    setModalVisible(false);
   };
 
 
@@ -119,8 +120,10 @@ const EditProfileScreen = () => {
 
   return (
     <ScrollView style={styles.container}
+    keyboardShouldPersistTaps="handled"
     refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
     >
+      <TouchableOpacity activeOpacity={1}>
       <View style={styles.topBar}>
         <TopBarPrimary />
       </View>
@@ -139,7 +142,7 @@ const EditProfileScreen = () => {
 
       <View style={styles.formContainer}>
         <View style={styles.inputGroup}>
-          <Text style={styles.label}>Your Name (आपका नाम)</Text>
+          <Text style={styles.label}>Your Name (आपका नाम) <Text style={{color:COLORS.red}}>*</Text></Text>
           <TextInput style={styles.input}
           value={name}
           onChangeText={setName}
@@ -148,7 +151,7 @@ const EditProfileScreen = () => {
 
 
         <View style={styles.inputGroup}>
-          <Text style={styles.label}>Rahne Ka Desh - Residing Country</Text>
+          <Text style={styles.label}>Rahne Ka Desh - Residing Country <Text style={{color:COLORS.red}}>*</Text></Text>
           <View style={styles.mobileInputContainer}>            
             <Coutries style={styles.pickerFullWidth} selectedCountry={selectedCountry} setSelectedCountry={setSelectedCountry} setCountryCode={setCountryCode} />          
           </View>
@@ -156,7 +159,7 @@ const EditProfileScreen = () => {
         
 
         <View style={styles.inputGroup}>
-          <Text style={styles.label}>Mobile (मोबाइल)</Text>
+          <Text style={styles.label}>Mobile (मोबाइल) <Text style={{color:COLORS.red}}>*</Text></Text>
           <View style={styles.mobileInputContainer}>
             <View style={styles.pickerWrapper}>
               <Text style={styles.pl5}>+{countryCode}</Text>              
@@ -171,7 +174,7 @@ const EditProfileScreen = () => {
         </View>
 
         <View style={styles.inputGroup}>
-          <Text style={styles.label}>Email (ईमेल)</Text>
+          <Text style={styles.label}>Email (ईमेल) <Text style={{color:COLORS.red}}>*</Text></Text>
           <TextInput style={styles.input} keyboardType="email-address"
           value={email}
           onChangeText={setEmail}
@@ -179,8 +182,11 @@ const EditProfileScreen = () => {
            />
         </View>
 
+
+
+        {/* Image Picker */}
         <View style={[styles.inputGroup, { marginBottom: 0 }]}>
-          <TouchableOpacity onPress={pickImage}>
+          <TouchableOpacity onPress={() => setModalVisible(true)}>
             <View style={styles.imageUploadContent}>
               <Image
                 source={require('../../Assets/profile-icon.png')}
@@ -195,6 +201,49 @@ const EditProfileScreen = () => {
             </View>
           )}
         </View>
+
+        {/* Modal */}
+        <Modal
+          transparent
+          animationType="slide"
+          visible={modalVisible}
+          onRequestClose={() => setModalVisible(false)}
+        >
+          <TouchableOpacity
+            style={styles.modalOverlay}
+            activeOpacity={1}
+            onPressOut={() => setModalVisible(false)}
+          >
+            <View style={styles.modalContent}>
+              {/* Close Button */}
+              <TouchableOpacity
+                style={styles.modalCloseButton}
+                onPress={() => setModalVisible(false)}
+              >
+                <Icon name="close" size={24} color="#000" />
+              </TouchableOpacity>
+
+              <TouchableOpacity style={styles.modalButton} onPress={() => pickImage(true)}>
+                <Icon name="camera-outline" size={24} color="#000" style={{ marginRight: 10 }} />
+                <Text style={styles.modalButtonText}>Camera</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity style={styles.modalButton} onPress={() => pickImage(false)}>
+                <Icon name="image-outline" size={24} color="#000" style={{ marginRight: 10 }} />
+                <Text style={styles.modalButtonText}>Gallery</Text>
+              </TouchableOpacity>
+            </View>
+          </TouchableOpacity>
+        </Modal>
+        
+        
+        
+        
+
+
+
+
+
       </View>
 
       <View style={[styles.button, { marginBottom: 30 }]}>
@@ -208,6 +257,7 @@ const EditProfileScreen = () => {
           onPress={handleUpdate}
         />
       </View>
+      </TouchableOpacity>
     </ScrollView>
   );
 };
@@ -311,7 +361,23 @@ const styles = StyleSheet.create({
   },
   pl5:{
     paddingLeft:10,
-  }
+  },
+
+
+  modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'flex-end' },
+  modalContent: { backgroundColor: '#fff', padding: 20, borderTopRightRadius: 16, borderTopLeftRadius: 16 },
+  modalButton: { flexDirection: 'row', alignItems: 'center', paddingVertical: 15 },
+  modalButtonText: { fontSize: 16, color: '#000' },
+  modalCloseButton: {
+    position: 'absolute',
+    top: 10,
+    right: 10,
+    zIndex: 1,
+    padding: 5,
+  },
+
+
+  
 });
 
 export default EditProfileScreen;
