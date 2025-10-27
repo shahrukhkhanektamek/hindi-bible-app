@@ -12,6 +12,7 @@ import RegisterScreen from '../Screens/Register/RegisterScreen.js';
 import UsernamePasswordScreen from '../Screens/Register/UsernamePassword.js';
 
 import LoginScreen from '../Screens/Login/LoginScreen.js';
+import ForgotScreen from '../Screens/Login/ForgotScreen.js';
 import MemberLoginScreen from '../Screens/MemberLogin/MemberLoginScreen.js';
 
 import LoginSuccessScreen from '../Screens/LoginSuccess/LoginSuccess.js';
@@ -123,6 +124,7 @@ const StackNavigation = () => (
       )
     } */}
     <Stack.Screen name="Login" component={LoginScreen} />
+    <Stack.Screen name="Forgot" component={ForgotScreen} />
     <Stack.Screen name="LoginSuccess" component={LoginSuccessScreen} />
 
     <Stack.Screen name="Register" component={RegisterScreen} />

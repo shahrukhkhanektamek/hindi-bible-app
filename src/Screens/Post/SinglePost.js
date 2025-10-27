@@ -42,19 +42,19 @@ import {
 
 
   const SinglePost = () => {
-    const route = useRoute();
-    const navigation = useNavigation();
-    const { width } = useWindowDimensions();
-    const { item, name} = route.params || {};
-  
-    const { extraData } = useContext(GlobalContext);
-    const appSetting = extraData.appSetting;
-    const userDetail = extraData.userDetail;
-  
-    const videoHeight = (Dimensions.get("window").width * 9) / 16;
-    
+  const route = useRoute();
+  const navigation = useNavigation();
+  const { width } = useWindowDimensions();
+  const { item, name} = route.params || {};
 
-    const data = item;
+  const { extraData } = useContext(GlobalContext);
+  const appSetting = extraData.appSetting;
+  const userDetail = extraData.userDetail;
+
+  const videoHeight = (Dimensions.get("window").width * 9) / 16;
+  
+
+  const data = item;
     
   const [page, setPage] = useState(0);
   const [isLoading, setisLoading] = useState(false);
@@ -252,7 +252,7 @@ import {
             ) : data.post_type == 5 ? (
               <View>
                 {/* <Article /> */}
-                <Text style={{ color: COLORS.white }}>Article Section</Text>
+                <Image source={{uri:data.image}} style={styles.image} />
               </View>
             ) : (
               <Text style={{ color: COLORS.white }}>None</Text>
@@ -265,7 +265,7 @@ import {
   
           <View style={styles.descriptionContainer}>
             <Button
-              title="VIDEO DESCRIPTION"
+              title="DESCRIPTION"
               height="30"
               width="55%"
               borderRadius={3}
@@ -464,7 +464,12 @@ import {
       fontWeight: "500",
       textAlign:'right'
     },
-  
+    image: {
+    width: "100%",
+    height: 500,
+    borderRadius: 0,
+    resizeMode:'stretch'
+  },
 
 
 

@@ -135,6 +135,21 @@ const PayScreen = ({route}) => {
           onPress={() => navigation.navigate('Home')}
         />
         <LogoutButton/>
+        <GradiantButton
+            title="Back"
+            height="30"
+            width="20%"
+            fontSize={15}
+            gradientType="purple"
+            borderRadius={5}
+            onPress={() => {
+              if (navigation.canGoBack()) {
+                navigation.goBack();
+              } else {
+                navigation.navigate('Home', route.params); // 👈 yahan apne home screen ka route name likho
+              }
+            }}
+          />
       </View>
 
       <View style={styles.buttonContainer}>

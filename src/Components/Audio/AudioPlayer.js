@@ -15,6 +15,8 @@ const AudioPlayer = ({
   artist = "",
   source,
   onEnd,
+  handleViewPost,
+  item,
 }) => {
   const audioRef = useRef(null);
   const [duration, setDuration] = useState(0);
@@ -54,6 +56,7 @@ const AudioPlayer = ({
       setPausedTime(currentTime); // Save current time
       setPlayingId(null);
     } else {
+      handleViewPost(item)
       // Resuming
       setPlayingId(id);
     }
@@ -73,6 +76,8 @@ const AudioPlayer = ({
     audioRef.current.seek(value);
   };
   const onSliding = (value) => setSeekTime(value);
+
+
 
   return (
     <View style={styles.container}>

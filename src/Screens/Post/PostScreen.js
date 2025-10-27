@@ -164,7 +164,7 @@ const GenesisScreen = ({route}) => {
       }
       else if(item.post_type==5)
       {
-        // !item.is_paid?navigation.navigate('SinglePost', {item:item,name:name}):handlePay(item.id)
+        !item.is_paid?navigation.navigate('SinglePost', {item:item,name:name}):handlePay(item.id)
       }
       else if(item.post_type==6)
       {
@@ -261,7 +261,13 @@ const GenesisScreen = ({route}) => {
           fontSize={15}
           gradientType="purple"
           borderRadius={5}
-          onPress={() => navigation.goBack()}
+          onPress={() => {
+            if (navigation.canGoBack()) {
+              navigation.goBack();
+            } else {
+              navigation.navigate('Home', route.params); // 👈 yahan apne home screen ka route name likho
+            }
+          }}
         />
       </View>
       <View style={styles.button}>
@@ -313,6 +319,8 @@ const GenesisScreen = ({route}) => {
                         artist={item?.artist}
                         description={item?.description}
                         onEnd={() => handleAudioEnd(item.id)}
+                        handleViewPost={handleViewPost}
+                        item={item}
                       />
                 </View>
               
@@ -353,13 +361,16 @@ const GenesisScreen = ({route}) => {
               ) : (item.post_type==4) ? ( 
                 <View style={styles.pdfWrapper} key={postKey}>  
                   <TouchableOpacity 
-                  onPress={() =>handleViewPost(item)}>
+                  onPress={() =>{
+                    handleViewPost(item); Linking.openURL(item.pdf) 
+                  }}>
                       <Image source={{uri:item.image}} style={styles.image} />
                       <Pdf
                         title={item.name}
                         // fileName="tgc_learning_guide.pdf"
                         // fileSize="2.3 MB"
                         fileUrl={item.pdf}
+                        item={item}
                       />
                     </TouchableOpacity>                      
                 </View>
@@ -379,7 +390,18 @@ const GenesisScreen = ({route}) => {
               )} 
             </React.Fragment>
 
-            {(item.description && item.post_type!=1)? (
+            <Text style={styles.title}>{item.name}</Text>
+            {/* Read More */}
+            <TouchableOpacity 
+              style={styles.readMoreButton}
+              onPress={() =>{
+                handleViewPost(item); 
+              }}
+            >
+              <Text style={styles.readMoreText}>Read More</Text>
+            </TouchableOpacity>
+
+            {(item.description && item.post_type!=1 && item.post_type!=5)? (
               <View style={styles.descriptionContainer}>
                 {/* <Text>{item.description}</Text> */}
                 <MyHTMLViewer  
@@ -390,8 +412,8 @@ const GenesisScreen = ({route}) => {
             }
              
             {(item.is_paid==1 && userDetail)?(
-              <TouchableOpacity onPress={() =>handlePay(item.id)} style={[styles.paidStatus]}>
-                <GradientButton
+              <View style={[styles.paidStatus]}>
+                  <GradientButton
                   title="Pay"
                   height="30"
                   width="50"
@@ -400,8 +422,9 @@ const GenesisScreen = ({route}) => {
                   borderRadius={5}
                   fontSize={15}
                   fontWeight="500"
+                  onPress={() =>handlePay(item.id)} 
                 />
-              </TouchableOpacity>
+              </View>
             ):null
             }
 
@@ -433,12 +456,12 @@ const GenesisScreen = ({route}) => {
 
             <View style={styles.viewsWrapper}>
               <View style={[styles.viewsWrapperIcon]}>
-                {(item.is_download==1)?(
+                {/* {(item.is_download==1)?(
                   <TouchableOpacity onPress={() => Linking.openURL(item.audio)}>
                     <FontAwesome name="download" size={25} color="#555" />
                   </TouchableOpacity>
                 ):null
-                }
+                } */}
               </View>
 
               <View style={[styles.viewsWrapperIcon]}>
@@ -582,6 +605,28 @@ const styles = StyleSheet.create({
   },
   imageContainer: {
     width: "100%",
+  },
+  title: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: COLORS.black,
+    marginBottom: 0,
+    marginTop: 10,
+    marginLeft:15
+  },
+  readMoreButton: {
+    alignSelf: 'flex-start',
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+    backgroundColor: 'blue',
+    borderRadius: 6,
+    marginLeft:15,
+    marginTop:10,
+  },
+  readMoreText: {
+    color: COLORS.white,
+    fontWeight: '600',
+    fontSize: 14,
   },
 
   pdfWrapper: {

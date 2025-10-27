@@ -15,7 +15,7 @@ import GradiantButton from '../../Button/GradientButton';
 import { useNavigation } from '@react-navigation/native';
 import COLORS from '../../../Constants/Colors';
 
-const AfterRegistrationModal = ({ visible, onClose, userPackage  }) => {
+const AfterSendPasswordModal = ({ visible, onClose, data  }) => {
   const navigation = useNavigation();
   const [agreeTerms, setAgreeTerms] = useState(false);
 
@@ -36,27 +36,27 @@ const AfterRegistrationModal = ({ visible, onClose, userPackage  }) => {
               <View style={styles.middleSection}>
                 
                 <View style={styles.secondSection}>
-                  <Text style={styles.message}>Aapka Account Bna Hua hai. Neeche click kar ke login kijiye </Text>
-                  {/* <Text style={{ color: COLORS.goldenYellow, fontSize: 16, marginBottom: 3 }}>YOUR PACKAGE PERIOD</Text> */}
-                  {/* <Text style={{ color: COLORS.white, fontSize: 16 }}>11 - 26-03-2026</Text> */}
+                  
+                  <Text style={styles.message}>
+                    Aapka username aur naya password aapke registered email ID <Text style={{color:'yellow'}}>{data.email}</Text>  me bhej diya hai. kripya 5 minute baad apna email check kijiye. Email me aap SPAM & JUNK mails bhi check kijiye. Kabhi kabhi hamara email vaha bhi ho sakta hai.  
+                  </Text>
+                   <View style={styles.buttonBottom}>
+                        <GradiantButton
+                        title="Ok"
+                        height="35"
+                        width="50%"
+                        gradientType="blue"
+                        borderRadius={5}
+                        onPress={() => {                    
+                            onClose();
+                        }}
+                        />                
+                    </View>
                 </View>
                 
                 
               </View>
-              <View style={styles.buttonBottom}>
-                <GradiantButton
-                  title="Login"
-                  height="35"
-                  width="100%"
-                  gradientType="blue"
-                  borderRadius={5}
-                  onPress={() => {                    
-                    onClose();
-                    navigation.navigate('Login');
-                  }}
-                />
-                
-              </View>
+              
               <TouchableOpacity style={styles.crossIcon} onPress={onClose}>
                 <Icon name="close" size={20} color="#fff" />
               </TouchableOpacity>
@@ -95,7 +95,7 @@ const styles = StyleSheet.create({
   },
   buttonBottom: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent: 'center',
   },
   middleSection: {
     backgroundColor: BACKGROUND_COLORS.white,
@@ -151,4 +151,4 @@ const styles = StyleSheet.create({
 });
 
 
-export default AfterRegistrationModal;
+export default AfterSendPasswordModal;

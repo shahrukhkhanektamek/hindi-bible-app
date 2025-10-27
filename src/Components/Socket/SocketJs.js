@@ -48,6 +48,9 @@ const SocketJs = () => {
     socket.on("force_logout", async () => {
       console.log("🚨 Force logout received");
       const response = await postData([], urls.logout,"GET", navigation,extraData,1,1);
+      // storage.delete('savedUsername');
+      // storage.delete('savedPassword');
+      // storage.set('rememberMe', 'false');
     });
 
     return () => {

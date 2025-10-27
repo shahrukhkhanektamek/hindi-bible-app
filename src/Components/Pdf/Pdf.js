@@ -3,20 +3,28 @@ import { View, Text, TouchableOpacity, StyleSheet, Linking } from 'react-native'
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import BACKGROUND_COLORS from '../../Constants/BackGroundColors';
 
-const Pdf = ({ title, fileName, fileSize, fileUrl }) => {
+const Pdf = ({ title, fileName, fileSize, fileUrl, item }) => {
   return (
     <View style={styles.pdfContainer}>
       <FontAwesome name="file-pdf-o" size={25} color="red" />
-      <View style={styles.pdfInfo}>
+      <View style={styles.pdfInfo} >
         <Text style={styles.pdfTitle}>{title}</Text>
         {(fileName?
         <Text style={styles.pdfDetails}>{fileName} • {fileSize}</Text>
           :null
           )}
       </View>
-      <TouchableOpacity onPress={() => Linking.openURL(fileUrl)}>
+
+      {(item.is_download==1)?(
+        <TouchableOpacity onPress={() => Linking.openURL(item.pdf)}>
+          <FontAwesome name="download" size={30} color="#555" />
+        </TouchableOpacity>
+      ):null
+      }
+
+      {/* <TouchableOpacity onPress={() => Linking.openURL(fileUrl)}>
         <FontAwesome name="download" size={30} color="#555" />
-      </TouchableOpacity>
+      </TouchableOpacity> */}
     </View>
   );
 };

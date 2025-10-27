@@ -10,8 +10,6 @@ import BACKGROUND_COLORS from '../../Constants/BackGroundColors.js';
 
 import DeviceChange from '../../Components/Modal/MemberLogin/DviceChangeAlertModal';
 import DviceChangeHour from '../../Components/Modal/MemberLogin/DviceChangeHourAlertModal';
-import WrongLoginDetailModal from '../../Components/Modal/MemberLogin/WrongLoginDetailModal';
-import AfterSendPasswordModal from '../../Components/Modal/MemberLogin/AfterSendPasswordModal';
 
 import { MMKV } from 'react-native-mmkv';
 const storage = new MMKV();
@@ -22,20 +20,13 @@ import DeviceInfo from 'react-native-device-info';
 import { logoutDevice } from '../../Components/Socket/socketService.js';
 const urls = apiUrl();
 
-const LoginScreen = ({route}) => {
-  const payment = route?.params?.payment ?? 0;
-  
+const LoginScreen = () => {
   const { extraData } = useContext(GlobalContext);
   const navigation = useNavigation();
 
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [isDeviceChangeModalVisible, setIsDeviceChangeModalVisible] = useState(false);
   const [isDeviceChangeHourModalVisible, setIsDeviceChangeHourModalVisible] = useState(false);
-
-  const [isWrongLoginDetailModalVisible, setIsWrongLoginDetailModalVisible] = useState(false);
-  const [isAfterSendPasswordModalVisible, setIsAfterSendPasswordModalVisible] = useState(false);
-  const [modaldata, setModalData] = useState([]);
-
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [rememberMe, setRememberMe] = useState(false);
@@ -68,25 +59,14 @@ const LoginScreen = ({route}) => {
       return;
     }
 
-    // ✅ Save credentials if rememberMe checked
-    if (rememberMe) {
-      storage.set('savedUsername', username);
-      storage.set('savedPassword', password);
-      storage.set('rememberMe', 'true');
-    } else {
-      storage.delete('savedUsername');
-      storage.delete('savedPassword');
-      storage.set('rememberMe', 'false');
-    }
 
     const filedata = {
       username: username,
       password: password,
-      payment: payment,
       firebase_token: storage.getString('firebaseToken'),
     };
 
-    const response = await postData(filedata, urls.login, 'POST', navigation, extraData, 0,1);
+    const response = await postData(filedata, urls.login, 'POST', navigation, extraData);
     setresponseData(response.data);
 
     if (response.action != 'login') {
@@ -95,9 +75,6 @@ const LoginScreen = ({route}) => {
       } else {
         setIsDeviceChangeHourModalVisible(true);
       }
-    }
-    else{
-      setIsWrongLoginDetailModalVisible(true);
     }
   };
 
@@ -115,16 +92,6 @@ const LoginScreen = ({route}) => {
         index: 0,
         routes: [{ name: 'Home' }],
       });
-    }
-  };
-
-  const sendPassword = async () => {
-    
-    const response = await postData({}, urls.sendPassword, 'POST', navigation, extraData);
-    setresponseData(response.data);
-    if (response.status == 200) {
-      setModalData(response.data);
-      setIsAfterSendPasswordModalVisible(true);      
     }
   };
 
@@ -147,7 +114,7 @@ const LoginScreen = ({route}) => {
       </View>
 
       <View style={styles.formContainer}>
-        <Text style={styles.formTitle}>Login Account </Text>
+        <Text style={styles.formTitle}>Forgot Account </Text>
 
         <View style={styles.inputGroup}>
           <Text style={styles.label}>USERNAME <Text style={{color:COLORS.red}}>*</Text></Text>
@@ -155,68 +122,24 @@ const LoginScreen = ({route}) => {
             style={styles.input}
             value={username}
             onChangeText={setUsername}
-            
+            autoCapitalize="none"
           />
-        </View>
-
-        <View style={styles.inputGroup}>
-          <Text style={styles.label}>PASSWORD <Text style={{color:COLORS.red}}>*</Text></Text>
-          <View style={styles.passwordInputContainer}>
-            <TextInput
-              style={styles.input}
-              secureTextEntry={!passwordVisible}
-              value={password}
-              onChangeText={setPassword}
-              autoCapitalize="none"
-            />
-            <TouchableOpacity
-              style={styles.showButton}
-              onPress={() => setPasswordVisible(!passwordVisible)}>
-              <Icon name={passwordVisible ? 'eye' : 'eye-off'} size={25} color={COLORS.black} />
-            </TouchableOpacity>
-          </View>
-        </View>
-
-        {/* ✅ Remember Me Checkbox */}
-        <TouchableOpacity
-          onPress={() => setRememberMe(!rememberMe)}
-          style={{ flexDirection: 'row', alignItems: 'center', marginTop: 0, marginBottom:20 }}>
-          <Icon
-            name={rememberMe ? 'checkbox-outline' : 'square-outline'}
-            size={22}
-            color={COLORS.white}
-          />
-          <Text style={{ color: COLORS.white, marginLeft: 8, fontSize: 14, }}>Save Username & Password</Text>
-        </TouchableOpacity>
-
-        <View style={[styles.button, { marginBottom: 20 }]}>
-          <GradiantButton
-            title="LOGIN"
-            height="35"
-            width="30%"
-            fontSize={16}
-            gradientType="orange"
-            borderRadius={5}
-            onPress={handleLogin}
-          />
-        </View>
-
-        <GradiantButton
-          title="Forgot Username Password"
-          height="35"
-          width="100%"
-          fontSize={16}
-          gradientType="green"
-          borderRadius={5}
-          onPress={sendPassword}
-        />
+        </View>        
 
 
       </View>
 
-      
-
-      
+      <View style={[styles.button, { marginBottom: 20 }]}>
+        <GradiantButton
+          title="Send Password"
+          height="35"
+          width="50%"
+          fontSize={16}
+          gradientType="orange"
+          borderRadius={5}
+          onPress={handleLogin}
+        />
+      </View>
 
       <DeviceChange
         visible={isDeviceChangeModalVisible}
@@ -229,22 +152,6 @@ const LoginScreen = ({route}) => {
         onClose={() => setIsDeviceChangeHourModalVisible(false)}
         data={responseData}
       />
-
-      <WrongLoginDetailModal
-        visible={isWrongLoginDetailModalVisible}
-        onClose={() => setIsWrongLoginDetailModalVisible(false)}
-        data={responseData}
-      />
-
-      <AfterSendPasswordModal
-        visible={isAfterSendPasswordModalVisible}
-        onClose={() => setIsAfterSendPasswordModalVisible(false)}
-        data={modaldata}
-      />
-
-
-
-
     </ScrollView>
   );
 };

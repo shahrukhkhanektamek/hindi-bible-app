@@ -40,7 +40,7 @@ const FreeTrialExpireModal = ({ visible, onClose }) => {
                   }}
                 />
               </View>
-              <Text style={styles.message}>aapka FREE TRIAL Expire ho gya hai neeche click karke nya plan lijiye.</Text>
+              <Text style={styles.message}>aapka FREE TRIAL Expire ho gya hai neeche click karke package kharidiye.</Text>
               <View style={styles.buttonBottom}>
               <GradiantButton
                   title="Make Payment"
@@ -50,7 +50,7 @@ const FreeTrialExpireModal = ({ visible, onClose }) => {
                   borderRadius={5}
                   onPress={() => {
                     onClose();
-                    navigation.navigate('Login');
+                    navigation.navigate('Login',{payment:1});
                   }}
                 />
                 

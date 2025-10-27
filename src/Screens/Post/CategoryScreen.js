@@ -104,7 +104,13 @@ const MainScreen = ({route}) => {
           gradientType="purple"
           borderRadius={5}
           fontSize={15}
-          onPress={() => navigation.goBack()}
+          onPress={() => {
+            if (navigation.canGoBack()) {
+              navigation.goBack();
+            } else {
+              navigation.navigate('Home',  route.params); // 👈 yahan apne home screen ka route name likho
+            }
+          }}
         />
       </View>
       <View style={styles.button}>

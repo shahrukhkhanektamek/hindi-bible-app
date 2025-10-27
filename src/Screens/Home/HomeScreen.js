@@ -1,7 +1,7 @@
 /* eslint-disable react-native/no-inline-styles */
 import { View, Text, StyleSheet, Linking, ScrollView, Animated, Dimensions, RefreshControl, TouchableOpacity  } from 'react-native';
 import React, { useEffect, useRef, useState, useContext, useCallback  } from 'react';
-import { useNavigation } from '@react-navigation/native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import GradientButton from '../../Components/Button/GradientButton.js';
 import TopBarPrimary from '../../Components/TopBar/TopBarPrimary.js';
 import COLORS from '../../Constants/Colors.js';
@@ -46,12 +46,14 @@ const HomeScreen = () => {
   const [isFreeTrialRuningModalModalVisible, setIsFreeTrialRuningModalVisible] = useState(false);
   const [isFreeTrialExpireModalVisible, setIsFreeTrialExpireModalVisible] = useState(false);
   const [isPackageExpireModalVisible, setIsPackageExpireModalVisible] = useState(false);
+  const [showpaymentbutton, setshowpaymentbutton] = useState(false);
 
   const [isLatestNews, setisLatestNews] = useState(false);
   const [NewDate, setNewDate] = useState('');
   const [NewsId, setNewsId] = useState('');
   const [Package, setPackage] = useState();
   const [videoKey, setVideoKey] = useState(0);
+  const [rdata, setrdata] = useState([]);
 
 
     const [page, setPage] = useState(0);
@@ -67,10 +69,13 @@ const HomeScreen = () => {
       }
     }, []);
     const fetchSettingData2 = async () => { 
+      // setshowpaymentbutton(false);
       try { 
         const response = await postData({}, urls.appSetting, "GET", navigation, extraData, 1);
+        
         if(response.status==200)
         {
+          setrdata(response);
           setappSetting(JSON.parse(storage.getString('appSetting')));
           setNewDate(response.data.latestNews.add_date_time)
           setNewsId(response.data.latestNews.id)
@@ -83,6 +88,7 @@ const HomeScreen = () => {
             setisLatestNews(true)
           }
           setisLoading(false);
+          
           if(response.data.is_login==1)
           {
             if(response.data.free_trial==1)
@@ -91,18 +97,31 @@ const HomeScreen = () => {
             }
             else if(response.data.package.status==0 || response.data.package.status==2)
             {
-              navigation.reset({
-                index: 0,
-                routes: [
-                  {
-                    name: 'SelectCountryScreen',
-                    params: {type:1}, 
-                  },
-                ],
-              });
-
+              setshowpaymentbutton(true);
+              // navigation.reset({
+              //   index: 0,
+              //   routes: [
+              //     {
+              //       name: 'SelectCountryScreen',
+              //       params: {type:1}, 
+              //     },
+              //   ],
+              // });
             }
           }
+          else{
+
+            extraData.setuserDetail(null);
+            extraData.setToken(null);
+            storage.delete('token');
+            storage.delete('user');
+
+            if(response.data.free_trial==2)
+            {
+              // setIsFreeTrialExpireModalVisible(true);
+            }
+          }
+
         }
       } catch (error) { 
         console.error('Error fetching countries:', error);
@@ -112,7 +131,15 @@ const HomeScreen = () => {
 
   const handleFreeTrial = async () => {      
     if(appSetting.free_trial==0){
-      navigation.navigate("OneDayFreeTrial")
+      if(rdata.data.device_is_register==0)
+      {
+        navigation.navigate("OneDayFreeTrial")
+      }
+      else
+      {
+        // navigation.navigate('SelectCountryScreen', {type:1})
+        setIsAfterRegisterModalVisible(true)
+      }
     }
     else if(appSetting.free_trial==1)
     {
@@ -199,6 +226,13 @@ const HomeScreen = () => {
     useEffect(() => {
       fetchSettingData2()
     },[])
+
+    useFocusEffect(
+      useCallback(() => {
+        fetchSettingData2(); // when returning from details screen
+      }, [])
+    );
+
     if (isLoading) {
       return (
           <PageLoding />          
@@ -295,7 +329,7 @@ const HomeScreen = () => {
         key={videoKey}
         style={styles.webviewVideo}
         type={appSetting.intro_video.type}               // "youtube", "vimeo", "gumlet", "gdrive", "video", "audio"
-        source={appSetting.intro_video.video_url} // video ID or URL
+        source={appSetting.intro_video.video} // video ID or URL
         thumbnail={appSetting.intro_video.image} // optional
       />
           
@@ -385,20 +419,35 @@ const HomeScreen = () => {
       {
         (userDetail)? 
         <>
-          <View style={styles.button}>
-            <GradientButton
-              title="Menu"
-              height="50"
-              width="50%"
-              gradientType="purple"
-              color={COLORS.white}
-              borderRadius={5}
-              fontSize={15} 
-              fontWeight="500"
-              onPress={() => navigation.navigate('Category')}
-              // onPress={() => setIsBeforeRegisterModalVisible(true)}
-            />
-          </View>
+          {(showpaymentbutton)?
+            <View style={styles.button}>
+              <GradientButton
+                title="Make Payment"
+                height="50"
+                width="50%"
+                gradientType="green"
+                color={COLORS.white}
+                borderRadius={5}
+                fontSize={15} 
+                fontWeight="500"
+                onPress={() => navigation.navigate('SelectCountryScreen', {type:1})}
+              />
+            </View>
+            :
+            <View style={styles.button}>
+              <GradientButton
+                title="Menu"
+                height="50"
+                width="50%"
+                gradientType="purple"
+                color={COLORS.white}
+                borderRadius={5}
+                fontSize={15} 
+                fontWeight="500"
+                onPress={() => navigation.navigate('Category')}
+              />
+            </View>
+            }
           <Logout />
           </>
         :

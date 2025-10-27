@@ -2,7 +2,7 @@ import { StyleSheet, View } from 'react-native';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 import TopBarPrimary from '../../Components/TopBar/TopBarPrimary.js';
 import GradiantButton from '../../Components/Button/GradientButton.js';
-import { useNavigation } from '@react-navigation/native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import BACKGROUND_COLORS from '../../Constants/BackGroundColors.js';
 import LogoutButton from '../../Components/LogoutButton.js';
 
@@ -29,7 +29,15 @@ const SelectCountryScreen = ({route}) => {
   }
 
 
-
+  useFocusEffect(
+    useCallback(() => {
+      if (navigation.canGoBack()) {
+        navigation.goBack();
+      } else {
+        navigation.navigate('Home', route.params);
+      }
+    }, [])
+  );
   
   const [isLoading, setisLoading] = useState(true); 
   const fetchData = async () => { 

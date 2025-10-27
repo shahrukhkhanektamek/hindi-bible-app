@@ -8,6 +8,7 @@ import {
   TouchableWithoutFeedback,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
+import Icon2 from 'react-native-vector-icons/FontAwesome';
 import BACKGROUND_COLORS from '../../../Constants/BackGroundColors';
 import GradiantButton from '../../Button/GradientButton';
 import { useNavigation } from '@react-navigation/native';
@@ -50,7 +51,7 @@ const BeforeRegistrationModal = ({ visible, onClose }) => {
                   borderRadius={5}
                   onPress={() => {
                     onClose();
-                    navigation.navigate('Register');
+                    navigation.navigate('OneDayFreeTrial');
                   }}
                 />
                 <GradiantButton
@@ -67,7 +68,8 @@ const BeforeRegistrationModal = ({ visible, onClose }) => {
               </View>
               
 
-              <Text style={styles.message}>Agr apka account TGC Bible Study ne bnaya hai to app login kr skte ho.</Text>
+              <Text style={styles.message}>Agr apka account TGC Bible Study ne bnaya hai to aap usi username & password se login kar sakte hain.</Text>
+              <Icon2 name="long-arrow-down" style={{textAlign:'center',marginBottom:10,marginTop:-15}} size={40} color="yellow" />
               <View style={styles.buttonBottom}>
                 <GradiantButton
                   title="Login"

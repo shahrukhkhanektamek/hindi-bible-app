@@ -9,12 +9,13 @@ const storage = new MMKV();
 
  
      
-export const socketUrl = 'http://192.168.1.61:3003';
+// export const socketUrl = 'http://192.168.1.61:3003';
+export const socketUrl = 'http://192.168.1.17:3003';
 export const apiUrl = () => {   
-  const apiUrl = 'http://192.168.1.61/projects/codediffusion/hindibible/api/'; 
+  // const apiUrl = 'http://192.168.1.61/projects/codediffusion/hindibible/api/'; 
   // const apiUrl = 'https://developershahrukh.in/demo/codediffusion/hindibible/api/'; 
   // const apiUrl = 'https://digitalnamo.com/azmal/2025/april/hindibible/api/'; 
-  // const apiUrl = 'http://192.168.1.17/projects/hindibible/api/'; 
+  const apiUrl = 'http://192.168.1.17/projects/hindibible/api/'; 
 
       
   const commurl = apiUrl;    
@@ -32,6 +33,7 @@ export const apiUrl = () => {
     "logout":`${mainUrl}logout`,  
     "sendOtp":`${mainUrl}send-otp`,
     "submitOtp":`${mainUrl}submit-otp`,
+    "sendPassword":`${mainUrl}send-password`,
     "createPassword":`${mainUrl}create-password`,
     "proceedLogin":`${mainUrl}proceed-login`,
     
@@ -43,7 +45,7 @@ export const apiUrl = () => {
 
     "category":`${mainUrl}category`,
     "subCategory":`${mainUrl}sub-category`,
-    "subSubCategory":`${mainUrl}sub-sub-category`,
+    "subSubCategory":`${mainUrl}sub-sub-category`, 
     "subSubSubCategory":`${mainUrl}sub-sub-sub-category`, 
     "postList":`${mainUrl}post/list`, 
     "postView":`${mainUrl}post/view`, 
@@ -208,11 +210,36 @@ const responseCheck = async (response, navigation, extraData, messageAlert) => {
           storeLoginToken(result);
           extraData.setuserDetail(JSON.stringify(result?.data));
           extraData.setToken(result?.token);
-          navigation.reset({
-            index: 0,
-            routes: [{ name: 'Category' }], 
-          });
-          return result;
+          // navigation.reset({
+          //   index: 0,
+          //   routes: [{ name: 'Category' }], 
+          // });
+
+          if(result.data.free_trial==1)
+          {
+            navigation.reset({
+              index: 0,
+              routes: [{ name: 'Category' }], 
+            });
+            return result;
+          }
+          if(result.package.status==0 || result.package.status==2)
+          {
+            navigation.reset({
+              index: 0,
+              routes: [{ name: 'SelectCountryScreen' }], 
+            });
+            return result;
+          }
+          else
+          {
+            navigation.reset({
+              index: 0,
+              routes: [{ name: 'Category' }], 
+            });
+            return result;
+          }
+
           
           case "logout":
           showSuccessMessage(result.message, extraData, 1, messageAlert);
