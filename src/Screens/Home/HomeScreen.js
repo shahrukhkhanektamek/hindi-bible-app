@@ -324,14 +324,16 @@ const HomeScreen = () => {
       </View>
  
       <View style={styles.videoPlayer}>
-           
-      <UniversalPlayer
-        key={videoKey}
-        style={styles.webviewVideo}
-        type={appSetting.intro_video.type}               // "youtube", "vimeo", "gumlet", "gdrive", "video", "audio"
-        source={appSetting.intro_video.video} // video ID or URL
-        thumbnail={appSetting.intro_video.image} // optional
-      />
+      
+        
+        <UniversalPlayer
+          key={videoKey}
+          style={styles.webviewVideo}
+          type={appSetting.intro_video.type}               // "youtube", "vimeo", "gumlet", "gdrive", "video", "audio"
+          source={appSetting.intro_video.video_url} // video ID or URL
+          thumbnail={appSetting.intro_video.image} // optional
+          height={200}
+        />
           
         {/* {appSetting.intro_video.type == 1 ? (                        
             <VideoPlayer
@@ -579,6 +581,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: 10,
+    width:'90%',
+    margin:'auto'
   },
   emojiContainer: {
     flexDirection: 'row',
@@ -611,9 +615,8 @@ const styles = StyleSheet.create({
   },
   webviewVideo: {
     // height: (Dimensions.get('window').width * 9) / 16,
-    height:170,
+    height:150,
     width: '100%',
-    width:'80%',
     margin:'auto',
     borderRadius:10,
   },

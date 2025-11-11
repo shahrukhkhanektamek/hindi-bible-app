@@ -3,7 +3,7 @@ import { View, TouchableOpacity, Image, StyleSheet, ActivityIndicator } from 're
 import Icon from 'react-native-vector-icons/Ionicons';
 import WebView from 'react-native-webview';
 
-const VimeoPlayer = ({ videoUrl, thumbnail }) => {
+const VimeoPlayer = ({ videoUrl, thumbnail, height=200 }) => {
   const [playing, setPlaying] = useState(false);
   const [loading, setLoading] = useState(false); // ✅ loader state
   const webviewRef = useRef(null);
@@ -22,21 +22,22 @@ const VimeoPlayer = ({ videoUrl, thumbnail }) => {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container,  {height}]}>
    
 
         <WebView
-        ref={webviewRef}
-        style={styles.webview}
-        javaScriptEnabled={true}
-        domStorageEnabled={true}
-        allowsFullscreenVideo={true}
-        source={{
-            uri: videoUrl,
-        }}
-        originWhitelist={['*']}
-        mediaPlaybackRequiresUserAction={false}
-        // onLoadEnd={handleWebViewLoadEnd}
+          ref={webviewRef}
+          style={[styles.webview]}
+          javaScriptEnabled={true}
+          domStorageEnabled={true}
+          allowsFullscreenVideo={true} // ✅ Enables video zoom/fullscreen
+          allowsInlineMediaPlayback={true} // ✅ iOS support for inline mode
+          setSupportMultipleWindows={false} // ✅ Prevents opening new windows
+          androidLayerType="hardware" // ✅ Improves performance on Android
+          mediaPlaybackRequiresUserAction={false}
+          source={{ uri: videoUrl }}
+          originWhitelist={['*']}
+          onMessage={(event) => console.log('Message from WebView:', event.nativeEvent.data)}
         />
 
  
@@ -46,7 +47,7 @@ const VimeoPlayer = ({ videoUrl, thumbnail }) => {
           <Image
             source={{ uri: thumbnail }}
             style={styles.thumbnail}
-            resizeMode="cover"
+            resizeMode="stretch"
           />
           <Icon name="play-circle" size={60} color="white" style={styles.playIcon} />
         </TouchableOpacity>
@@ -65,8 +66,8 @@ const VimeoPlayer = ({ videoUrl, thumbnail }) => {
 const styles = StyleSheet.create({
   container: {
     width: '100%',
-    height: 250,
-    borderRadius: 10,
+    height: 200,
+    borderRadius: 0,
     overflow: 'hidden',
     backgroundColor: '#000',
     resizeMode:'contain'

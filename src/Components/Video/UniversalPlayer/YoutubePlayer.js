@@ -1,28 +1,36 @@
-import React from 'react';
-import { View } from 'react-native';
+import React, { useState } from 'react';
+import { View, StyleSheet } from 'react-native';
 import YoutubePlayer from 'react-native-youtube-iframe';
 
 const YoutubePlayerComponent = ({
   videoId,
-  paused,
-  setPaused,
-  height = 170,
-  width = '80%',
+  height = 200,
+  width = '100%',
 }) => {
+  const [playing, setPlaying] = useState(true); // start playing immediately
+
   return (
-    <View style={{ width: width, height: height, margin:'auto',flex:1, alignItems:'center' }}>
+    <View style={[styles.container, { height, width }]}>
       <YoutubePlayer
         height={height}
         width={width}
-        play={!paused}
-        key={paused ? 'paused' : 'playing'}
+        play={playing}
         videoId={videoId}
-        onChangeState={e => {
-          if (e === 'ended') setPaused(true);
+        onChangeState={(event) => {
+          if (event === 'ended') setPlaying(false);
         }}
       />
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    alignSelf: 'center',
+    backgroundColor: '#000',
+    overflow: 'hidden',
+    borderRadius: 10,
+  },
+});
 
 export default YoutubePlayerComponent;

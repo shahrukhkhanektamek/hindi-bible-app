@@ -37,6 +37,7 @@ import {
   import AudioPlayer from '../../Components/Audio/AudioPlayer.js';
   import Article from '../../Components/Article/Article.js';
   import LogoutButton from '../../Components/LogoutButton.js';
+import UniversalPlayer from "../../Components/Video/UniversalPlayer/UniversalPlayer.js";
   const urls=apiUrl();
 
 
@@ -171,8 +172,17 @@ import {
             {/* Video Type */}
             {data.post_type == 1 ? ( 
                 <View>
+
+                  <UniversalPlayer
+                    // key={videoKey}
+                    style={styles.webviewVideo}
+                    type={data.video_type}               // "youtube", "vimeo", "gumlet", "gdrive", "video", "audio"
+                    source={data.video_url} // video ID or URL
+                    thumbnail={data.image} // optional
+                    height={175}
+                  />
                     
-                    {data.video_type == 1 ? (                        
+                    {/* {data.video_type == 1 ? (                        
                         <VideoPlayer
                         videoSource={data.video}
                         thumbnail={data.image}
@@ -206,7 +216,7 @@ import {
                         <GumletVideo videoId={data.video} />                        
                     ) : (
                         <Text style={{ color: COLORS.white }}>None</Text>
-                    )}
+                    )} */}
 
                 </View>
             ) : data.post_type == 2 ? (
@@ -364,6 +374,7 @@ import {
       marginHorizontal: 16,
       marginTop: 20,
     },
+    
     videoContainer: {
       alignItems: "center",
       width: "100%",
@@ -465,11 +476,11 @@ import {
       textAlign:'right'
     },
     image: {
-    width: "100%",
-    height: 500,
-    borderRadius: 0,
-    resizeMode:'stretch'
-  },
+      width: "100%",
+      height: 500,
+      borderRadius: 0,
+      resizeMode:'stretch'
+    },
 
 
 

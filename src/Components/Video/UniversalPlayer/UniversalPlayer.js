@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { ActivityIndicator, Text } from 'react-native';
 import { YoutubePlayerComponent, VimeoPlayer, GumletPlayer, GDrivePlayer, CustomPlayer } from './index.js';
 
-const UniversalPlayer = ({ type, source, thumbnail, gumletToken, vimeoToken, id, title, artist, description, setPlayingId, playingId, onEnd }) => {
+const UniversalPlayer = ({ type, source, thumbnail, gumletToken, vimeoToken, id, title, artist, description, setPlayingId, playingId, onEnd, height=null }) => {
   const [paused, setPaused] = useState(true);
 
   if(!source) return <Text style={{ color:'#fff' }}>No source found</Text>;
@@ -17,15 +17,15 @@ const UniversalPlayer = ({ type, source, thumbnail, gumletToken, vimeoToken, id,
 
   switch(type2) {
     case 'youtube':
-      return <YoutubePlayerComponent videoId={source} thumbnail={thumbnail} paused={paused} setPaused={setPaused} />;
+      return <YoutubePlayerComponent videoId={source} thumbnail={thumbnail} paused={paused} setPaused={setPaused} height={height} />;
     case 'vimeo':
-      return <VimeoPlayer videoUrl={source} thumbnail={thumbnail} paused={paused} setPaused={setPaused} />;
+      return <VimeoPlayer videoUrl={source} thumbnail={thumbnail} paused={paused} setPaused={setPaused} height={height} />;
     case 'gumlet':
-      return <GumletPlayer videoId={source} gumletToken={gumletToken} paused={paused} setPaused={setPaused} />;
+      return <GumletPlayer videoId={source} gumletToken={gumletToken} paused={paused} setPaused={setPaused} height={height} />;
     case 'gdrive':
-      return <GDrivePlayer videoId={source} thumbnail={thumbnail} paused={paused} setPaused={setPaused} />;
+      return <GDrivePlayer videoId={source} thumbnail={thumbnail} paused={paused} setPaused={setPaused} height={height} />;
     default:
-      return <CustomPlayer type={type} source={source} thumbnail={thumbnail} paused={paused} setPaused={setPaused} id={id} title={title} artist={artist} description={description} setPlayingId={setPlayingId} playingId={playingId} onEnd={onEnd} />;
+      return <CustomPlayer type={type} source={source} thumbnail={thumbnail} paused={paused} height={height} setPaused={setPaused} id={id} title={title} artist={artist} description={description} setPlayingId={setPlayingId} playingId={playingId} onEnd={onEnd} />;
   }
 };
 
