@@ -14,13 +14,14 @@ const Pdf = ({ title, fileName, fileSize, fileUrl, item }) => {
           :null
           )}
       </View>
-
-      {(item.is_download==1)?(
-        <TouchableOpacity onPress={() => Linking.openURL(item.pdf)}>
-          <FontAwesome name="download" size={30} color="#555" />
-        </TouchableOpacity>
-      ):null
-      }
+      
+      
+        {(item.is_download==1 && item.is_paid!=1 && userDetail)?(
+          <TouchableOpacity onPress={() => Linking.openURL(item.pdf)}>
+            <FontAwesome name="download" size={30} color="#555" />
+          </TouchableOpacity>
+        ):null
+        }
 
       {/* <TouchableOpacity onPress={() => Linking.openURL(fileUrl)}>
         <FontAwesome name="download" size={30} color="#555" />

@@ -51,6 +51,7 @@ export const apiUrl = () => {
     "postView":`${mainUrl}post/view`, 
     "postLike":`${mainUrl}post/like`, 
     "postDetail":`${mainUrl}post/detail`,
+    "getDownloadUrl":`${mainUrl}post/get-download-url`,
 
     "NewsList":`${mainUrl}news/list`,
     "packageHistory":`${mainUrl}package-history`,

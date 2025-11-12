@@ -113,6 +113,18 @@ const GenesisScreen = ({route}) => {
       } 
     }; 
 
+    const getDownloadUrl = async (item) => { 
+      try {
+        const response = await postData({id:item.id}, urls.getDownloadUrl, "GET", null, extraData,0,1);
+        if(response.status==200)
+        {
+          
+        }
+      } catch (error) {
+        console.error('Error fetching countries:', error);
+      } 
+    }; 
+
     useEffect(() => {
       fetchData()
     },[page])
@@ -160,6 +172,7 @@ const GenesisScreen = ({route}) => {
       }
       else if(item.post_type==4)
       {
+        Linking.openURL(item.pdf)
         // !item.is_paid?navigation.navigate('SinglePost', {item:item,name:name}):handlePay(item.id)
       }
       else if(item.post_type==5)
@@ -362,7 +375,7 @@ const GenesisScreen = ({route}) => {
                 <View style={styles.pdfWrapper} key={postKey}>  
                   <TouchableOpacity 
                   onPress={() =>{
-                    handleViewPost(item); Linking.openURL(item.pdf) 
+                    handleViewPost(item);  
                   }}>
                       <Image source={{uri:item.image}} style={styles.image} />
                       <Pdf
@@ -389,17 +402,21 @@ const GenesisScreen = ({route}) => {
                 <Text>None</Text>
               )} 
             </React.Fragment>
-
-            <Text style={styles.title}>{item.name}</Text>
-            {/* Read More */}
-            <TouchableOpacity 
-              style={styles.readMoreButton}
-              onPress={() =>{
-                handleViewPost(item); 
-              }}
-            >
-              <Text style={styles.readMoreText}>Read More</Text>
-            </TouchableOpacity>
+            
+            {(item.post_type!=2 && item.post_type!=4)?(
+              <Text style={styles.title}>{item.name}</Text>
+            ):(null)}
+            
+            {(item.post_type!=2 && item.post_type!=4)?(
+              <TouchableOpacity 
+                style={styles.readMoreButton}
+                onPress={() =>{
+                  handleViewPost(item); 
+                }}
+              >
+                <Text style={styles.readMoreText}>Read More</Text>
+              </TouchableOpacity>
+              ):(null)}
 
             {(item.description && item.post_type!=1 && item.post_type!=5)? (
               <View style={styles.descriptionContainer}>
@@ -456,12 +473,12 @@ const GenesisScreen = ({route}) => {
 
             <View style={styles.viewsWrapper}>
               <View style={[styles.viewsWrapperIcon]}>
-                {/* {(item.is_download==1)?(
-                  <TouchableOpacity onPress={() => Linking.openURL(item.audio)}>
+                {(item.is_download==1)?(
+                  <TouchableOpacity onPress={() => getDownloadUrl(item)}>
                     <FontAwesome name="download" size={25} color="#555" />
                   </TouchableOpacity>
                 ):null
-                } */}
+                }
               </View>
 
               <View style={[styles.viewsWrapperIcon]}>
@@ -601,7 +618,7 @@ const styles = StyleSheet.create({
     width: "100%",
     height: 200,
     borderRadius: 0,
-    resizeMode:'stretch'
+    resizeMode: 'contain',
   },
   imageContainer: {
     width: "100%",

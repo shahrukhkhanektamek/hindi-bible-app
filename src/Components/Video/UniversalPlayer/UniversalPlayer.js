@@ -15,9 +15,9 @@ const UniversalPlayer = ({ type, source, thumbnail, gumletToken, vimeoToken, id,
   if(type==5) type2 = 'gdrive';
  
 
-  switch(type2) {
+  switch(type2) { 
     case 'youtube':
-      return <YoutubePlayerComponent videoId={source} thumbnail={thumbnail} paused={paused} setPaused={setPaused} height={height} />;
+      return <YoutubePlayerComponent videoUrl={source} thumbnail={thumbnail} paused={paused} setPaused={setPaused} height={height} />;
     case 'vimeo':
       return <VimeoPlayer videoUrl={source} thumbnail={thumbnail} paused={paused} setPaused={setPaused} height={height} />;
     case 'gumlet':

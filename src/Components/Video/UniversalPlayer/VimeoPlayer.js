@@ -1,64 +1,68 @@
-import React, { useRef, useState } from 'react';
-import { View, TouchableOpacity, Image, StyleSheet, ActivityIndicator } from 'react-native';
-import Icon from 'react-native-vector-icons/Ionicons';
+import React, { useRef } from 'react';
+import { View, TouchableWithoutFeedback, StyleSheet } from 'react-native';
 import WebView from 'react-native-webview';
 
-const VimeoPlayer = ({ videoUrl, thumbnail, height=200 }) => {
-  const [playing, setPlaying] = useState(false);
-  const [loading, setLoading] = useState(false); // ✅ loader state
+const VimeoPlayer = ({ videoUrl, height = 200 }) => {
   const webviewRef = useRef(null);
+  const lastTap = useRef(null);
 
-  const handlePlay = () => {
-    setPlaying(true);
-    setLoading(true);
-    handleWebViewLoadEnd()
-  };
+  // JS injected into WebView for double-click + fullscreen detection
+  const injectedJS = `
+    // Simulate a double click on body
+    window.simulateDoubleClick = function() {
+      const evt = new MouseEvent('dblclick', { bubbles: true, cancelable: true, view: window });
+      document.body.dispatchEvent(evt);
+    };
 
-  const handleWebViewLoadEnd = () => {
-    setLoading(false); // hide loader when WebView finishes loading
-    if (webviewRef.current) {
-      webviewRef.current.postMessage('triggerButton'); // trigger play in HTML
+    // Pause video when exiting fullscreen
+    document.addEventListener('fullscreenchange', function() {
+      const video = document.querySelector('video');
+      if (video && !document.fullscreenElement) {
+        video.pause();
+      }
+    });
+
+    true; // Important for Android
+  `;
+
+  // Detect double tap
+  const handleTap = () => {
+    const now = Date.now();
+    const DOUBLE_PRESS_DELAY = 300;
+
+    if (lastTap.current && (now - lastTap.current) < DOUBLE_PRESS_DELAY) {
+      // Double-tap detected
+      if (webviewRef.current) {
+        webviewRef.current.injectJavaScript(`window.simulateDoubleClick(); true;`);
+      }
+    } else {
+      lastTap.current = now;
     }
   };
 
   return (
-    <View style={[styles.container,  {height}]}>
-   
-
-        <WebView
-          ref={webviewRef}
-          style={[styles.webview]}
-          javaScriptEnabled={true}
-          domStorageEnabled={true}
-          allowsFullscreenVideo={true} // ✅ Enables video zoom/fullscreen
-          allowsInlineMediaPlayback={true} // ✅ iOS support for inline mode
-          setSupportMultipleWindows={false} // ✅ Prevents opening new windows
-          androidLayerType="hardware" // ✅ Improves performance on Android
-          mediaPlaybackRequiresUserAction={false}
-          source={{ uri: videoUrl }}
-          originWhitelist={['*']}
-          onMessage={(event) => console.log('Message from WebView:', event.nativeEvent.data)}
-        />
-
- 
-
-      {!playing && (
-        <TouchableOpacity style={styles.overlay} onPress={handlePlay}>
-          <Image
-            source={{ uri: thumbnail }}
-            style={styles.thumbnail}
-            resizeMode="stretch"
+    <View style={[styles.container, { height }]}>
+      <TouchableWithoutFeedback onPress={handleTap}>
+        <View style={{ flex: 1 }}>
+          <WebView
+            ref={webviewRef}
+            style={styles.webview}
+            javaScriptEnabled={true}
+            domStorageEnabled={true}
+            allowsFullscreenVideo={true}
+            allowsInlineMediaPlayback={true}
+            setSupportMultipleWindows={false}
+            androidLayerType="hardware"
+            mediaPlaybackRequiresUserAction={false}
+            originWhitelist={['*']}
+            mixedContentMode="always"
+            allowFileAccess={true}
+            allowUniversalAccessFromFileURLs={true}
+            injectedJavaScript={injectedJS}
+            source={{ uri: videoUrl }}
           />
-          <Icon name="play-circle" size={60} color="white" style={styles.playIcon} />
-        </TouchableOpacity>
-      )}
-
-      {/* Loader overlay */}
-      {loading && (
-        <View style={styles.loaderOverlay}>
-          <ActivityIndicator size="large" color="#ffffff" />
         </View>
-      )}
+      </TouchableWithoutFeedback>
     </View>
   );
 };
@@ -66,38 +70,11 @@ const VimeoPlayer = ({ videoUrl, thumbnail, height=200 }) => {
 const styles = StyleSheet.create({
   container: {
     width: '100%',
-    height: 200,
-    borderRadius: 0,
-    overflow: 'hidden',
     backgroundColor: '#000',
-    resizeMode:'contain'
+    overflow: 'hidden',
   },
   webview: {
     flex: 1,
-    borderRadius: 10,
-  },
-  overlay: {
-    position: 'absolute',
-    width: '100%',
-    height: '100%',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  thumbnail: {
-    width: '100%',
-    height: '100%',
-  },
-  playIcon: {
-    position: 'absolute',
-  },
-  loaderOverlay: {
-    position: 'absolute',
-    width: '100%',
-    height: '100%',
-    backgroundColor: 'rgba(0,0,0,0.5)',
-    justifyContent: 'center',
-    alignItems: 'center',
-    zIndex: 10,
   },
 });
 

@@ -181,42 +181,6 @@ import UniversalPlayer from "../../Components/Video/UniversalPlayer/UniversalPla
                     thumbnail={data.image} // optional
                     height={175}
                   />
-                    
-                    {/* {data.video_type == 1 ? (                        
-                        <VideoPlayer
-                        videoSource={data.video}
-                        thumbnail={data.image}
-                        frameSource={require('../../Assets/videoFrame.jpeg')}
-                        />
-                    ) : data.video_type == 2 ? (
-                        <WebView
-                        style={{ height: videoHeight, width: "100%" }}
-                        javaScriptEnabled={true}
-                        domStorageEnabled={true}
-                        allowsFullscreenVideo={true}
-                        source={{
-                            uri: `${data.video_url}`,
-                        }}
-                        originWhitelist={['*']}
-                        mediaPlaybackRequiresUserAction={false}
-                        />
-                    ) : data.video_type == 3 ? (
-                      <WebView
-                      style={{ height: videoHeight, width: "100%" }}
-                      javaScriptEnabled={true}
-                      domStorageEnabled={true}
-                      allowsFullscreenVideo={true}
-                      source={{
-                        uri: `https://www.youtube.com/embed/${data.video}?modestbranding=1&rel=0&controls=1&fs=1`,
-                      }}
-                      originWhitelist={['*']}
-                      mediaPlaybackRequiresUserAction={false}
-                    />
-                    ) : data.video_type == 4 ? (
-                        <GumletVideo videoId={data.video} />                        
-                    ) : (
-                        <Text style={{ color: COLORS.white }}>None</Text>
-                    )} */}
 
                 </View>
             ) : data.post_type == 2 ? (

@@ -324,8 +324,6 @@ const HomeScreen = () => {
       </View>
  
       <View style={styles.videoPlayer}>
-      
-        
         <UniversalPlayer
           key={videoKey}
           style={styles.webviewVideo}
@@ -334,48 +332,6 @@ const HomeScreen = () => {
           thumbnail={appSetting.intro_video.image} // optional
           height={200}
         />
-          
-        {/* {appSetting.intro_video.type == 1 ? (                        
-            <VideoPlayer
-            key={videoKey} 
-            videoSource={appSetting.intro_video.video}
-            thumbnail={appSetting.intro_video.image}
-            frameSource={require('../../Assets/videoFrame.jpeg')}
-            />
-        ) : appSetting.intro_video.type == 2 ? (
-            <WebView
-            key={videoKey}
-            style={styles.webviewVideo}
-            javaScriptEnabled={true}
-            domStorageEnabled={true}
-            allowsFullscreenVideo={true}
-            source={{
-                uri: `${appSetting.intro_video.video_url}`,
-            }}
-            originWhitelist={['*']}
-            mediaPlaybackRequiresUserAction={false}
-            />
-        ) : appSetting.intro_video.type == 3 ? (
-          <WebView
-          key={videoKey}
-          style={styles.webviewVideo}
-          javaScriptEnabled={true}
-          domStorageEnabled={true}
-          allowsFullscreenVideo={true}
-          source={{
-            uri: `${appSetting.intro_video.video_url}`,
-          }}
-          originWhitelist={['*']}
-          mediaPlaybackRequiresUserAction={false}
-        />
-        ) : appSetting.intro_video.type == 4 ? (
-            <GumletVideo key={videoKey} videoId={appSetting.intro_video.video} />                        
-        ) : (
-            <Text style={{ color: COLORS.white }}>None</Text>
-        )} */}
-
-
-
       </View>
           
       
@@ -436,19 +392,34 @@ const HomeScreen = () => {
               />
             </View>
             :
-            <View style={styles.button}>
-              <GradientButton
-                title="Menu"
-                height="50"
-                width="50%"
-                gradientType="purple"
-                color={COLORS.white}
-                borderRadius={5}
-                fontSize={15} 
-                fontWeight="500"
-                onPress={() => navigation.navigate('Category')}
-              />
-            </View>
+            <>
+              <View style={styles.button}>
+                <GradientButton
+                  title="Menu"
+                  height="50"
+                  width="50%"
+                  gradientType="purple"
+                  color={COLORS.white}
+                  borderRadius={5}
+                  fontSize={15} 
+                  fontWeight="500"
+                  onPress={() => navigation.navigate('Category')}
+                />
+              </View>
+              {/* <View style={styles.button}>
+                <GradientButton
+                  title="My Downloads"
+                  height="50"
+                  width="50%"
+                  gradientType="green"
+                  color={COLORS.white}
+                  borderRadius={5}
+                  fontSize={15} 
+                  fontWeight="500"
+                  onPress={() => navigation.navigate('Downloads')}
+                />
+              </View> */}
+            </>
             }
           <Logout />
           </>

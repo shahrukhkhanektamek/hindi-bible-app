@@ -48,6 +48,7 @@ import SingleVideo from '../Components/Video/SingleVideo.js';
 import FeedbackScreen from '../Screens/Feedback/FeedbackScreen.js';
 
 import OrderHistoryScreen from '../Screens/OrderHistory/OrderHistoryScreen.js';
+import DownloadsScreen from '../Screens/Downloads/DownloadsScreen.js';
 import AlbumImage from '../Components/Image/AlbumImage.js';
 import SingleImage from '../Components/Image/SingleImage.js'; 
 
@@ -180,6 +181,7 @@ const StackNavigation = () => (
     <Stack.Screen name="Feedback" component={FeedbackScreen} />
 
     <Stack.Screen name="OrderHistory" component={OrderHistoryScreen} />
+    <Stack.Screen name="Downloads" component={DownloadsScreen} />
 
     <Stack.Screen name="OneDayFreeTrial" component={OneDayFreeTrialScreen} />
 
