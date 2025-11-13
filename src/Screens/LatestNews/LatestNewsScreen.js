@@ -5,8 +5,6 @@ import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import BACKGROUND_COLORS from '../../Constants/BackGroundColors.js';
 import COLORS from '../../Constants/Colors.js';
 import TopBarPrimary from '../../Components/TopBar/TopBarPrimary.js';
-import VideoPlayer from '../../Components/Video/VideoPlayer.js';
-import WebView from 'react-native-webview';
 import { GlobalContext } from '../../Components/GlobalContext';
 import PageLoding from '../../Components/PageLoding.js';
 import { postData, apiUrl } from '../../Components/api';
@@ -24,19 +22,24 @@ const LatestNewsScreen = () => {
   const [refreshing, setRefreshing] = useState(false);
   const [data, setData] = useState([]);
   const [videoKey, setVideoKey] = useState(0);
+  const [page, setpage] = useState(0);
 
   const onRefresh = useCallback(() => {
     setVideoKey(prev => prev + 1);
     setRefreshing(true);
     setRefreshing(false);
     fetchData();
+    setpage(0)
   }, []);
 
   const fetchData = async () => {
     try {
-      const response = await postData({}, urls.NewsList, "GET", navigation, extraData, 1);
+      const response = await postData({page:page}, urls.NewsList, "GET", navigation, extraData, 0);
       if(response.status === 200) {
-        setData(response.data);
+        
+        const data = response.data; 
+        setData(prevData => page === 0 || page === 1 ? data : [...prevData, ...data]);
+
         setIsLoading(false);
       }
     } catch (error) {
@@ -46,13 +49,18 @@ const LatestNewsScreen = () => {
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [page]);
 
   useFocusEffect(
     useCallback(() => {
       fetchData(); // when returning from details screen
     }, [])
   );
+
+  const loadMoreData = async () => {
+    setpage(page+1);
+  }
+
 
   if(isLoading) return <PageLoding />;
 
@@ -130,6 +138,18 @@ const LatestNewsScreen = () => {
           </TouchableOpacity>
         </View>
       ))}
+
+        <TouchableOpacity 
+        onPress={()=>loadMoreData()}
+        style={{
+            margin:'auto',
+            backgroundColor:BACKGROUND_COLORS.darkRed,
+            paddingVertical:10,
+            paddingHorizontal:15,
+            borderRadius:5,
+            marginBottom:10,
+          }}><Text style={{color:COLORS.white}}>Load More</Text></TouchableOpacity>
+
       </TouchableOpacity>
     </ScrollView>
   );
@@ -203,6 +223,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     fontSize: 14,
   },
+  
 });
 
 export default LatestNewsScreen;
