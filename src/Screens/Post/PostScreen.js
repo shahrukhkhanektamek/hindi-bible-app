@@ -73,14 +73,14 @@ const GenesisScreen = ({route}) => {
     setPlayingId(0)
     setRefreshing(true);
     setRefreshing(false);
-    fetchData();
+    // fetchData();
   }, []);
 
     const fetchData = async () => { 
       try { 
         let fileDataLet = {page:page,id:id,category_type:category_type,show_case:show_case,search:search,name:name};
         setfileData(fileDataLet);
-        const response = await postData(fileDataLet, urls.postList, "GET", null, extraData, 1);
+        const response = await postData(fileDataLet, urls.postList, "GET", null, extraData, 0);
         if(response.status==200)
         {
           // setData(response.data);
@@ -125,9 +125,10 @@ const GenesisScreen = ({route}) => {
       } 
     }; 
 
-    useEffect(() => {
-      fetchData()
-    },[page])
+    // useEffect(() => {
+    //   fetchData()
+    // },[page])
+
     const handleLoadMore = () => {
       setPage(page + 1);       
     };
@@ -135,7 +136,7 @@ const GenesisScreen = ({route}) => {
     useFocusEffect(
       useCallback(() => {
         fetchData(); // when returning from details screen
-      }, [])
+      }, [page])
     );
 
     useEffect(() => {
@@ -232,9 +233,10 @@ const GenesisScreen = ({route}) => {
 };
 
 
+
   return (
     <ScrollView style={styles.container}
-      onEndReached={handleLoadMore}
+      // onEndReached={handleLoadMore}
       onEndReachedThreshold={0.5}
       refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
         >
@@ -303,7 +305,7 @@ const GenesisScreen = ({route}) => {
         
 
         {data.map((item, index) => (
-          <View style={[styles.itemContainer]} key={item.id}>
+          <View style={[styles.itemContainer]} key={index}>
             <React.Fragment >
               {(item.post_type==1) ? ( 
                 <View style={[styles.videoFrame]}
@@ -406,6 +408,8 @@ const GenesisScreen = ({route}) => {
             {(item.post_type!=2 && item.post_type!=4)?(
               <Text style={styles.title}>{item.name}</Text>
             ):(null)}
+
+            
             
             {(item.post_type!=2 && item.post_type!=4)?(
               <TouchableOpacity 
@@ -497,7 +501,16 @@ const GenesisScreen = ({route}) => {
         ))}
 
 
-        
+        <TouchableOpacity 
+        onPress={()=>handleLoadMore()}
+        style={{
+            margin:'auto',
+            backgroundColor:BACKGROUND_COLORS.darkRed,
+            paddingVertical:10,
+            paddingHorizontal:15,
+            borderRadius:5,
+            marginBottom:10,
+          }}><Text style={{color:COLORS.white}}>Load More</Text></TouchableOpacity>
        
 
 

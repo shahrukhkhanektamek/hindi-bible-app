@@ -28,7 +28,7 @@ const LatestNewsScreen = () => {
     setVideoKey(prev => prev + 1);
     setRefreshing(true);
     setRefreshing(false);
-    fetchData();
+    // fetchData();
     setpage(0)
   }, []);
 
@@ -38,7 +38,8 @@ const LatestNewsScreen = () => {
       if(response.status === 200) {
         
         const data = response.data; 
-        setData(prevData => page === 0 || page === 1 ? data : [...prevData, ...data]);
+        setData(prevData => page === 0 ? data : [...prevData, ...data]);
+        
 
         setIsLoading(false);
       }
@@ -47,14 +48,14 @@ const LatestNewsScreen = () => {
     }
   };
 
-  useEffect(() => {
-    fetchData();
-  }, [page]);
+  // useEffect(() => {
+  //   fetchData();
+  // }, [page]);
 
   useFocusEffect(
     useCallback(() => {
       fetchData(); // when returning from details screen
-    }, [])
+    }, [page])
   );
 
   const loadMoreData = async () => {
