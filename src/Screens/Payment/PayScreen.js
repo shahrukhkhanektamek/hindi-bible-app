@@ -32,6 +32,7 @@ const PayScreen = ({route}) => {
 
 
   const [payment_type, setpayment_type] = useState(route.params.country);
+  // const [payment_type, setpayment_type] = useState('india');
   const [amount, setamount] = useState('00.00');
   const [gst, setgst] = useState('00.00');
   const [payableamount, setpayableamount] = useState('00.00');
@@ -65,21 +66,58 @@ const PayScreen = ({route}) => {
         const response = await postData({id:item_id}, urls.postDetail, "GET", null, extraData, 1);
         if(response.status==200)
         {
-          if(payment_type=='india')
+          if(response.data.is_paid==1)
           {
-            setamount('₹ '+response.data.cost);
-            setgst('₹ '+response.data.gst);
-            setpayableamount('₹ '+response.data.payable_price);
-          }
+            if(payment_type=='india')
+            {
+              setamount('₹ '+response.data.cost); 
+              setgst('₹ '+response.data.gst);
+              setpayableamount('₹ '+response.data.payable_price);
+            }
+            else
+            {
+              setamount('$'+response.data.cost_international);
+              setgst('$'+response.data.gst_international);
+              setpayableamount('$'+response.data.payable_price_international);
+            }
+            settitle(response.data.name);
+            setfromDate(response.data.from_date); 
+            settoDate(response.data.to_date);
+          } 
           else
           {
-            setamount('$'+response.data.cost_international);
-            setgst('$'+response.data.gst_international);
-            setpayableamount('$'+response.data.payable_price_international);
+            if(type==1)
+            {
+              navigation.reset({
+                index: 0,
+                routes: [{ name: 'Category' }], 
+              });
+            }
+            else if(type==2)
+            {          
+              navigation.reset({
+                index: 0,
+                routes: [
+                  {
+                    name: 'Post',
+                    params: fileData2, 
+                  },
+                ],
+              });
+            }
+            else if(type==3)
+            {
+              navigation.reset({
+                index: 0,
+                routes: [
+                  {
+                    name: 'ContributionPaymentSuccess',
+                    params: response.data, 
+                  },
+                ],
+              });
+            }
           }
-          settitle(response.data.name);
-          setfromDate(response.data.from_date); 
-          settoDate(response.data.to_date);
         } 
       } catch (error) {
         console.error('Error fetching countries:', error);

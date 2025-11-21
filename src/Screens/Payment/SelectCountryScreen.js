@@ -44,7 +44,7 @@ const SelectCountryScreen = ({route}) => {
       try {
         const response = await postData({}, urls.getProfile, "GET", navigation, extraData, 1);
         if(response.status==200)
-        {
+        { 
             if(response.data.payment_mode==1) 
             {
               navigation.navigate('Pay',{country:'india',type:type,item_id:item_id,fileData:fileData});

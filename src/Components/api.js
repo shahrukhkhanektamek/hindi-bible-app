@@ -113,7 +113,7 @@ export const postData = async (filedata, url, method, navigation, extraData, loa
       method: method,
       headers: {
         "Content-Type": "application/json",
-        "Authorization":"Bearer "+storage.getString('token'),
+        "Authorization":storage.getString('token')?"Bearer "+storage.getString('token'):'',
       },
       body: data, // Convert data to JSON string
     });    
@@ -300,6 +300,23 @@ const responseCheck = async (response, navigation, extraData, messageAlert) => {
             index: 0,
             routes: [{ name: 'Home' }], 
           });
+          // navigation.navigate("Home")
+
+          // const routeNames = navigation.getState()?.routeNames || [];
+
+          // if (routeNames.includes("Home")) {
+          //   navigation.reset({
+          //     index: 0,
+          //     routes: [{ name: "Home" }],
+          //   });
+          // } else {
+          //   navigation.reset({
+          //     index: 0,
+          //     routes: [{ name: routeNames[0] }], // fallback first available screen
+          //   });
+          // }
+
+
           return result;
       } 
       else if (result.status === 419) {

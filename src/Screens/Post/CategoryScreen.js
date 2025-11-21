@@ -17,13 +17,14 @@ const storage = new MMKV();
 
 const MainScreen = ({route}) => {
   const navigation = useNavigation();
-  const show_case = route.params?.show_case?route.params?.show_case:0;
+  let show_case = route.params?.show_case?route.params?.show_case:0;
    
 
 
     const { extraData } = useContext(GlobalContext);
     const appSetting = extraData.appSetting;
     const userDetail = extraData.userDetail;
+
 
 
     const [page, setPage] = useState(0);
@@ -150,7 +151,7 @@ const MainScreen = ({route}) => {
 
 
 
-            {!show_case?(
+            {userDetail?(
           
             <View style={styles.buttonWrapper}>
                 <GradiantButton

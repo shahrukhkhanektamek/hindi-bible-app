@@ -13,6 +13,11 @@ import { GlobalContext } from '../../Components/GlobalContext';
 import { postData, apiUrl } from '../../Components/api';
 const urls=apiUrl();
 
+
+
+import { MMKV } from 'react-native-mmkv';
+const storage = new MMKV();
+
 const EditUsernamePasswordScreen = () => {
 
     
@@ -25,6 +30,7 @@ const EditUsernamePasswordScreen = () => {
 
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState(''); 
+  const [rememberMe, setRememberMe] = useState(false);
 
 
  
@@ -34,6 +40,18 @@ const EditUsernamePasswordScreen = () => {
       Alert.alert('Error', 'Please enter username and password');
       return;
     }
+
+    // ✅ Save credentials if rememberMe checked
+      // if (rememberMe) {
+        storage.set('savedUsername', username);
+        storage.set('savedPassword', password);
+        storage.set('rememberMe', 'true');
+      // } else {
+      //   storage.delete('savedUsername');
+      //   storage.delete('savedPassword');
+      //   storage.set('rememberMe', 'false');
+      // }
+
     const filedata = {
       "username":username,
       "password":password,
@@ -71,6 +89,26 @@ const EditUsernamePasswordScreen = () => {
       useEffect(() => {
         fetchData()
       },[]) 
+
+
+
+        useEffect(() => {
+          
+      
+          // ✅ Retrieve saved credentials from MMKV
+          const savedUsername = storage.getString('savedUsername');
+          const savedPassword = storage.getString('savedPassword');
+          const savedRemember = storage.getString('rememberMe');
+      
+          if (savedRemember === 'true' && savedUsername && savedPassword) {
+            setUsername(savedUsername);
+            setPassword(savedPassword);
+            setRememberMe(true);
+          }
+        }, []);
+
+
+
       if (isLoading) {
         return (
             <PageLoding />          
@@ -78,28 +116,49 @@ const EditUsernamePasswordScreen = () => {
       }
 
   return (
-    <ScrollView style={styles.container}
+    <ScrollView keyboardShouldPersistTaps="handled" style={styles.container}
     refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
     >
       <View style={styles.topBar}>
         <TopBarPrimary />
       </View>
 
-      <View style={styles.button}>
-        <GradiantButton
-          title="Home"
-          height="35"
-          width="30%"
-          fontSize={16}
-          gradientType="yellow"
-          borderRadius={5}
-          onPress={() => navigation.navigate('Home')}
-        />
-      </View>
+      
+
+        <View style={styles.buttonTop}>
+          <GradiantButton
+            title="Home"
+            height="30"
+            width="20%"
+            gradientType="yellow"
+            borderRadius={5}
+            fontSize={15}
+            onPress={() => navigation.navigate("Home")}
+          />
+          <GradiantButton
+            title="Menu"
+            height="30"
+            width="20%"
+            gradientType="blue"
+            borderRadius={5}
+            fontSize={15}
+            onPress={() => navigation.navigate('Category')}
+          />
+          
+          <GradiantButton
+            title="Back"
+            height="30"
+            width="20%"
+            fontSize={15}
+            gradientType="purple"
+            borderRadius={5}
+            onPress={() => navigation.goBack()}
+          />
+        </View>
 
       <View style={styles.formContainer}>
       {/* (अकाउंट बनाइये) */}
-        <Text style={styles.formTitle}>Edit Username & Password / (अकाउंट बनाइये) </Text>
+        <Text style={styles.formTitle}>Edit / Change Username & Password </Text>
 
         <View style={styles.inputGroup}>
           <Text style={styles.label}>USERNAME <Text style={{color:COLORS.red}}>*</Text></Text>
@@ -195,6 +254,14 @@ const styles = StyleSheet.create({
     position: 'absolute',
     right: 10,
     top: 9,
+  },
+  buttonTop: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    columnGap: 15,
+    // marginBottom: 20,
+    marginTop: 10,
   },
 });
 

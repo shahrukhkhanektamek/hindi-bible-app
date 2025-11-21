@@ -80,6 +80,7 @@ const PayNowScreen = ({route}) => {
             fontWeight={500}
             gradientType="vibrantRed"
             borderRadius={5}
+            onPress={() => navigation.goBack()}
           />
         </View>
       </View>

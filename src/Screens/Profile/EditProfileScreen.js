@@ -128,17 +128,39 @@ const EditProfileScreen = () => {
         <TopBarPrimary />
       </View>
 
-      <View style={styles.button}>
-        <GradiantButton
-          title="Home"
-          height="35"
-          width="30%"
-          fontSize={16}
-          gradientType="yellow"
-          borderRadius={5}
-          onPress={() => navigation.navigate('Home')}
-        />
-      </View>
+
+      <View style={styles.buttonTop}>
+          <GradiantButton
+            title="Home"
+            height="30"
+            width="20%"
+            gradientType="yellow"
+            borderRadius={5}
+            fontSize={15}
+            onPress={() => navigation.navigate("Home")}
+          />
+          <GradiantButton
+            title="Menu"
+            height="30"
+            width="20%"
+            gradientType="blue"
+            borderRadius={5}
+            fontSize={15}
+            onPress={() => navigation.navigate('Category')}
+          />
+          
+          <GradiantButton
+            title="Back"
+            height="30"
+            width="20%"
+            fontSize={15}
+            gradientType="purple"
+            borderRadius={5}
+            onPress={() => navigation.goBack()}
+          />
+        </View>
+
+    
 
       <View style={styles.formContainer}>
         <View style={styles.inputGroup}>
@@ -151,7 +173,7 @@ const EditProfileScreen = () => {
 
 
         <View style={styles.inputGroup}>
-          <Text style={styles.label}>Rahne Ka Desh - Residing Country <Text style={{color:COLORS.red}}>*</Text></Text>
+          <Text style={styles.label}>रहने का देश - Residing Country <Text style={{color:COLORS.red}}>*</Text></Text>
           <View style={styles.mobileInputContainer}>            
             <Coutries style={styles.pickerFullWidth} selectedCountry={selectedCountry} setSelectedCountry={setSelectedCountry} setCountryCode={setCountryCode} />          
           </View>
@@ -374,6 +396,14 @@ const styles = StyleSheet.create({
     right: 10,
     zIndex: 1,
     padding: 5,
+  },
+  buttonTop: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    columnGap: 15,
+    // marginBottom: 20,
+    marginTop: 10,
   },
 
 

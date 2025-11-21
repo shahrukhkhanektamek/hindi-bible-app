@@ -68,7 +68,7 @@ const BeforeRegistrationModal = ({ visible, onClose }) => {
               </View>
               
 
-              <Text style={styles.message}>Agr apka account TGC Bible Study ne bnaya hai to aap usi username & password se login kar sakte hain.</Text>
+              <Text style={styles.message}>Agar aapka account TGC Bible Study Office se bana hai to aap usi username & password se login kijiye.</Text>
               <Icon2 name="long-arrow-down" style={{textAlign:'center',marginBottom:10,marginTop:-15}} size={40} color="yellow" />
               <View style={styles.buttonBottom}>
                 <GradiantButton
@@ -81,8 +81,7 @@ const BeforeRegistrationModal = ({ visible, onClose }) => {
                     onClose();
                     navigation.navigate('Login');
                   }}
-                />
-                
+                />                
               </View>
 
 

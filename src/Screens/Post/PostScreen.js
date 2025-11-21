@@ -73,7 +73,7 @@ const GenesisScreen = ({route}) => {
     setPlayingId(0)
     setRefreshing(true);
     setRefreshing(false);
-    // fetchData();
+    fetchData();
   }, []);
 
     const fetchData = async () => { 
@@ -158,35 +158,52 @@ const GenesisScreen = ({route}) => {
         setPostPurchaseModalVisible(true);
         return false;
       }
-      postViewData(item)
-      if(item.post_type==1)
-      {
-        !item.is_paid?navigation.navigate('SinglePost', {item:item,name:name}):handlePay(item.id)
-      }
-      else if(item.post_type==2)
-      {
-        // !item.is_paid?navigation.navigate('SinglePost', {item:item,name:name}):handlePay(item.id)
-      }
-      else if(item.post_type==3)
-      {
-        !item.is_paid?navigation.navigate('SingleImage', {image:item.image}):handlePay(item.id)
-      }
-      else if(item.post_type==4)
-      {
-        Linking.openURL(item.pdf)
-        // !item.is_paid?navigation.navigate('SinglePost', {item:item,name:name}):handlePay(item.id)
-      }
-      else if(item.post_type==5)
-      {
-        !item.is_paid?navigation.navigate('SinglePost', {item:item,name:name}):handlePay(item.id)
-      }
-      else if(item.post_type==6)
-      {
-        !item.is_paid?navigation.navigate('AlbumImage', {
-          images: item?.album?item.album:[],
-          initialIndex: 0,
-        }):handlePay(item.id)
-      }
+      // postViewData(item)
+
+
+      try {
+        const response = await postData({post_id:item.id,id:id,category_type:category_type}, urls.postView, "POST", null, extraData, 0);
+        if(response.status==200)
+        {
+
+            if(response.data.is_paid==1)
+            {
+              setPostPurchaseModalVisible(true);
+              return false;
+            }
+
+            if(item.post_type==1)
+            {
+              !item.is_paid?navigation.navigate('SinglePost', {item:item,name:name}):handlePay(item.id)
+            }
+            else if(item.post_type==2)
+            {
+              // !item.is_paid?navigation.navigate('SinglePost', {item:item,name:name}):handlePay(item.id)
+            }
+            else if(item.post_type==3)
+            {
+              !item.is_paid?navigation.navigate('SingleImage', {image:item.image}):handlePay(item.id)
+            }
+            else if(item.post_type==4)
+            {
+              Linking.openURL(item.pdf)
+              // !item.is_paid?navigation.navigate('SinglePost', {item:item,name:name}):handlePay(item.id)
+            }
+            else if(item.post_type==5)
+            {
+              !item.is_paid?navigation.navigate('SinglePost', {item:item,name:name}):handlePay(item.id)
+            }
+            else if(item.post_type==6)
+            {
+              !item.is_paid?navigation.navigate('AlbumImage', {
+                images: item?.album?item.album:[],
+                initialIndex: 0,
+              }):handlePay(item.id)
+            }
+        }
+      } catch (error) {
+        console.error('Error fetching countries:', error);
+      }      
     };
 
     const convertGoogleDriveLink = (url) => { 
