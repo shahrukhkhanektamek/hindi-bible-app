@@ -4,10 +4,12 @@ import {
 import DeviceInfo from 'react-native-device-info';
 import RNFS from 'react-native-fs';
 import { MMKV } from 'react-native-mmkv';
+
+
+import { reset } from './NavigationService';
+
 const storage = new MMKV(); 
    
-
- 
      
 // export const socketUrl = 'http://192.168.1.61:3003';
 export const socketUrl = 'http://192.168.1.17:3003';
@@ -72,6 +74,8 @@ export const apiUrl = () => {
 
  
 export const postData = async (filedata, url, method, navigation, extraData, loaderShowHide=null, messageAlert=null) => {
+
+  
 
   // console.log('navigation')
   // return false;
@@ -159,7 +163,7 @@ const responseCheck = async (response, navigation, extraData, messageAlert) => {
           {
             navigation.reset({
               index: 0,
-              routes: [{ name: 'Category' }], 
+              routes: [{ name: 'Home' },{ name: 'Category' }], 
             });
             return result;
           }
@@ -167,7 +171,7 @@ const responseCheck = async (response, navigation, extraData, messageAlert) => {
           {
             navigation.reset({
               index: 0,
-              routes: [{ name: 'SelectCountryScreen' }], 
+              routes: [{ name: 'Home' },{ name: 'SelectCountryScreen' }], 
             });
             return result;
           }
@@ -175,7 +179,7 @@ const responseCheck = async (response, navigation, extraData, messageAlert) => {
           {
             navigation.reset({
               index: 0,
-              routes: [{ name: 'Category' }], 
+              routes: [{ name: 'Home' },{ name: 'Category' }], 
             });
             return result;
           }
@@ -211,16 +215,13 @@ const responseCheck = async (response, navigation, extraData, messageAlert) => {
           storeLoginToken(result);
           extraData.setuserDetail(JSON.stringify(result?.data));
           extraData.setToken(result?.token);
-          // navigation.reset({
-          //   index: 0,
-          //   routes: [{ name: 'Category' }], 
-          // });
+          
 
           if(result.data.free_trial==1)
           {
             navigation.reset({
               index: 0,
-              routes: [{ name: 'Category' }], 
+              routes: [{ name: 'Home' },{ name: 'Category' }], 
             });
             return result;
           }
@@ -228,7 +229,7 @@ const responseCheck = async (response, navigation, extraData, messageAlert) => {
           {
             navigation.reset({
               index: 0,
-              routes: [{ name: 'SelectCountryScreen' }], 
+              routes: [{ name: 'Home' },{ name: 'SelectCountryScreen' }], 
             });
             return result;
           }
@@ -236,7 +237,7 @@ const responseCheck = async (response, navigation, extraData, messageAlert) => {
           {
             navigation.reset({
               index: 0,
-              routes: [{ name: 'Category' }], 
+              routes: [{ name: 'Home' },{ name: 'Category' }], 
             });
             return result;
           }
@@ -296,28 +297,13 @@ const responseCheck = async (response, navigation, extraData, messageAlert) => {
           extraData.setToken(null);
           storage.delete('token');
           storage.delete('user');
-          navigation.reset({
-            index: 0,
-            routes: [{ name: 'Home' }], 
-          });
-          // navigation.navigate("Home")
-
-          // const routeNames = navigation.getState()?.routeNames || [];
-
-          // if (routeNames.includes("Home")) {
-          //   navigation.reset({
-          //     index: 0,
-          //     routes: [{ name: "Home" }],
-          //   });
-          // } else {
-          //   navigation.reset({
-          //     index: 0,
-          //     routes: [{ name: routeNames[0] }], // fallback first available screen
-          //   });
-          // }
-
-
-          return result;
+          reset(
+          [
+            { name: 'Home' }
+          ],
+          0 // means Category active rahe
+        );
+        return result;
       } 
       else if (result.status === 419) {
         return result;
@@ -381,5 +367,40 @@ export const convertToBase64 = async (uri) => {
     // uploadImage(base64Image);
   } catch (error) {
     console.log('Error converting to Base64:', error);
+  }
+};
+ 
+
+export const convertWithFees = async (from = 'usd', to = 'inr', amount = 10, feePercent = 2) => {
+  try {
+    const response = await fetch(
+      `https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies/${from}.json`
+    );
+
+    if (!response.ok) throw new Error("Failed to fetch currency");
+
+    const data = await response.json();
+
+    const rate = data[from]?.[to];
+
+    if (!rate) throw new Error("Conversion rate not found");
+
+    const converted = amount * rate;
+
+    const fee = (converted * feePercent) / 100;
+
+    const net = converted - fee; 
+
+    return {
+      rate: parseFloat(rate),
+      amount: parseFloat(amount),
+      converted: parseFloat(converted.toFixed(2)),
+      fee: parseFloat(fee.toFixed(2)),
+      net: parseFloat(net.toFixed(2)),
+    };
+
+  } catch (error) {
+    console.log("convertWithFees Error:", error);
+    throw error;
   }
 };

@@ -251,7 +251,7 @@ useEffect(() => {
         // so we use the last known height + setKeyboardHeight again to trigger re-render
         setKeyboardHeight(prev => prev); 
         setKeyboardHeight(event.endCoordinates.height+10);
-        console.log(event);
+        // console.log(event);
       }, 200);
     }
   });

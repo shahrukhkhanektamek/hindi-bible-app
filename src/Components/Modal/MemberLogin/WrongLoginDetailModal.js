@@ -15,7 +15,7 @@ import GradiantButton from '../../Button/GradientButton';
 import { useNavigation } from '@react-navigation/native';
 import COLORS from '../../../Constants/Colors';
 
-const WrongLoginDetailModal = ({ visible, onClose, proceed  }) => {
+const WrongLoginDetailModal = ({ visible, onClose, data  }) => {
   const navigation = useNavigation();
   const [agreeTerms, setAgreeTerms] = useState(false);
 
@@ -36,12 +36,43 @@ const WrongLoginDetailModal = ({ visible, onClose, proceed  }) => {
               <View style={styles.middleSection}>
                 
                 <View style={styles.secondSection}>
-                  <Text style={[styles.message1,{textTransform:'uppercase',color:'white',fontSize:14, marginBottom:10} ]}>
-                     Wrong username password 
-                  </Text>
-                  <Text style={styles.message}>
-                     check capital / small letters & special characters #*$@
-                  </Text>
+                  {data?.type==1?
+                    <>
+                      <Text style={[styles.message1,{textTransform:'uppercase',color:'white',fontSize:14, marginBottom:10} ]}>
+                        Wrong username 
+                      </Text>
+                      <Text style={styles.message}>
+                        {/* check capital / small letters & special characters #*$@ */}
+                      </Text>
+                    </>
+                    :null
+                  }
+
+
+                  {data?.type==2?
+                    <>
+                      <Text style={[styles.message1,{textTransform:'uppercase',color:'white',fontSize:14, marginBottom:10} ]}>
+                        Wrong username password 
+                      </Text>
+                      <Text style={styles.message}>
+                        check capital / small letters & special characters #*$@
+                      </Text>
+                    </>
+                    :null
+                  }
+
+                  {data?.type==3?
+                    <>
+                      <Text style={[styles.message1,{textTransform:'uppercase',color:'white',fontSize:14, marginBottom:10} ]}>
+                        Apka account blocked kr diya gya hai 
+                      </Text>
+                      <Text style={styles.message}>
+                        {/* check capital / small letters & special characters #*$@ */}
+                      </Text>
+                    </>
+                    :null
+                  }
+
                 </View>
                 
                 

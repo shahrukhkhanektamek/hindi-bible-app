@@ -13,7 +13,7 @@ import Coutries from '../../Components/CountryPicker.js';
 
 
 import { GlobalContext } from '../../Components/GlobalContext';
-import { postData, apiUrl } from '../../Components/api';
+import { postData, apiUrl, convertWithFees } from '../../Components/api';
 import PageLoading from '../../Components/PageLoding.js';
 const urls=apiUrl();
 
@@ -24,17 +24,19 @@ const PayThruAppScreen = ({route}) => {
 
   const paymentList = extraData.paymentDetail;
   const PayPal = paymentList.PayPal;
-
+  const convertion_fess = paymentList.Razorpay.convertion_fess;
   
-
   
-
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [mobile, setMobile] = useState('');
   const [selectedCountry, setSelectedCountry] = useState();
   const [countryCode, setCountryCode] = useState('91');
   const [amount, setamount] = useState();
+  const [convertedAmount, setConvertedAmount] = useState(null);
+  const [fees, setfees] = useState(paymentList.Razorpay.fees);
+
+  
 
   const filedata = {
     "name":name,
@@ -72,83 +74,56 @@ const PayThruAppScreen = ({route}) => {
     }
   };
 
-const getPayPalAccessToken = async () => {
-  const clientId = PayPal.key;
-  const secret = PayPal.salt;
 
-  // Sandbox → https://api-m.sandbox.paypal.com
-  // Live → https://api-m.paypal.com
-  const tokenUrl = "https://api-m.sandbox.paypal.com/v1/oauth2/token";
 
-  // Encode credentials (clientId:secret) → base64
-  const credentials = btoa(`${clientId}:${secret}`);
+  const handleAmountChange = async (value) => {
+    setamount(value);
 
-  try {
-    const response = await fetch(tokenUrl, {
-      method: "POST",
-      headers: {
-        "Authorization": `Basic ${credentials}`,
-        "Content-Type": "application/x-www-form-urlencoded",
-      },
-      body: "grant_type=client_credentials",
-    });
-
-    const data = await response.json();
-
-    if (response.ok) {
-      console.log("✅ Access Token:", data.access_token);
-      return data.access_token;
-    } else {
-      console.error("❌ Failed to get token:", data);
-      return null;
+    if (!value || isNaN(value)) {
+      setConvertedAmount(null);
+      return;
     }
-  } catch (error) {
-    console.error("⚠️ Error fetching PayPal token:", error);
-    return null; 
-  }
-};
-const getExchangeRate = async () => {
-  const token = await getPayPalAccessToken();
-  if (!token) return;
 
-  const body = {
-    quote_items: [
-      {
-        base_currency: "USD",   // must be uppercase ISO currency
-        target_currency: "INR",  // must be uppercase ISO currency
-        base_amount: "10.00"     // string
-      }
-    ]
+    try {
+      // 1️⃣ Currency conversion INR में
+      const convertedData = await convertWithFees("usd", "inr", value, convertion_fess);
+      const converted = parseFloat(convertedData.converted);
+
+      // 2️⃣ Conversion fee amount
+      const conversionFeeAmount = parseFloat(((converted * convertion_fess) / 100).toFixed(2));
+
+      // 3️⃣ Razorpay charges
+      const razorpayFee = parseFloat(((converted * fees) / 100).toFixed(2));
+      const razorpayGST = parseFloat(((razorpayFee * 18) / 100).toFixed(2));
+      const totalRazorCharges = razorpayFee + razorpayGST;
+
+      // 4️⃣ Final amount user gets
+      const finalAmount = parseFloat((converted - conversionFeeAmount - totalRazorCharges).toFixed(2));
+
+      // Set state
+      setConvertedAmount({
+        rate: convertedData.rate,
+        usd: value,
+        converted,
+        conversionFeeAmount,
+        razorpayFee,
+        razorpayGST,
+        totalRazorCharges,
+        finalAmount,
+      });
+
+      console.log(convertedAmount)
+
+    } catch (err) {
+      console.log("Conversion Error:", err);
+    }
   };
-
-  try {
-    const response = await fetch(
-      "https://api-m.sandbox.paypal.com/v2/pricing/quote-exchange-rates",
-      {
-        method: "POST",
-        headers: {
-          "Authorization": `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(body)
-      }
-    );
-
-    const data = await response.json();
-    console.log("Exchange Rate Response:", data);
-  } catch (err) {
-    console.error("Error fetching exchange rate:", err);
-  }
-};
-
-
 
 
   useEffect(() => {
-    fetchOldData()
-    // getExchangeRate()
-  },[]) 
-  if (isLoading) {
+    fetchOldData();
+  }, []);
+  if (isLoading) { 
     return (
         <PageLoading />          
     );
@@ -220,6 +195,36 @@ const getExchangeRate = async () => {
             />
           </View>
 
+
+          {convertedAmount && payment_type!='india' && (
+            <View style={{
+              backgroundColor: '#fff',
+              padding: 15,
+              borderRadius: 10,
+              marginBottom: 15,
+              marginTop: 5
+            }}>
+              <Text style={{ fontSize: 18, fontWeight: '700', marginBottom: 10 }}>Calculation Summary</Text>
+
+              <Text>💵 Entered Amount:  ${convertedAmount.usd}</Text>
+              <Text>💱 Converted to INR: ₹{convertedAmount.converted}</Text>
+              <Text>🔁 Conversion Fee ({convertion_fess}%): - ₹{convertedAmount.conversionFeeAmount}</Text>
+              <Text>💳 Razorpay Fee ({fees}%): - ₹{convertedAmount.razorpayFee}</Text>
+              <Text>🧾 GST on Razorpay (18%): - ₹{convertedAmount.razorpayGST}</Text>
+
+              <View style={{
+                borderTopWidth: 1,
+                marginTop: 10,
+                paddingTop: 10,
+                borderColor: "#ddd"
+              }}>
+                <Text style={{ fontSize: 20, fontWeight: "bold", color: "green" }}>
+                  Final Amount We Receive: ₹{convertedAmount.finalAmount}
+                </Text>
+              </View>
+            </View>
+          )}
+
           <View style={styles.inputGroup}>
             <Text style={styles.label}>Ammount <Text style={styles.redStar}>*</Text></Text>
             <TextInput
@@ -228,7 +233,8 @@ const getExchangeRate = async () => {
               placeholder={payment_type=='india'?"Rs.":"USD"}
               placeholderTextColor="black"
               value={amount}
-              onChangeText={setamount}
+              // onChangeText={setamount}
+              onChangeText={handleAmountChange}
             />
           </View>
 

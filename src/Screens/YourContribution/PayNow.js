@@ -42,7 +42,7 @@ const PayNowScreen = ({route}) => {
       <View style={styles.topBar}>
         <TopBarPrimary />
       </View>
-
+ 
       <View style={styles.button}>
         <GradiantButton
           title="BACK"
