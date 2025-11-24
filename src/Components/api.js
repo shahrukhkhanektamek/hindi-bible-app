@@ -193,7 +193,7 @@ const responseCheck = async (response, navigation, extraData, messageAlert) => {
           extraData.setToken(result?.token);
           navigation.reset({
             index: 0,
-            routes: [{ name: 'Home' }], 
+            routes: [{ name: 'Category' }], 
           }); 
           return result;
 
@@ -404,3 +404,33 @@ export const convertWithFees = async (from = 'usd', to = 'inr', amount = 10, fee
     throw error;
   }
 };
+
+
+export const convertAmount = async (from = 'usd', to = 'inr', amount = 10) => {
+  try {
+    const response = await fetch(
+      `https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies/${from}.json`
+    );
+
+    if (!response.ok) throw new Error("Failed to fetch currency");
+
+    const data = await response.json();
+
+    const rate = data[from]?.[to];
+
+    if (!rate) throw new Error("Conversion rate not found");
+    const converted = amount * rate;
+    return {
+      rate: parseFloat(rate),
+      amount: parseFloat(amount),
+      converted: parseFloat(converted.toFixed(2)),
+    };
+
+  } catch (error) {
+    console.log("convertWithFees Error:", error);
+    throw error;
+  }
+};
+
+
+

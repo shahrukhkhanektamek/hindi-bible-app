@@ -28,7 +28,7 @@ const PostPurchaseModal = ({ visible, onClose, handlePay }) => {
           <TouchableWithoutFeedback>
             <View style={styles.modalContent}>
               
-              <Text style={styles.message}>Is Content ko view karne ke liye apko pay karna hoga. Neeche click kar ke pay kare.</Text>
+              <Text style={styles.message}>Is Content ko view karne ke liye apko pay karna hoga. Neeche click kar ke pay kijiye.</Text>
               <View style={styles.buttonBottom}>
                 
                 <GradiantButton

@@ -36,7 +36,7 @@ const AfterRegistrationModal = ({ visible, onClose, userPackage  }) => {
               <View style={styles.middleSection}>
                 
                 <View style={styles.secondSection}>
-                  <Text style={styles.message}>Aapka Account Bna Hua hai. Neeche click kar ke login kijiye </Text>
+                  <Text style={styles.message}>Aapka Account Bana Hua hai. Neeche click kar ke login kijiye </Text>
                   {/* <Text style={{ color: COLORS.goldenYellow, fontSize: 16, marginBottom: 3 }}>YOUR PACKAGE PERIOD</Text> */}
                   {/* <Text style={{ color: COLORS.white, fontSize: 16 }}>11 - 26-03-2026</Text> */}
                 </View>

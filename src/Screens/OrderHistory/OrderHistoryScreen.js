@@ -69,6 +69,18 @@ const OrderHistoryScreen = () => {
           <View style={styles.heading}>
             <View style={styles.headingItem}>
               <Button
+                title="ITEM"
+                height="35"
+                width="100%"
+                fontSize={14}
+                backgroundColor={BACKGROUND_COLORS.darkRed}
+                borderRadius={0}
+                borderColor="#000"
+                borderWidth={1}
+              />
+            </View>
+            <View style={styles.headingItem}>
+              <Button
                 title="PURCHASE"
                 height="35"
                 width="100%"
@@ -108,12 +120,15 @@ const OrderHistoryScreen = () => {
           {data.map((item) => (
               <View style={styles.row} key={item.id}>
                 <View style={styles.cell}>
+                  <Text style={styles.cellText}>{item.p_type_text}</Text>
+                </View> 
+                <View style={styles.cell}>
                   <Text style={styles.cellText}>{item.start_date_time}</Text>
                 </View>
                 <View style={styles.cell}>
                   <Text style={styles.cellText}>{item.end_date_time}</Text>
-                </View>
-                <View style={styles.cell}>
+                </View>   
+                <View style={styles.cell}> 
                   <Text style={styles.cellText}>{item.final_amount}</Text>
                 </View>
               </View>
@@ -147,7 +162,7 @@ const styles = StyleSheet.create({
     borderColor: BACKGROUND_COLORS.darkRed,
   },
   scrollContent: {
-    padding: 20,
+    paddingTop: 20,
     paddingBottom: 80,
   },
   heading: {

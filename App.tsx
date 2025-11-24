@@ -1,4 +1,5 @@
 import PrivacySnapshot from 'react-native-privacy-snapshot';
+import RNExitApp from 'react-native-exit-app';
 import React, { useEffect, useRef, useState, useContext } from 'react';
 import { NavigationContainer, useFocusEffect } from '@react-navigation/native';
 
@@ -6,7 +7,7 @@ import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import DeviceInfo from 'react-native-device-info';
 
 import { navigationRef } from './src/Components/NavigationService';
-import StackNavigation from './src/Navigation/StactNavigation.js';
+import StackNavigation from './src/Navigation/StactNavigation.js'; 
 import { GlobalProvider } from './src/Components/GlobalContext';
 import { Alert, AppState, KeyboardAvoidingView, Keyboard, PermissionsAndroid, Platform, StatusBar, TouchableWithoutFeedback, View, ScrollView } from 'react-native';
 
@@ -305,6 +306,24 @@ useEffect(() => {
     return () => subscription.remove();
   }
 }, []);
+
+
+// const appState = React.useRef(AppState.currentState);
+// React.useEffect(() => {
+//     const subscription = AppState.addEventListener("change", nextAppState => {
+//       // Screen lock hone par state 'background' ya 'inactive' hoti hai
+//       if (
+//         appState.current.match(/active/) &&
+//         (nextAppState === "background" || nextAppState === "inactive")
+//       ) {
+//         RNExitApp.exitApp();
+//       }
+
+//       appState.current = nextAppState;
+//     });
+
+//     return () => subscription.remove();
+//   }, []);
 
 
 

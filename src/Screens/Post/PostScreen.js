@@ -182,7 +182,8 @@ const GenesisScreen = ({route}) => {
             }
             else if(item.post_type==3)
             {
-              !item.is_paid?navigation.navigate('SingleImage', {image:item.image}):handlePay(item.id)
+              !item.is_paid?navigation.navigate('SinglePost', {item:item,name:name}):handlePay(item.id)
+              // !item.is_paid?navigation.navigate('SingleImage', {image:item.image}):handlePay(item.id)
             }
             else if(item.post_type==4)
             {
@@ -195,10 +196,12 @@ const GenesisScreen = ({route}) => {
             }
             else if(item.post_type==6)
             {
-              !item.is_paid?navigation.navigate('AlbumImage', {
-                images: item?.album?item.album:[],
-                initialIndex: 0,
-              }):handlePay(item.id)
+              !item.is_paid?navigation.navigate('SinglePost', {item:item,name:name}):handlePay(item.id)
+
+              // !item.is_paid?navigation.navigate('AlbumImage', {
+              //   images: item?.album?item.album:[],
+              //   initialIndex: 0,
+              // }):handlePay(item.id)
             }
         }
       } catch (error) {
@@ -359,7 +362,7 @@ const GenesisScreen = ({route}) => {
               ) : (item.post_type==3) ? ( 
                 <View style={styles.imageWrapper} key={postKey}>
                   <View style={styles.imageContainer}>
-                    <TouchableOpacity onPress={() =>handleViewPost(item)}>
+                    <TouchableOpacity onPress={() =>!item.is_paid?navigation.navigate('SingleImage', {image:item.image}):handlePay(item.id)}>
                       <Image source={{uri:item.image}} style={styles.image} />
                     </TouchableOpacity>
                   </View>
@@ -368,7 +371,16 @@ const GenesisScreen = ({route}) => {
               ) : (item.post_type==6) ? ( 
                 <View style={styles.imageWrapper} key={postKey}>
                   <View style={styles.imageContainer}>
-                    <Image source={{uri:item.image}} style={styles.image} />
+                    <TouchableOpacity 
+                    onPress={() =>
+                        !item.is_paid?navigation.navigate('AlbumImage', {
+                          images: item?.album?item.album:[],
+                          initialIndex: 0,
+                        }):handlePay(item.id)
+                    }
+                    >
+                      <Image source={{uri:item.image}} style={styles.image} />
+                    </TouchableOpacity>
                     <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
                       <View style={styles.imageTitleWrapper}>
                         <Text style={styles.imageTitle}>{item.name}</Text>
@@ -381,7 +393,12 @@ const GenesisScreen = ({route}) => {
                             gradientType="orange"
                             borderRadius={5} 
                             fontSize={15}                        
-                            onPress={() =>handleViewPost(item)}
+                            onPress={() =>
+                                !item.is_paid?navigation.navigate('AlbumImage', {
+                                  images: item?.album?item.album:[],
+                                  initialIndex: 0,
+                                }):handlePay(item.id)
+                            }
                           />
                         ):null
                         }
@@ -422,13 +439,13 @@ const GenesisScreen = ({route}) => {
               )} 
             </React.Fragment>
             
-            {(item.post_type!=2 && item.post_type!=4)?(
+            {(item.post_type!=2 && item.post_type!=4  && item.post_type!=6)?(
               <Text style={styles.title}>{item.name}</Text>
             ):(null)}
 
             
             
-            {(item.post_type!=2 && item.post_type!=4)?(
+            {(item.post_type!=2 && item.post_type!=4 )?(
               <TouchableOpacity 
                 style={styles.readMoreButton}
                 onPress={() =>{
@@ -439,7 +456,7 @@ const GenesisScreen = ({route}) => {
               </TouchableOpacity>
               ):(null)}
 
-            {(item.description && item.post_type!=1 && item.post_type!=5)? (
+            {(item.description && item.post_type!=1 && item.post_type!=5  && item.post_type!=6 && item.post_type!=3)? (
               <View style={styles.descriptionContainer}>
                 {/* <Text>{item.description}</Text> */}
                 <MyHTMLViewer  

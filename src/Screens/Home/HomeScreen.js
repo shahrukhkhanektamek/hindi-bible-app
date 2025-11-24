@@ -93,9 +93,9 @@ const HomeScreen = () => {
           {
             if(response.data.free_trial==1)
             {
-              
+              setshowpaymentbutton(false);              
             }
-            else if(response.data.package.status==0 || response.data.package.status==2)
+            else if(response.data.package.status==0 || response.data.package.status==2 || response.data.free_trial==2)
             {
               setshowpaymentbutton(true);
               // navigation.reset({

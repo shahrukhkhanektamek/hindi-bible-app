@@ -1,7 +1,7 @@
 /* eslint-disable react-native/no-inline-styles */
 /* eslint-disable comma-dangle */
-import { StyleSheet, Text, View, TextInput, ScrollView } from 'react-native';
-import React, { useState, useContext, useEffect } from 'react';
+import { StyleSheet, Text, View, TextInput, ScrollView, RefreshControl, TouchableOpacity } from 'react-native';
+import React, { useState, useContext, useEffect, useCallback } from 'react';
 import TopBarPrimary from '../../Components/TopBar/TopBarPrimary.js';
 import GradiantButton from '../../Components/Button/GradientButton.js';
 import { useNavigation } from '@react-navigation/native';
@@ -13,7 +13,7 @@ import Coutries from '../../Components/CountryPicker.js';
 
 
 import { GlobalContext } from '../../Components/GlobalContext';
-import { postData, apiUrl, convertWithFees } from '../../Components/api';
+import { postData, apiUrl, convertWithFees, convertAmount } from '../../Components/api';
 import PageLoading from '../../Components/PageLoding.js';
 const urls=apiUrl();
 
@@ -22,10 +22,12 @@ const PayThruAppScreen = ({route}) => {
   const {payment_type} = route.params; 
   const { extraData } = useContext(GlobalContext);
 
+  const fetchAppSettingData = extraData.fetchAppSettingData;
   const paymentList = extraData.paymentDetail;
-  const PayPal = paymentList.PayPal;
-  const convertion_fess = paymentList.Razorpay.convertion_fess;
+  const convertion_fess = paymentList.Razorpay.platform_fee;
+  const gst = paymentList.Razorpay.gst;
   
+
   
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -84,17 +86,17 @@ const PayThruAppScreen = ({route}) => {
       return;
     }
 
-    try {
+    try { 
       // 1️⃣ Currency conversion INR में
-      const convertedData = await convertWithFees("usd", "inr", value, convertion_fess);
+      const convertedData = await convertAmount("usd", "inr", value);
       const converted = parseFloat(convertedData.converted);
 
       // 2️⃣ Conversion fee amount
       const conversionFeeAmount = parseFloat(((converted * convertion_fess) / 100).toFixed(2));
 
       // 3️⃣ Razorpay charges
-      const razorpayFee = parseFloat(((converted * fees) / 100).toFixed(2));
-      const razorpayGST = parseFloat(((razorpayFee * 18) / 100).toFixed(2));
+      const razorpayFee = parseFloat(((converted * convertion_fess) / 100).toFixed(2));
+      const razorpayGST = parseFloat(((razorpayFee * gst) / 100).toFixed(2));
       const totalRazorCharges = razorpayFee + razorpayGST;
 
       // 4️⃣ Final amount user gets
@@ -112,7 +114,6 @@ const PayThruAppScreen = ({route}) => {
         finalAmount,
       });
 
-      console.log(convertedAmount)
 
     } catch (err) {
       console.log("Conversion Error:", err);
@@ -122,7 +123,19 @@ const PayThruAppScreen = ({route}) => {
 
   useEffect(() => {
     fetchOldData();
+    fetchAppSettingData();
   }, []);
+
+  const [refreshing, setRefreshing] = useState(false);
+  const onRefresh = useCallback(() => {
+    fetchOldData();
+    setRefreshing(true);
+    setRefreshing(false);
+    handleAmountChange(amount);
+    fetchAppSettingData();
+  }, []);
+
+
   if (isLoading) { 
     return (
         <PageLoading />          
@@ -131,7 +144,13 @@ const PayThruAppScreen = ({route}) => {
 
 
   return (
-    <ScrollView keyboardShouldPersistTaps="handled" style={styles.container}>
+    <ScrollView keyboardShouldPersistTaps="handled" style={styles.container}
+    refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+    >
+
+      <TouchableOpacity activeOpacity={1}>
+
+
       <View style={styles.topBar}>
         <TopBarPrimary />
       </View>
@@ -208,8 +227,8 @@ const PayThruAppScreen = ({route}) => {
 
               <Text>💵 Entered Amount:  ${convertedAmount.usd}</Text>
               <Text>💱 Converted to INR: ₹{convertedAmount.converted}</Text>
-              <Text>🔁 Conversion Fee ({convertion_fess}%): - ₹{convertedAmount.conversionFeeAmount}</Text>
-              <Text>💳 Razorpay Fee ({fees}%): - ₹{convertedAmount.razorpayFee}</Text>
+              <Text>🔁 Razorpay Fee ({convertion_fess}%): - ₹{convertedAmount.conversionFeeAmount}</Text>
+              {/* <Text>💳 Razorpay Fee ({fees}%): - ₹{convertedAmount.razorpayFee}</Text> */}
               <Text>🧾 GST on Razorpay (18%): - ₹{convertedAmount.razorpayGST}</Text>
 
               <View style={{
@@ -252,6 +271,8 @@ const PayThruAppScreen = ({route}) => {
           </View>
         </View>
       </View>
+
+      </TouchableOpacity>
     </ScrollView>
   );
 };

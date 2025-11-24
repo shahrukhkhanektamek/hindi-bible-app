@@ -6,7 +6,7 @@ import { GlobalContext } from './GlobalContext';
 import { postData, apiUrl } from './api';
 const urls=apiUrl();
 
-const CountryPicker = ({ selectedCountry, setSelectedCountry, setCountryCode }) => {
+const CountryPicker = ({ selectedCountry, setSelectedCountry, setCountryCode, type=null }) => {
 
   const { extraData } = useContext(GlobalContext);
   const navigation = useNavigation(); 
@@ -34,7 +34,7 @@ const CountryPicker = ({ selectedCountry, setSelectedCountry, setCountryCode }) 
   const fetchPickerData = async () => { 
     try {
       
-      const response = await postData([], urls.country,"GET", navigation,extraData);
+      const response = await postData({type:type}, urls.country,"GET", navigation,extraData);
       const data = response.data;
       // const data = [
       //   { "id":"99","name": "India"}
@@ -43,7 +43,7 @@ const CountryPicker = ({ selectedCountry, setSelectedCountry, setCountryCode }) 
 
       // console.log(data) 
       data.forEach(item => { 
-        if(item.id==selectedCountry)
+        if(item.id==selectedCountry || data.length==1)
         {
           setSelectedCountryName(item.name);
           setSelectedCountry(item.id);

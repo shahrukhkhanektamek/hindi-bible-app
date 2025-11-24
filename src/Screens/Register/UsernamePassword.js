@@ -70,17 +70,31 @@ const UsernamePasswordScreen = ({route}) => {
         <TopBarPrimary />
       </View>
 
-      <View style={styles.button}>
-        <GradiantButton
-          title="Home"
-          height="35"
-          width="30%"
-          fontSize={16}
-          gradientType="yellow"
-          borderRadius={5}
-          onPress={() => navigation.navigate('Home')}
-        />
-      </View>
+      
+
+
+        <View style={styles.buttonTop}>
+          <GradiantButton
+            title="Home"
+            height="30"
+            width="20%"
+            gradientType="yellow"
+            borderRadius={5}
+            fontSize={15}
+            onPress={() => navigation.navigate("Home")}
+          />
+          
+          
+          <GradiantButton
+            title="Back"
+            height="30"
+            width="20%"
+            fontSize={15}
+            gradientType="purple"
+            borderRadius={5}
+            onPress={() => navigation.goBack()}
+          />
+        </View>
 
       <View style={styles.formContainer}>
       {/* (अकाउंट बनाइये) */}
@@ -180,6 +194,14 @@ const styles = StyleSheet.create({
     position: 'absolute',
     right: 10,
     top: 9,
+  },
+  buttonTop: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    columnGap: 15,
+    // marginBottom: 20,
+    marginTop: 10,
   },
 });
 

@@ -51,7 +51,7 @@ export const GlobalProvider = ({ children }) => {
     try {
       const response = await postData({}, urls.appSetting, "GET", navigation, extraData);
 
-
+ 
       if(response.status==200)
       {
         setappSetting(JSON.parse(storage.getString('appSetting')));

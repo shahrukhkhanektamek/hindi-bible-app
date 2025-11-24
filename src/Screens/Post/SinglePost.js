@@ -194,24 +194,9 @@ import UniversalPlayer from "../../Components/Video/UniversalPlayer/UniversalPla
               </View>
             ) : data.post_type == 3 ? (
               <View style={styles.imageWrapper}>
-                <Image
-                  source={require("../../Assets/videoThumbnail.jpeg")}
-                  style={styles.image}
-                />
-                <GradiantButton
-                  title="Album"
-                  height="31"
-                  width="25%"
-                  gradientType="orange"
-                  borderRadius={5}
-                  fontSize={15}
-                  onPress={() =>
-                    navigation.navigate("AlbumImage", {
-                      images: {},
-                      initialIndex: 0,
-                    })
-                  }
-                />
+                
+                  <Image source={{uri:data.image}} style={styles.image} />
+                
               </View>
             ) : data.post_type == 4 ? (
               <View style={styles.pdfWrapper}>
@@ -228,6 +213,29 @@ import UniversalPlayer from "../../Components/Video/UniversalPlayer/UniversalPla
                 {/* <Article /> */}
                 <Image source={{uri:data.image}} style={styles.image} />
               </View>
+            ): data.post_type == 6 ? (
+              <>
+                <View>
+                  <Image source={{uri:data.image}} style={styles.image} />
+                </View>
+                <View style={{marginTop:10,display:'flex',justifyContent:'center', alignItems:'center'}}> 
+                  <GradiantButton 
+                      title="Album"
+                      height="31"
+                      width="25%"
+                      gradientType="orange"
+                      borderRadius={5} 
+                      fontSize={15}                        
+                      onPress={() =>
+                        !item.is_paid?navigation.navigate('AlbumImage', {
+                          images: item?.album?item.album:[],
+                            initialIndex: 0,
+                          }):handlePay(item.id)
+                        }
+                    />
+                  </View>
+              </>
+
             ) : (
               <Text style={{ color: COLORS.white }}>None</Text>
             )}
@@ -369,12 +377,7 @@ import UniversalPlayer from "../../Components/Video/UniversalPlayer/UniversalPla
       alignItems: "center",
       marginTop: 10,
     },
-    image: {
-      width: "100%",
-      height: 200,
-      resizeMode: "cover",
-      marginBottom: 10,
-    },
+    
     pdfWrapper: {
       backgroundColor: COLORS.black,
       padding: 10,
@@ -441,9 +444,9 @@ import UniversalPlayer from "../../Components/Video/UniversalPlayer/UniversalPla
     },
     image: {
       width: "100%",
-      height: 500,
+      height: 300,
       borderRadius: 0,
-      resizeMode:'stretch'
+      resizeMode:'contain'
     },
 
 

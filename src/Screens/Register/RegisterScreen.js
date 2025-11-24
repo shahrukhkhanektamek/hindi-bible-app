@@ -158,6 +158,7 @@ const RegisterScreen = ({ route }) => {
               <Text style={styles.label}>Rahne Ka Desh - Residing Country <Text style={{color:COLORS.red}}>*</Text></Text>
               <View style={styles.mobileInputContainer}>
                 <Coutries
+                  type={1}
                   style={styles.pickerFullWidth}
                   selectedCountry={selectedCountry}
                   setSelectedCountry={setSelectedCountry}
