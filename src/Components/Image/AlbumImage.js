@@ -4,7 +4,7 @@ import { View, Image, Text, TouchableOpacity, StyleSheet, Dimensions, StatusBar 
 import Icon from 'react-native-vector-icons/Feather';
 import BACKGROUND_COLORS from '../../Constants/BackGroundColors';
 import { useNavigation } from '@react-navigation/native';
-import SystemNavigationBar from 'react-native-system-navigation-bar';
+import ImmersiveMode from "react-native-immersive-mode";
 
 const AlbumImage = ({ route }) => {
   const navigation = useNavigation();
@@ -14,28 +14,32 @@ const AlbumImage = ({ route }) => {
   const [screenSize, setScreenSize] = useState(Dimensions.get('window'));
   const isLandscape = screenSize.width > screenSize.height;
 
+  
+
+
   useEffect(() => {
-    // STATUS BAR HIDE
-    StatusBar.setHidden(true, 'slide');
+    StatusBar.setHidden(true, "slide");
 
-    // NAVIGATION BAR HIDE
-    SystemNavigationBar.enableImmersive();
+    ImmersiveMode.fullLayout(true);
+    ImmersiveMode.setBarMode("Full");
 
-    const updateSize = ({ window }) => {
-      setScreenSize(window);
+    const listener = Dimensions.addEventListener("change", ({ window }) => {
+      setScreenSize(window); // <--- Landscape detect fix
 
-      // rotate hone par bhi immersive mode continue
-      SystemNavigationBar.enableImmersive();
-    };
-
-    const sub = Dimensions.addEventListener('change', updateSize);
+      StatusBar.setHidden(true);
+      ImmersiveMode.fullLayout(true);
+      ImmersiveMode.setBarMode("Full");
+    });
 
     return () => {
-      sub?.remove();
-      StatusBar.setHidden(false); // screen se wapas jaate waqt show kar do
-      SystemNavigationBar.setNavigationColor('black', 'light');
+      StatusBar.setHidden(false);
+      ImmersiveMode.setBarMode("Normal");
+      listener?.remove();
     };
   }, []);
+
+
+
 
   const goPrev = () => setIndex(index === 0 ? images.length - 1 : index - 1);
   const goNext = () => setIndex(index === images.length - 1 ? 0 : index + 1);
@@ -46,8 +50,8 @@ const AlbumImage = ({ route }) => {
       <Image
         source={{ uri: images[index].image }}
         style={{
-          width: isLandscape ? screenSize.width * 0.70 : screenSize.width * 0.92,
-          height: isLandscape ? screenSize.height * 0.80 : screenSize.height * 0.70,
+          width: isLandscape ? '100%' : '100%',
+          height: isLandscape ? screenSize.height : screenSize.height * 1,
           resizeMode: 'contain',
           borderRadius: 10,
         }}
@@ -101,13 +105,16 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     marginTop: 18,
     gap: 30,
+    position:'absolute',
+    zIndex:1,
+    bottom:30
   },
 
   // Landscape arrows left + right overlay centered
   landscapeNav: {
     position: 'absolute',
     width: '100%',
-    top: '50%',
+    top: '45%',
     flexDirection: 'row',
     justifyContent: 'space-between',
     paddingHorizontal: 20,

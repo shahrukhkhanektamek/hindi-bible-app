@@ -4,7 +4,8 @@ import {
 import DeviceInfo from 'react-native-device-info';
 import RNFS from 'react-native-fs';
 import { MMKV } from 'react-native-mmkv';
-
+import metadata from "libphonenumber-js/metadata.full.json";
+import { parsePhoneNumberFromString, getExampleNumber, getCountryCallingCode  } from "libphonenumber-js";
 
 import { reset } from './NavigationService';
 
@@ -434,3 +435,33 @@ export const convertAmount = async (from = 'usd', to = 'inr', amount = 10) => {
 
 
 
+
+
+export const getExpectedLength = (countryISO) => {
+  try {
+    const callingCode = getCountryCallingCode(countryISO, metadata);
+    console.log(getCountryCallingCode)
+    const formats = metadata.countries[countryISO][2]; // National number formats
+
+    const possibleLengths = new Set();
+
+    formats.forEach(([,, , , , possible]) => {
+      if (Array.isArray(possible)) {
+        possible.forEach(len => possibleLengths.add(len));
+      }
+    });
+
+    return [...possibleLengths];
+  } catch (e) {
+    return null;
+  }
+};
+
+export const validateNumber = (phone, countryISO) => {
+  const digitOnly = phone.replace(/\D/g, "");
+  const possibleLengths = getExpectedLength(countryISO);
+
+  if (!possibleLengths) return false;
+
+  return possibleLengths.includes(digitOnly.length);
+};

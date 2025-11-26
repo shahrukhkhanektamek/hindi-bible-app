@@ -25,7 +25,7 @@ const AlertMessage = ({ extraData }) => {
           useNativeDriver: true,
         }),
         Animated.timing(translateYAnim, {
-          toValue: 0,
+          toValue: 40,
           duration: 500,
           useNativeDriver: true,
         }),
@@ -71,17 +71,17 @@ const styles = StyleSheet.create({
   alert: {
     position: "absolute",
     top: 20,
-    left: "5%",
-    transform: [{ translateX: -150 }], // Center horizontally
-    // backgroundColor: "#dff0d8",
+    left: "0%",
+    transform: [{ translateX: -150 }],   // 150 = half of your alert width
     padding: 15,
     borderRadius: 10,
-    width: 'auto',
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
     elevation: 5,
     zIndex: 1000,
+    width: '80%',   // FIXED WIDTH (important for perfect centering)
+    marginLeft:'10%'
   },
   alertTitle: {
     color: "#3c763d",

@@ -6,7 +6,7 @@ import { GlobalContext } from './GlobalContext';
 import { postData, apiUrl } from './api';
 const urls=apiUrl();
 
-const CountryPicker = ({ selectedCountry, setSelectedCountry, setCountryCode, type=null }) => {
+const CountryPicker = ({ selectedCountry, setSelectedCountry, setCountryCode, type=null, setmobile_pattern }) => {
 
   const { extraData } = useContext(GlobalContext);
   const navigation = useNavigation(); 
@@ -48,10 +48,11 @@ const CountryPicker = ({ selectedCountry, setSelectedCountry, setCountryCode, ty
           setSelectedCountryName(item.name);
           setSelectedCountry(item.id);
           setCountryCode(item.phonecode);
+          setmobile_pattern(item.mobile_pattern);
         }
         
       });
-
+ 
       setCountries(data);
       setFilteredCountries(data);
       setLoading(false);
@@ -79,6 +80,7 @@ const CountryPicker = ({ selectedCountry, setSelectedCountry, setCountryCode, ty
     setSelectedCountryName(country.name);
     setSelectedCountry(country.id);
     setCountryCode(country.phonecode);
+    setmobile_pattern(country.mobile_pattern);
 
     // Modal close karo
     setModalVisible(false);

@@ -1,6 +1,6 @@
 /* eslint-disable react-native/no-inline-styles */
-import { StyleSheet, View } from 'react-native';
-import React, { useEffect, useRef, useState, useContext  } from 'react';
+import { RefreshControl, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
+import React, { useEffect, useRef, useState, useContext, useCallback  } from 'react';
 import TopBarPrimary from '../../Components/TopBar/TopBarPrimary.js';
 import GradiantButton from '../../Components/Button/GradientButton.js';
 import { useNavigation } from '@react-navigation/native';
@@ -36,7 +36,8 @@ const PayScreen = ({route}) => {
   const [amount, setamount] = useState('00.00');
   const [gst, setgst] = useState('00.00');
   const [payableamount, setpayableamount] = useState('00.00');
-
+const [page, setPage] = useState(0);
+  const [refreshing, setRefreshing] = useState(false);
   const [title, settitle] = useState('Wait...');
   const [fromDate, setfromDate] = useState('Wait...'); 
   const [toDate, settoDate] = useState('Wait...');
@@ -153,82 +154,99 @@ const PayScreen = ({route}) => {
         }
       }
 
+    }, [page]);
+  
+    const onRefresh = useCallback(() => {
+      setRefreshing(true);
+
+      setPage(prev => {
+        const newPage = prev + 1;
+        // console.log("Updated Page:", newPage);
+        return newPage;
+      });
+
+      setRefreshing(false);
     }, []);
 
-
   return (
-    <View style={styles.container}>
-      <View style={styles.topBar}>
-        <TopBarPrimary />
-      </View>
-
-      <View style={[styles.buttonTop, { marginBottom: 30 }]}>
-        <GradiantButton
-          title="Home"
-          height="30"
-          width="30%"
-          fontSize={16}
-          gradientType="yellow"
-          borderRadius={5}
-          onPress={() => navigation.navigate('Home')}
-        />
-        <LogoutButton/>
-        <GradiantButton
-            title="Back"
-            height="30"
-            width="20%"
-            fontSize={15}
-            gradientType="purple"
-            borderRadius={5}
-            onPress={() => {
-              if (navigation.canGoBack()) {
-                navigation.goBack();
-              } else {
-                navigation.navigate('Home', route.params); // 👈 yahan apne home screen ka route name likho
-              }
-            }}
-          />
-      </View>
-
-      <View style={styles.buttonContainer}>
-        <View style={styles.textContainer}>
-          <View style={styles.textBox1}>
-            
-            
-            {(gst>0)?(
-              <View>
-                <Text style={[styles.textStyle, { color: COLORS.darkRed, fontWeight: '700',fontSize:20 }]}>Fees: {amount}</Text>
-                <Text style={[styles.textStyle, { color: COLORS.darkRed, fontWeight: '700',fontSize:20 }]}>Gst: {gst}</Text>
-                <Text style={[styles.textStyle, { color: COLORS.darkRed, fontWeight: '700',fontSize:20 }]}>Payable Fees: {payableamount}</Text>
-              </View>
-            ):(
-              <Text style={[styles.textStyle, { color: COLORS.darkRed, fontWeight: '700',fontSize:25 }]}>Fees: {amount}</Text>
-            )}
-            {(typeO==1)?(
-              <>
-                <Text style={[styles.textStyle, { color: COLORS.black }]}>ONE YEAR FEES</Text>
-                <Text style={[styles.textStyle, { color: COLORS.black }]}>एक वर्ष की फीस</Text>
-              </>
-            ):(null)}
-          </View>
-          <View style={styles.textBox2}>
-            <Text style={[styles.textStyle, { color: COLORS.goldenYellow }]}>{title}</Text>
-            <Text style={styles.textStyle}>{fromDate} - {toDate}</Text>
-          </View>
+      <ScrollView style={styles.container}
+        keyboardShouldPersistTaps="handled"
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+      >
+      <TouchableOpacity activeOpacity={1} style={{paddingBottom:20}}>
+      
+        <View style={styles.topBar}>
+          <TopBarPrimary />
         </View>
-        <View style={styles.button}>
+
+        <View style={[styles.buttonTop, { marginBottom: 30 }]}>
           <GradiantButton
-            title="Pay"
-            height="35"
-            width="32%"
+            title="Home"
+            height="30"
+            width="30%"
             fontSize={16}
-            gradientType="orange"
+            gradientType="yellow"
             borderRadius={5}
-            onPress={handleCreateTransaction}
+            onPress={() => navigation.navigate('Home')}
           />
+          <LogoutButton/>
+          <GradiantButton
+              title="Back"
+              height="30"
+              width="20%"
+              fontSize={15}
+              gradientType="purple"
+              borderRadius={5}
+              onPress={() => {
+                if (navigation.canGoBack()) {
+                  navigation.goBack();
+                } else {
+                  navigation.navigate('Home', route.params); // 👈 yahan apne home screen ka route name likho
+                }
+              }}
+            />
         </View>
-      </View>
-    </View>
+
+        <View style={styles.buttonContainer}>
+          <View style={styles.textContainer}>
+            <View style={styles.textBox1}>
+              
+              
+              {(gst>0)?(
+                <View>
+                  <Text style={[styles.textStyle, { color: COLORS.darkRed, fontWeight: '700',fontSize:20 }]}>Fees: {amount}</Text>
+                  <Text style={[styles.textStyle, { color: COLORS.darkRed, fontWeight: '700',fontSize:20 }]}>Gst: {gst}</Text>
+                  <Text style={[styles.textStyle, { color: COLORS.darkRed, fontWeight: '700',fontSize:20 }]}>Payable Fees: {payableamount}</Text>
+                </View>
+              ):(
+                <Text style={[styles.textStyle, { color: COLORS.darkRed, fontWeight: '700',fontSize:25 }]}>Fees: {amount}</Text>
+              )}
+              {(typeO==1)?(
+                <>
+                  <Text style={[styles.textStyle, { color: COLORS.black }]}>ONE YEAR FEES</Text>
+                  <Text style={[styles.textStyle, { color: COLORS.black }]}>एक वर्ष की फीस</Text>
+                </>
+              ):(null)}
+            </View>
+            <View style={styles.textBox2}>
+              <Text style={[styles.textStyle, { color: COLORS.goldenYellow }]}>{title}</Text>
+              <Text style={styles.textStyle}>{fromDate} - {toDate}</Text>
+            </View>
+          </View>
+          <View style={styles.button}>
+            <GradiantButton
+              title="Pay"
+              height="35"
+              width="32%"
+              fontSize={16}
+              gradientType="orange"
+              borderRadius={5}
+              onPress={handleCreateTransaction}
+            />
+          </View>
+        </View>
+      </TouchableOpacity>
+    </ScrollView>
   );
 };
 

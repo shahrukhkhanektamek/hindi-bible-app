@@ -29,6 +29,7 @@ const RegisterScreen = ({ route }) => {
   const [imageUri, setImageUri] = useState(null);
   const [image, setImage] = useState(null);
   const [modalVisible, setModalVisible] = useState(false); // modal state
+  
 
   const show_case = route.params?.show_case;
 
@@ -36,10 +37,40 @@ const RegisterScreen = ({ route }) => {
     const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return regex.test(email);
   };
+
+
+
+
+  const [error, setError] = useState("");
+  const [mobile_pattern, setmobile_pattern] = useState();
   const isValidPhone = (phone) => {
-    const regex = /^\+?[0-9]{6,15}$/; // +countrycode optional, 6–15 digits allowed
-    return regex.test(phone);
+    let pattern = mobile_pattern;
+    if (typeof pattern === "string") {
+      pattern = pattern.replace(/^\/|\/$/g, "");
+      try {
+        pattern = new RegExp(pattern);
+      } catch (e) {
+        console.log("❌ Invalid RegExp format:", e);
+        return { valid: false, message: "Invalid regex format" };
+      }
+    }
+    const patternStr = pattern.toString();
+    const rangeMatch = patternStr.match(/\{(\d+),(\d+)\}/);
+    const min = rangeMatch ? parseInt(rangeMatch[1]) : 0;
+    const max = rangeMatch ? parseInt(rangeMatch[2]) : Infinity;
+    const cleaned = phone.replace(/[^\d]/g, "");
+    if (cleaned.length < min) {
+      return { valid: false, message: `Minimum ${min} digits required` };
+    }
+    if (cleaned.length > max) {
+      return { valid: false, message: `Maximum ${max} digits allowed` };
+    }
+    if (!pattern.test(cleaned)) {
+      return { valid: false, message: "Invalid phone number format" };
+    }
+    return { valid: true, message: "Number valid hai ✔️" };
   };
+
 
   const handleRegister = () => {
 
@@ -50,7 +81,7 @@ const RegisterScreen = ({ route }) => {
       extraData.alert.setAlertType(0);
       return false;
     }
-    else if(!isValidPhone(mobile))
+    else if(error)
     {
       extraData.alert.setAlertMessage("Enter valid mobile!");
       extraData.alert.setShowAlert(true);
@@ -163,6 +194,7 @@ const RegisterScreen = ({ route }) => {
                   selectedCountry={selectedCountry}
                   setSelectedCountry={setSelectedCountry}
                   setCountryCode={setCountryCode}
+                  setmobile_pattern={setmobile_pattern}
                 />
               </View>
             </View>
@@ -178,7 +210,17 @@ const RegisterScreen = ({ route }) => {
                   style={styles.mobileInput}
                   keyboardType="phone-pad"
                   value={mobile}
-                  onChangeText={setMobile}
+                  onChangeText={(text) => {
+                    const cleaned = text.replace(/[^\d]/g, "");
+                    const patternStr = mobile_pattern.toString();
+                    const rangeMatch = patternStr.match(/\{(\d+),(\d+)\}/);
+                    const min = rangeMatch ? parseInt(rangeMatch[1]) : 0;
+                    const max = rangeMatch ? parseInt(rangeMatch[2]) : Infinity;
+                    if (cleaned.length > max) return;
+                    setMobile(cleaned);
+                    const validation = isValidPhone(cleaned);
+                    setError(validation.valid ? "" : validation.message);
+                  }}
                 />
               </View>
             </View>

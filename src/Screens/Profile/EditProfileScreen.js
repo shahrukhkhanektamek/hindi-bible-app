@@ -37,6 +37,38 @@ const EditProfileScreen = () => {
 
 
 
+  const [error, setError] = useState("");
+  const [mobile_pattern, setmobile_pattern] = useState();
+  const isValidPhone = (phone) => {
+    let pattern = mobile_pattern;
+    if (typeof pattern === "string") {
+      pattern = pattern.replace(/^\/|\/$/g, "");
+      try {
+        pattern = new RegExp(pattern);
+      } catch (e) {
+        console.log("❌ Invalid RegExp format:", e);
+        return { valid: false, message: "Invalid regex format" };
+      }
+    }
+    const patternStr = pattern.toString();
+    const rangeMatch = patternStr.match(/\{(\d+),(\d+)\}/);
+    const min = rangeMatch ? parseInt(rangeMatch[1]) : 0;
+    const max = rangeMatch ? parseInt(rangeMatch[2]) : Infinity;
+    const cleaned = phone.replace(/[^\d]/g, "");
+    if (cleaned.length < min) {
+      return { valid: false, message: `Minimum ${min} digits required` };
+    }
+    if (cleaned.length > max) {
+      return { valid: false, message: `Maximum ${max} digits allowed` };
+    }
+    if (!pattern.test(cleaned)) {
+      return { valid: false, message: "Invalid phone number format" };
+    }
+    return { valid: true, message: "Number valid hai ✔️" };
+  };
+
+
+
   const handleUpdate = async () => {
     // if (!name || !email) {
     //   Alert.alert('Error', 'Please enter username and password');
@@ -175,22 +207,33 @@ const EditProfileScreen = () => {
         <View style={styles.inputGroup}>
           <Text style={styles.label}>रहने का देश - Residing Country <Text style={{color:COLORS.red}}>*</Text></Text>
           <View style={styles.mobileInputContainer}>            
-            <Coutries style={styles.pickerFullWidth} selectedCountry={selectedCountry} setSelectedCountry={setSelectedCountry} setCountryCode={setCountryCode} />          
+            <Coutries style={styles.pickerFullWidth} selectedCountry={selectedCountry} setmobile_pattern={setmobile_pattern} setSelectedCountry={setSelectedCountry} setCountryCode={setCountryCode} />          
           </View>
         </View>
         
 
+        {/* Mobile */}
         <View style={styles.inputGroup}>
           <Text style={styles.label}>Mobile (मोबाइल) <Text style={{color:COLORS.red}}>*</Text></Text>
           <View style={styles.mobileInputContainer}>
             <View style={styles.pickerWrapper}>
-              <Text style={styles.pl5}>+{countryCode}</Text>              
+              <Text style={styles.pl5}>+{countryCode}</Text>
             </View>
             <TextInput
               style={styles.mobileInput}
               keyboardType="phone-pad"
               value={mobile}
-              onChangeText={(text) => setMobile(text)}
+              onChangeText={(text) => {
+                const cleaned = text.replace(/[^\d]/g, "");
+                const patternStr = mobile_pattern.toString();
+                const rangeMatch = patternStr.match(/\{(\d+),(\d+)\}/);
+                const min = rangeMatch ? parseInt(rangeMatch[1]) : 0;
+                const max = rangeMatch ? parseInt(rangeMatch[2]) : Infinity;
+                if (cleaned.length > max) return;
+                setMobile(cleaned);
+                const validation = isValidPhone(cleaned);
+                setError(validation.valid ? "" : validation.message);
+              }}
             />
           </View>
         </View>
