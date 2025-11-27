@@ -1,6 +1,6 @@
 /* eslint-disable react-native/no-inline-styles */
-import { StyleSheet, Text, View, TextInput, TouchableOpacity, ScrollView } from 'react-native';
-import React, { useContext, useState } from 'react';
+import { StyleSheet, Text, View, TextInput, TouchableOpacity, ScrollView, Animated } from 'react-native';
+import React, { useContext, useState, useRef } from 'react';
 import Icon from 'react-native-vector-icons/Ionicons';
 import TopBarPrimary from '../../Components/TopBar/TopBarPrimary.js';
 import GradiantButton from '../../Components/Button/GradientButton.js';
@@ -10,58 +10,73 @@ import BACKGROUND_COLORS from '../../Constants/BackGroundColors.js';
 
 import { GlobalContext } from '../../Components/GlobalContext';
 import { postData, apiUrl } from '../../Components/api';
-const urls=apiUrl();
+const urls = apiUrl();
 
-const UsernamePasswordScreen = ({route}) => {
+const UsernamePasswordScreen = ({ route }) => {
 
-    const data = (route.params).data;
-
+  const data = (route.params).data;
   const { extraData } = useContext(GlobalContext);
 
-  const navigation = useNavigation(); 
+  const navigation = useNavigation();
   const [passwordVisible, setPasswordVisible] = useState(false);
 
   const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');  
+  const [password, setPassword] = useState('');
+  const [agree, setAgree] = useState(false);
 
+  // ⭐ Add shake animation ref
+  const shakeAnim = useRef(new Animated.Value(0)).current;
 
-  
+  // ⭐ Shake animation function
+  const shake = () => {
+    Animated.sequence([
+      Animated.timing(shakeAnim, { toValue: 10, duration: 80, useNativeDriver: true }),
+      Animated.timing(shakeAnim, { toValue: -10, duration: 80, useNativeDriver: true }),
+      Animated.timing(shakeAnim, { toValue: 10, duration: 80, useNativeDriver: true }),
+      Animated.timing(shakeAnim, { toValue: 0, duration: 80, useNativeDriver: true }),
+    ]).start();
+  };
 
+  const handleRegister = async () => {
 
-  const handleRegister = async () => {   
-    
-    if(!username)
-    {
+    // ⭐ CHECKBOX REQUIRED VALIDATION
+    if (!agree) {
+      shake(); // animate
+      // extraData.alert.setAlertMessage("Please accept Terms & Conditions!");
+      // extraData.alert.setShowAlert(true);
+      // extraData.alert.setAlertType(0);
+      return false;
+    }
+
+    if (!username) {
       extraData.alert.setAlertMessage("Enter username!");
       extraData.alert.setShowAlert(true);
       extraData.alert.setAlertType(0);
       return false;
     }
-    else if(!password)
-    {
+    else if (!password) {
       extraData.alert.setAlertMessage("Enter password!");
       extraData.alert.setShowAlert(true);
       extraData.alert.setAlertType(0);
       return false;
     }
+
     const filedata = {
-      "username":username,
-      "password":password,
-      "name":data.name,
-      "phone":data.phone,
-      "email":data.email,
-      "country":data.country,
-      "show_case":data.show_case,
-      "image":data.image,
-    };
-    const response = await postData(filedata, urls.registerOtpSend,"POST", navigation,extraData);
-    if(response.status==200)
-    {
-      const response2 = await postData({"otp":1234,"id":response.data.id}, urls.register,"POST", navigation,extraData);
-    }
-  
+      "username": username,
+      "password": password,
+      "name": data.name,
+      "phone": data.phone,
+      "email": data.email,
+      "country": data.country,
+      "show_case": data.show_case,
+      "image": data.image,
     };
 
+    const response = await postData(filedata, urls.registerOtpSend, "POST", navigation, extraData);
+    if (response.status == 200) {
+      const response2 = await postData({ "otp": 1234, "id": response.data.id }, urls.register, "POST", navigation, extraData);
+    }
+  };
 
 
   return (
@@ -70,43 +85,34 @@ const UsernamePasswordScreen = ({route}) => {
         <TopBarPrimary />
       </View>
 
-      
+      <View style={styles.buttonTop}>
+        <GradiantButton
+          title="Home"
+          height="30"
+          width="20%"
+          gradientType="yellow"
+          borderRadius={5}
+          fontSize={15}
+          onPress={() => navigation.navigate("Home")}
+        />
 
-
-        <View style={styles.buttonTop}>
-          <GradiantButton
-            title="Home"
-            height="30"
-            width="20%"
-            gradientType="yellow"
-            borderRadius={5}
-            fontSize={15}
-            onPress={() => navigation.navigate("Home")}
-          />
-          
-          
-          <GradiantButton
-            title="Back"
-            height="30"
-            width="20%"
-            fontSize={15}
-            gradientType="purple"
-            borderRadius={5}
-            onPress={() => navigation.goBack()}
-          />
-        </View>
+        <GradiantButton
+          title="Back"
+          height="30"
+          width="20%"
+          fontSize={15}
+          gradientType="purple"
+          borderRadius={5}
+          onPress={() => navigation.goBack()}
+        />
+      </View>
 
       <View style={styles.formContainer}>
-      {/* (अकाउंट बनाइये) */}
         <Text style={styles.formTitle}>Create Username & Password / (अकाउंट बनाइये)</Text>
 
         <View style={styles.inputGroup}>
           <Text style={styles.label}>USERNAME</Text>
-          <TextInput
-            style={styles.input}
-            value={username}
-            onChangeText={setUsername}
-          />
+          <TextInput style={styles.input} value={username} onChangeText={setUsername} />
         </View>
 
         <View style={styles.inputGroup}>
@@ -124,6 +130,47 @@ const UsernamePasswordScreen = ({route}) => {
             </TouchableOpacity>
           </View>
         </View>
+
+        {/* ⭐⭐⭐ Checkbox + Terms with Shake Animation ⭐⭐⭐ */}
+        <Animated.View
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            marginTop: -15,
+            flexWrap: "wrap",
+            transform: [{ translateX: shakeAnim }]
+          }}
+        >
+          <TouchableOpacity onPress={() => setAgree(!agree)} style={{ padding: 5 }}>
+            <Icon
+              name={agree ? "checkbox" : "square-outline"}
+              size={26}
+              color={agree ? COLORS.orange : COLORS.white}
+            />
+          </TouchableOpacity>
+
+          <TouchableOpacity onPress={() => setAgree(!agree)} style={{ padding: 5 }}>
+            <Text style={{ color: COLORS.white, fontSize: 15 }}>
+              I agree to
+            </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            onPress={() => navigation.navigate("TermsScreen")}
+            style={{ padding: 5 }}
+          >
+            <Text
+              style={{
+                color: COLORS.goldenYellow,
+                fontSize: 15,
+                textDecorationLine: "underline",
+                fontWeight: "600"
+              }}
+            >
+              Terms & Conditions
+            </Text>
+          </TouchableOpacity>
+        </Animated.View>
       </View>
 
       <View style={[styles.button, { marginBottom: 20 }]}>
@@ -140,6 +187,7 @@ const UsernamePasswordScreen = ({route}) => {
     </ScrollView>
   );
 };
+
 
 const styles = StyleSheet.create({
   container: {
@@ -200,7 +248,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     columnGap: 15,
-    // marginBottom: 20,
     marginTop: 10,
   },
 });

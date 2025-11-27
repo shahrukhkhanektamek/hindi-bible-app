@@ -1,11 +1,12 @@
 /* eslint-disable no-extra-semi */
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, useContext } from "react"; // ⬅️ add useContext
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import Slider from "@react-native-community/slider";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import Video from "react-native-video";
 import BACKGROUND_COLORS from "../../Constants/BackGroundColors";
 import formatTime from "../../Helper/formatTime";
+import { GlobalContext } from '../GlobalContext'; // ⬅️ import context
 
 const AudioPlayer = ({
   id,
@@ -13,7 +14,7 @@ const AudioPlayer = ({
   setPlayingId,
   title = "Unknown Title...",
   artist = "",
-  source,
+  source, 
   onEnd,
   handleViewPost,
   item,
@@ -24,7 +25,9 @@ const AudioPlayer = ({
   const [isSeeking, setIsSeeking] = useState(false);
   const [seekTime, setSeekTime] = useState(0);
   const [playbackRate, setPlaybackRate] = useState(1.0);
-  const [pausedTime, setPausedTime] = useState(0); // 👈 Added
+  const [pausedTime, setPausedTime] = useState(0);
+
+  const { setIsMediaPlaying } = useContext(GlobalContext); // ⬅️ ADD CONTEXT
 
   const isPlaying = playingId === id;
 
@@ -45,20 +48,19 @@ const AudioPlayer = ({
   // 🧩 FIX: Resume from paused time, not reset
   useEffect(() => {
     if (isPlaying && audioRef.current && pausedTime > 0) {
-      // Resume from where it was paused
       audioRef.current.seek(pausedTime);
     }
   }, [isPlaying]);
 
   const togglePlayPause = () => {
     if (isPlaying) {
-      // Pausing
-      setPausedTime(currentTime); // Save current time
+      setPausedTime(currentTime);
       setPlayingId(null);
+      setIsMediaPlaying(false); // ⬅️ UPDATE CONTEXT
     } else {
-      handleViewPost(item)
-      // Resuming
+      handleViewPost(item);
       setPlayingId(id);
+      setIsMediaPlaying(true); // ⬅️ UPDATE CONTEXT
     }
   };
 
@@ -77,8 +79,6 @@ const AudioPlayer = ({
   };
   const onSliding = (value) => setSeekTime(value);
 
-
-
   return (
     <View style={styles.container}>
       {/* Hidden Audio Player */}
@@ -96,6 +96,7 @@ const AudioPlayer = ({
           setPlayingId(null);
           setCurrentTime(0);
           setPausedTime(0);
+          setIsMediaPlaying(false); // ⬅️ CONTEXT OFF
         }}
         onError={(e) => console.log("Audio Error:", e)}
         {...videoProps}
@@ -149,8 +150,6 @@ const styles = StyleSheet.create({
     backgroundColor: BACKGROUND_COLORS.white,
     borderRadius: 10,
     padding: 10,
-    // marginVertical: 5,
-    // elevation: 2,
   },
   infoRow: {
     flexDirection: "row",

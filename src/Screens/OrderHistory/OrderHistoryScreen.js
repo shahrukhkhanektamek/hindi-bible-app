@@ -1,4 +1,4 @@
-import { View, ScrollView, StyleSheet, Text, SafeAreaView, RefreshControl } from 'react-native';
+import { View, ScrollView, StyleSheet, Text, SafeAreaView, RefreshControl, TouchableOpacity } from 'react-native';
 import React, { useState, useEffect, useCallback, useContext } from 'react';
 import BACKGROUND_COLORS from '../../Constants/BackGroundColors';
 import Button from '../../Components/Button/Button';
@@ -66,6 +66,7 @@ const OrderHistoryScreen = () => {
         <ScrollView contentContainerStyle={styles.scrollContent}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
         >
+          <TouchableOpacity activeOpacity={1} >
           <View style={styles.heading}>
             <View style={styles.headingItem}>
               <Button
@@ -133,6 +134,7 @@ const OrderHistoryScreen = () => {
                 </View>
               </View>
             ))}
+            </TouchableOpacity>
         </ScrollView>
 
         <View style={styles.buttonWrapper}>

@@ -42,7 +42,7 @@ const WrongLoginDetailModal = ({ visible, onClose, data  }) => {
                         Wrong username 
                       </Text>
                       <Text style={styles.message}>
-                        {/* check capital / small letters & special characters #*$@ */}
+                        Is USERNAME se koi account nahi hai 
                       </Text>
                     </>
                     :null
@@ -63,8 +63,8 @@ const WrongLoginDetailModal = ({ visible, onClose, data  }) => {
 
                   {data?.type==3?
                     <>
-                      <Text style={[styles.message1,{textTransform:'uppercase',color:'white',fontSize:14, marginBottom:10} ]}>
-                        Apka account blocked kr diya gya hai 
+                      <Text style={[styles.message1,{textTransform:'capitalize',color:'white',fontSize:16, marginBottom:10} ]}>
+                        Aapka account block kar diya gaya hai. Adhik jaankari ke liye home page par 'contact us' click kijiye aur hame sampark kijiye.
                       </Text>
                       <Text style={styles.message}>
                         {/* check capital / small letters & special characters #*$@ */}

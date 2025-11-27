@@ -51,9 +51,19 @@ const PayDirectScreen = () => {
 
       <View style={styles.button}>
         <GradiantButton
-          title="BACK"
+          title="Home"
           height="35"
-          width="30%"
+          width="25%"
+          gradientType="yellow"
+          borderRadius={5}
+          fontSize={15}
+          onPress={() => navigation.navigate('Home')}
+        />
+        
+        <GradiantButton
+          title="Back"
+          height="35"
+          width="25%"
           fontSize={16}
           gradientType="purple"
           borderRadius={5}
@@ -126,6 +136,11 @@ const styles = StyleSheet.create({
   },
   button: {
     alignItems: 'center',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    columnGap: 20,
+    marginBottom: 0,
     marginVertical: 10,
   },
   payDirectContainer: {

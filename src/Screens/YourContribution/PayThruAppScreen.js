@@ -188,8 +188,18 @@ const PayThruAppScreen = ({route}) => {
 
       <View style={styles.button}>
         <GradiantButton
+          title="Home"
+          height="35"
+          width="25%"
+          gradientType="yellow"
+          borderRadius={5}
+          fontSize={15}
+          onPress={() => navigation.navigate('Home')}
+        />
+        
+        <GradiantButton
           title="Back"
-          height="30"
+          height="35"
           width="25%"
           fontSize={16}
           gradientType="purple"
@@ -334,6 +344,11 @@ const styles = StyleSheet.create({
   },
   button: {
     alignItems: 'center',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    columnGap: 20,
+    marginBottom: 0,
   },
   mainContainer: {
     marginTop: 5,

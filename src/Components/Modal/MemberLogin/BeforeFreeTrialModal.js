@@ -40,12 +40,12 @@ const BeforeFreeTrialModal = ({ visible, onClose, params }) => {
                   }}
                 />
               </View>
-              <Text style={styles.message}>Agar aap is content ko play karna chaahte hain to kripaya neeche FREE TRIAL par click karke Free Registration kijiye.</Text>
+              <Text style={styles.message}>Agar aap is content ko play karna chaahte hain to kripaya neeche FREE REGISTRATION par click kijiye.</Text>
               <View style={styles.buttonBottom}>
               <GradiantButton
                   title="Menu"
                   height="35"
-                  width="40%"
+                  width="45%"
                   gradientType="blue"
                   borderRadius={5}
                   onPress={() => {
@@ -54,9 +54,9 @@ const BeforeFreeTrialModal = ({ visible, onClose, params }) => {
                   }}
                 />
                 <GradiantButton
-                  title="Free Trial"
+                  title="Free Registration"
                   height="35"
-                  width="40%"
+                  width="50%"
                   gradientType="green"
                   borderRadius={5}
                   onPress={() => {

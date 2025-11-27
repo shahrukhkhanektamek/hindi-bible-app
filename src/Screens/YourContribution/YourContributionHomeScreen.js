@@ -72,6 +72,8 @@ const YourContributionHomeScreen = () => {
         />
       </View>
 
+      
+
       <View style={styles.mainSection}>
         <View style={[styles.section, { marginTop: 10 }]}>
           <Text style={styles.text}>Agar aap INDIAN RUPEES (INR) me pay karna chaahte hain to kripaya INDIA select kijiye.</Text>

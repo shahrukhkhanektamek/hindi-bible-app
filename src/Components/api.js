@@ -450,7 +450,7 @@ export const getExpectedLength = (countryISO) => {
         possible.forEach(len => possibleLengths.add(len));
       }
     });
-
+ 
     return [...possibleLengths];
   } catch (e) {
     return null;

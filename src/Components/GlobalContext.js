@@ -26,6 +26,7 @@ export const GlobalProvider = ({ children }) => {
   const [userDetail, setuserDetail] = useState(null);
   const [token, setToken] = useState(null);
   const [isLoading, setisLoading] = useState(true);
+  const [isMediaPlaying, setIsMediaPlaying] = useState(false);
 
  
   
@@ -98,7 +99,21 @@ export const GlobalProvider = ({ children }) => {
 
 
 
-  const extraData = {alert, sidebar, loader, appSetting, userDetail, setuserDetail, token, setToken, fetchAppSettingData, setappSetting, paymentDetail};
+  const extraData = {
+    alert, 
+    sidebar, 
+    loader, 
+    appSetting, 
+    userDetail, 
+    setuserDetail, 
+    token, 
+    setToken, 
+    fetchAppSettingData, 
+    setappSetting, 
+    paymentDetail,
+    setIsMediaPlaying,
+    isMediaPlaying
+  };
   
   useEffect(() => {
     fetchAppSettingData();
@@ -119,7 +134,7 @@ export const GlobalProvider = ({ children }) => {
     
 
   return ( 
-    <GlobalContext.Provider value={{extraData:extraData}}>
+    <GlobalContext.Provider value={{extraData:extraData,setIsMediaPlaying:setIsMediaPlaying,isMediaPlaying:isMediaPlaying}}>
       {children}
       <Loader extraData={extraData} />
       <AlertMessage extraData={extraData} />

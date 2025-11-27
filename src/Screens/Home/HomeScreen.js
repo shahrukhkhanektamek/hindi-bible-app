@@ -13,6 +13,7 @@ import AfterRegistrationModal from '../../Components/Modal/MemberLogin/AfterRegi
 import FreeTrialRuningModal from '../../Components/Modal/MemberLogin/FreeTrialRuningModal.js';
 import FreeTrialExpireModal from '../../Components/Modal/MemberLogin/FreeTrialExpireModal.js';
 import PackageExpireModal from '../../Components/Modal/MemberLogin/PackageExpireModal.js';
+import ForceUpdateModal from '../../Components/Modal/ForceUpdateModal.js';
 
 import UniversalPlayer from '../../Components/Video/UniversalPlayer/UniversalPlayer';
  
@@ -27,6 +28,7 @@ const storage = new MMKV
 
 import { GlobalContext } from '../../Components/GlobalContext';
 import WebView from 'react-native-webview';
+import DeviceInfo from 'react-native-device-info';
 
 const HomeScreen = () => {
   
@@ -55,6 +57,8 @@ const HomeScreen = () => {
   const [videoKey, setVideoKey] = useState(0);
   const [rdata, setrdata] = useState([]);
 
+  const [forceUpdate, setForceUpdate] = useState(null); 
+
 
     const [page, setPage] = useState(0);
     const [isLoading, setisLoading] = useState(true);
@@ -75,6 +79,18 @@ const HomeScreen = () => {
         
         if(response.status==200)
         {
+ 
+          if (response.data.force_update?.required) {
+            const currentVersionCode = await DeviceInfo.getVersion(); // e.g., "1.0.3"
+            const buildNumber = await DeviceInfo.getBuildNumber(); // versionCode
+            if (parseInt(buildNumber) < parseInt(response.data.force_update.min_version_code)) {
+              setForceUpdate(response.data.force_update);
+            }
+            // console.log(buildNumber) 
+          }
+
+ 
+
           setrdata(response);
           setappSetting(JSON.parse(storage.getString('appSetting')));
           setNewDate(response.data.latestNews.add_date_time)
@@ -499,6 +515,8 @@ const HomeScreen = () => {
         onClose={() => setIsPackageExpireModalVisible(false)}
         appSetting={appSetting}
       />
+
+      <ForceUpdateModal forceUpdate={forceUpdate} />
 
 
       </TouchableOpacity>

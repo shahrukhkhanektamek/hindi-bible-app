@@ -32,6 +32,7 @@ import { postData, apiUrl } from './src/Components/api';
 import BACKGROUND_COLORS from './src/Constants/BackGroundColors.js';
 import SocketJs from './src/Components/Socket/SocketJs.js';
 import PlanExpiryChecker from './src/Components/PlanExpiryChecker.js';
+import TimeOutChecker from './src/Components/TimeOutChecker.js';
 
 const urls=apiUrl();
 
@@ -41,62 +42,15 @@ const storage = new MMKV();
 const App = () => { 
 
   
-
-  const timeoutRef = useRef(null); 
-  const [timeoutSeconds, setTimeoutSeconds] = useState(20); // default 5 sec
   const [canGoBack, setCanGoBack] = useState(false);
   const [deviceId, setdeviceId] = useState();
 
   const [modalVisible, setModalVisible] = useState(false);
-   const [notificationData, setNotificationData] = useState({ title: '', body: '' });
+  const [notificationData, setNotificationData] = useState({ title: '', body: '' });
    
 
 
-  // Inactivity function
-  const onInactivity = () => {
-    console.log(`⚠️ ${timeoutSeconds} seconds inactivity detected!`);
-    // 👉 Yahan apna function likho (logout, navigate, API call etc.)
-    // Example: navigationRef.current?.navigate("Login");
-  };
-  const resetTimer = () => {
-    if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current);
-    }
-    storage.set("lastActiveTime", Date.now().toString());
-    timeoutRef.current = setTimeout(onInactivity, timeoutSeconds * 1000);
-  };
-
- 
-
-  // App resume hone par lastActiveTime check karna
-  const checkLastActiveTime = () => {
-    const lastTime = storage.getString("lastActiveTime");
-    if (lastTime) {
-      const diff = (Date.now() - parseInt(lastTime, 10)) / 1000; // seconds me
-      console.log("⏱ Last inactive seconds:", diff);
-      if (diff >= timeoutSeconds) {
-        onInactivity();
-      }
-    }
-    resetTimer(); // phir se timer chalu karo
-  };
-
-  useEffect(() => {   
-
-    resetTimer(); // initial timer
-
-    const subscription = AppState.addEventListener("change", (nextAppState) => {
-      if (nextAppState === "active") {
-        checkLastActiveTime();
-      } else {
-        resetTimer(); // background jane se pehle last time save ho jaye
-      }
-    });
-    return () => {
-      if (timeoutRef.current) clearTimeout(timeoutRef.current);
-      subscription.remove();
-    };
-  }, [timeoutSeconds]);
+  
 
 
 
@@ -336,6 +290,7 @@ useEffect(() => {
                 />
                 <SocketJs/>
                 <PlanExpiryChecker />
+                <TimeOutChecker />
               </GlobalProvider>
               </NavigationContainer>
             

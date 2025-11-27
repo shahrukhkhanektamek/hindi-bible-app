@@ -10,6 +10,7 @@ import LatestNewsDetailScreen from '../Screens/LatestNews/LatestNewsDetailScreen
 
 import RegisterScreen from '../Screens/Register/RegisterScreen.js';
 import UsernamePasswordScreen from '../Screens/Register/UsernamePassword.js';
+import TermsScreen from '../Screens/Register/TermsScreen.js';
 
 import LoginScreen from '../Screens/Login/LoginScreen.js';
 import ForgotScreen from '../Screens/Login/ForgotScreen.js';
@@ -129,6 +130,7 @@ const StackNavigation = () => (
     <Stack.Screen name="LoginSuccess" component={LoginSuccessScreen} />
 
     <Stack.Screen name="Register" component={RegisterScreen} />
+    <Stack.Screen name="TermsScreen" component={TermsScreen} />
     <Stack.Screen name="UsernamePassword" component={UsernamePasswordScreen} />
     
     <Stack.Screen name="EditProfile" component={EditProfileScreen} />

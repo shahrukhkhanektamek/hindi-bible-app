@@ -1,69 +1,137 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useContext } from 'react';
 import { View, StyleSheet, TouchableWithoutFeedback, BackHandler } from 'react-native';
 import WebView from 'react-native-webview';
+import { GlobalContext } from '../../GlobalContext';
 
 const YoutubePlayerComponent = ({ videoUrl, height = 200 }) => {
   const webviewRef = useRef(null);
   const lastTap = useRef(null);
 
-  // ✅ Injected JS for handling double-click inside WebView
+  const { setIsMediaPlaying } = useContext(GlobalContext);
+
   const injectedJS = `
     window.simulateDoubleClick = function() {
       const evt = new MouseEvent('dblclick', { bubbles: true, cancelable: true, view: window });
       document.body.dispatchEvent(evt);
     };
 
-    // ✅ Detect fullscreen exit and pause video
+    // Track play state
+    window._YT_PLAYING = false;
+
+    // Play/Pause toggle (double tap)
+    window.togglePlayPause = function() {
+      const iframe = document.querySelector('iframe');
+      if (!iframe) return;
+
+      iframe.contentWindow.postMessage(JSON.stringify({
+        event: "command",
+        func: window._YT_PLAYING ? "pauseVideo" : "playVideo",
+        args: ""
+      }), "*");
+
+      window._YT_PLAYING = !window._YT_PLAYING;
+
+      window.ReactNativeWebView.postMessage(JSON.stringify({
+        type: "media",
+        playing: window._YT_PLAYING
+      }));
+    };
+
+    // Detect fullscreen exit → Pause
     document.addEventListener('fullscreenchange', function() {
       const iframe = document.querySelector('iframe');
       if (!document.fullscreenElement && iframe) {
-        // Pause YouTube
-        if (iframe.src.includes('youtube.com')) {
-          iframe.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
-        }
-        // Pause Vimeo
-        if (iframe.src.includes('vimeo.com')) {
-          try {
-            new Vimeo.Player(iframe).pause();
-          } catch (e) {}
-        }
+        iframe.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
+
+        window.ReactNativeWebView.postMessage(JSON.stringify({
+          type: "media",
+          playing: false
+        }));
+
+        window._YT_PLAYING = false;
       }
     });
 
-    true; // Required for Android
+    /* 
+     ************************************************************
+     🔥🔥🔥 YOUTUBE REAL PLAY/PAUSE LISTENER ADDED HERE 🔥🔥🔥
+     ************************************************************
+    */
+
+    window.onYouTubeIframeAPIReady = function () {
+      const iframe = document.querySelector('iframe');
+      if (!iframe) return;
+
+      window.YTPlayer = new YT.Player(iframe, {
+        events: {
+          onStateChange: function (event) {
+            if (event.data === 1) {
+              window._YT_PLAYING = true;
+              window.ReactNativeWebView.postMessage(JSON.stringify({
+                type: "media",
+                playing: true
+              }));
+            }
+
+            if (event.data === 2) {
+              window._YT_PLAYING = false;
+              window.ReactNativeWebView.postMessage(JSON.stringify({
+                type: "media",
+                playing: false
+              }));
+            }
+          }
+        }
+      });
+    };
+
+    if (!window.YT) {
+      var tag = document.createElement("script");
+      tag.src = "https://www.youtube.com/iframe_api";
+      document.body.appendChild(tag);
+    }
+
+    true;
   `;
 
-  // ✅ Handle double tap detection
   const handleTap = () => {
     const now = Date.now();
     const DOUBLE_PRESS_DELAY = 300;
+
     if (lastTap.current && now - lastTap.current < DOUBLE_PRESS_DELAY) {
-      if (webviewRef.current) {
-        webviewRef.current.injectJavaScript(`window.simulateDoubleClick(); true;`);
-      }
+      webviewRef.current.injectJavaScript(`window.simulateDoubleClick(); true;`);
+      webviewRef.current.injectJavaScript(`window.togglePlayPause(); true;`);
     } else {
       lastTap.current = now;
     }
   };
 
-  // ✅ Optional: Android hardware back press exits fullscreen
+  const onMessage = (event) => {
+    try {
+      const data = JSON.parse(event.nativeEvent.data);
+      if (data.type === 'media') {
+        setIsMediaPlaying(data.playing);
+        console.log("🎬 WebView Media Playing:", data.playing);
+      }
+    } catch (e) {}
+  };
+
   useEffect(() => {
     const backAction = () => {
       if (webviewRef.current) {
-        // Send pause event to stop video when back pressed
         webviewRef.current.injectJavaScript(`
           const iframe = document.querySelector('iframe');
           if (iframe && iframe.src.includes('youtube.com')) {
             iframe.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
           }
-          if (iframe && iframe.src.includes('vimeo.com')) {
-            try { new Vimeo.Player(iframe).pause(); } catch(e){}
-          }
           true;
         `);
+
+        setIsMediaPlaying(false);
       }
-      return false; // Let back handler continue
+      return false;
     };
+
     const backHandler = BackHandler.addEventListener('hardwareBackPress', backAction);
     return () => backHandler.remove();
   }, []);
@@ -87,6 +155,7 @@ const YoutubePlayerComponent = ({ videoUrl, height = 200 }) => {
             allowFileAccess={true}
             allowUniversalAccessFromFileURLs={true}
             injectedJavaScript={injectedJS}
+            onMessage={onMessage}
             source={{ uri: videoUrl }}
           />
         </View>

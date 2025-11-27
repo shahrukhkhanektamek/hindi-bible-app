@@ -1,28 +1,55 @@
-import React, { useRef } from 'react';
+import React, { useRef, useContext } from 'react';
 import { View, TouchableWithoutFeedback, StyleSheet } from 'react-native';
 import WebView from 'react-native-webview';
+import { GlobalContext } from '../../GlobalContext';
 
 const VimeoPlayer = ({ videoUrl, height = 200 }) => {
   const webviewRef = useRef(null);
   const lastTap = useRef(null);
 
-  // JS injected into WebView for double-click + fullscreen detection
+  const { setIsMediaPlaying } = useContext(GlobalContext);  // ⬅️ ADDED
+  
+  // JS injected into WebView
   const injectedJS = `
-    // Simulate a double click on body
-    window.simulateDoubleClick = function() {
-      const evt = new MouseEvent('dblclick', { bubbles: true, cancelable: true, view: window });
-      document.body.dispatchEvent(evt);
-    };
-
-    // Pause video when exiting fullscreen
-    document.addEventListener('fullscreenchange', function() {
-      const video = document.querySelector('video');
-      if (video && !document.fullscreenElement) {
-        video.pause();
+    (function() {
+      
+      function sendToReactNative(status) {
+        window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'media', playing: status }));
       }
-    });
 
-    true; // Important for Android
+      function attachEvents() {
+        const videos = document.getElementsByTagName('video');
+
+        for (let v of videos) {
+          v.addEventListener('play', () => sendToReactNative(true));
+          v.addEventListener('playing', () => sendToReactNative(true));
+          v.addEventListener('pause', () => sendToReactNative(false));
+          v.addEventListener('ended', () => sendToReactNative(false));
+        }
+      }
+
+      attachEvents();
+
+      // Watch for dynamic iframe/video loads
+      const observer = new MutationObserver(() => attachEvents());
+      observer.observe(document.body, { childList: true, subtree: true });
+
+      // Your existing double-click and fullscreen code
+      window.simulateDoubleClick = function() {
+        const evt = new MouseEvent('dblclick', { bubbles: true, cancelable: true, view: window });
+        document.body.dispatchEvent(evt);
+      };
+
+      document.addEventListener('fullscreenchange', function() {
+        const video = document.querySelector('video');
+        if (video && !document.fullscreenElement) {
+          video.pause();
+        }
+      });
+
+    })();
+
+    true;
   `;
 
   // Detect double tap
@@ -31,7 +58,6 @@ const VimeoPlayer = ({ videoUrl, height = 200 }) => {
     const DOUBLE_PRESS_DELAY = 300;
 
     if (lastTap.current && (now - lastTap.current) < DOUBLE_PRESS_DELAY) {
-      // Double-tap detected
       if (webviewRef.current) {
         webviewRef.current.injectJavaScript(`window.simulateDoubleClick(); true;`);
       }
@@ -60,6 +86,17 @@ const VimeoPlayer = ({ videoUrl, height = 200 }) => {
             allowUniversalAccessFromFileURLs={true}
             injectedJavaScript={injectedJS}
             source={{ uri: videoUrl }}
+
+            // ⬅️ Receive play/pause message from WebView
+            onMessage={(event) => {
+              try {
+                const data = JSON.parse(event.nativeEvent.data);
+                if (data.type === 'media') {
+                  setIsMediaPlaying(data.playing);
+                  console.log("🎬 WebView Media Playing:", data.playing);
+                }
+              } catch (e) {}
+            }}
           />
         </View>
       </TouchableWithoutFeedback>

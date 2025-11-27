@@ -1,214 +1,155 @@
-import React, { useRef, useState } from 'react';
-import { 
-  View, 
-  TouchableOpacity, 
-  Image, 
-  Text, 
-  StyleSheet 
-} from 'react-native';
-import Video from 'react-native-video';
-import Icon from 'react-native-vector-icons/Ionicons';
-import Slider from '@react-native-community/slider';
-import Orientation from 'react-native-orientation-locker';
-import AudioPlayer from '../../Audio/AudioPlayer';
+import React, { useEffect, useRef, useState, useContext } from "react";
+import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import Slider from "@react-native-community/slider";
+import Icon from "react-native-vector-icons/Ionicons";
+import Video from "react-native-video";
+import BACKGROUND_COLORS from "../../../Constants/BackGroundColors";
+import formatTime from "../../../Helper/formatTime";
+import { GlobalContext } from '../../GlobalContext'; 
 
-const CustomPlayer = ({
-  type,
-  source,
-  paused,
-  setPaused,
-  thumbnail,
-  rate,
-  setRate,
-  onEnd,
+const AudioPlayer = ({
   id,
-  title,
-  artist,
-  description,
-  setPlayingId,
   playingId,
+  setPlayingId, 
+  title = "Unknown Title...", 
+  artist = "",
+  source,
+  onEnd,
+  handleViewPost,
+  item,
 }) => {
-  const videoRef = useRef(null);
+  const audioRef = useRef(null);
   const [duration, setDuration] = useState(0);
   const [currentTime, setCurrentTime] = useState(0);
-  const [fullscreen, setFullscreen] = useState(false);
+  const [isSeeking, setIsSeeking] = useState(false);
+  const [seekTime, setSeekTime] = useState(0);
+  const [playbackRate, setPlaybackRate] = useState(1.0);
+  const [pausedTime, setPausedTime] = useState(0);
 
-  // Format time like 1:23
-  const formatTime = (seconds) => {
-    const mins = Math.floor(seconds / 60);
-    const secs = Math.floor(seconds % 60);
-    return `${mins}:${secs < 10 ? '0' + secs : secs}`;
-  };
+  const { setIsMediaPlaying } = useContext(GlobalContext);
 
-  // Handle fullscreen toggle
-  const toggleFullscreen = () => {
-    if (fullscreen) {
-      Orientation.lockToPortrait();
-    } else {
-      Orientation.lockToLandscape();
+  const isPlaying = playingId === id;
+
+  const isVideoUrl =
+    typeof source === "string" &&
+    (source.includes("youtube.com") ||
+      source.includes("youtu.be") ||
+      source.endsWith(".mp4") ||
+      source.endsWith(".mkv") ||
+      source.endsWith(".mov") ||
+      source.endsWith(".avi"));
+
+  const videoProps = isVideoUrl ? { ignoreVideo: true } : { audioOnly: true };
+
+  useEffect(() => {
+    if (isPlaying && audioRef.current && pausedTime > 0) {
+      audioRef.current.seek(pausedTime);
     }
-    setFullscreen(!fullscreen);
+  }, [isPlaying]);
+
+  const togglePlayPause = () => {
+    if (isPlaying) {
+      setPausedTime(currentTime);
+      setPlayingId(null);
+      setIsMediaPlaying(false); // 🔥
+    } else {
+      handleViewPost(item);
+      setPlayingId(id);
+      setIsMediaPlaying(true); // 🔥
+    }
   };
 
-  if (type === 'audio') {
-    return (
-      <AudioPlayer
-        id={id}
-        source={{ uri: source }}
-        setPlayingId={setPlayingId}
-        playingId={playingId}
-        title={title}
-        artist={artist}
-        description={description}
-        onEnd={onEnd}
-      />
-    );
-  }
+  const toggleSpeed = () => {
+    if (playbackRate === 1) setPlaybackRate(1.5);
+    else if (playbackRate === 1.5) setPlaybackRate(2);
+    else setPlaybackRate(1);
+  };
+
+  const onSeekStart = () => setIsSeeking(true);
+  const onSeekComplete = (value) => {
+    setIsSeeking(false);
+    setCurrentTime(value);
+    setPausedTime(value);
+    audioRef.current.seek(value);
+    if (isPlaying) setIsMediaPlaying(true); // 🔥 seeking
+  };
+  const onSliding = (value) => setSeekTime(value);
 
   return (
-    <View style={[styles.container, fullscreen && styles.fullscreen]}>
+    <View style={styles.container}>
       <Video
-        ref={videoRef}
-        source={{ uri: source }}
-        style={[styles.video, fullscreen && styles.fullscreenVideo]}
-        paused={paused}
-        resizeMode="contain"
-        rate={rate}
+        ref={audioRef}
+        source={typeof source === "string" ? { uri: source } : source}
+        paused={!isPlaying}
+        rate={playbackRate}
         onLoad={(data) => setDuration(data.duration)}
-        onProgress={(data) => setCurrentTime(data.currentTime)}
-        onEnd={() => {
-          setPaused(true);
-          onEnd && onEnd();
+        onProgress={(data) => {
+          if (!isSeeking) setCurrentTime(data.currentTime);
+          if (isPlaying) setIsMediaPlaying(true); // 🔥 while playing
         }}
+        onEnd={() => {
+          if (onEnd) onEnd(id);
+          setPlayingId(null);
+          setCurrentTime(0);
+          setPausedTime(0);
+          setIsMediaPlaying(false); // 🔥 ended
+        }}
+        onError={(e) => console.log("Audio Error:", e)}
+        {...videoProps}
       />
 
-      {/* Thumbnail overlay */}
-      {thumbnail && paused && (
-        <TouchableOpacity
-          onPress={() => setPaused(false)}
-          activeOpacity={0.8}
-          style={styles.thumbnailOverlay}
-        >
-          <Image
-            source={{ uri: thumbnail }}
-            style={styles.thumbnail}
-            resizeMode="contain"
+      {/* Info Section */}
+      <View style={styles.infoRow}>
+        <TouchableOpacity onPress={togglePlayPause}>
+          <Icon
+            name={isPlaying ? "pause-circle" : "play-circle"}
+            size={55}
+            color="#2196F3"
           />
-          <Icon name="play-circle" size={60} color="white" style={styles.playIcon} />
-        </TouchableOpacity>
-      )}
-
-      {/* Controls */}
-      <View style={styles.controls}>
-        <TouchableOpacity
-          onPress={() => {
-            if (paused && videoRef.current) videoRef.current.seek(0);
-            setPaused(!paused);
-          }}
-        >
-          <Icon name={paused ? 'play' : 'pause'} size={26} color="#fff" />
         </TouchableOpacity>
 
-        {/* Slider */}
+        <View style={styles.textSection}>
+          <Text style={styles.title} numberOfLines={1}>{title}</Text>
+          {artist ? <Text style={styles.artist}>{artist}</Text> : null}
+        </View>
+
+        <TouchableOpacity onPress={toggleSpeed} style={styles.speedButton}>
+          <Text style={styles.speedText}>{playbackRate}x</Text>
+        </TouchableOpacity>
+      </View>
+
+      {/* Progress */}
+      <View style={styles.progressSection}>
+        <Text style={styles.time}>{formatTime(currentTime)}</Text>
         <Slider
-          style={{ flex: 1, marginHorizontal: 10 }}
+          style={styles.slider}
           minimumValue={0}
           maximumValue={duration}
-          value={currentTime}
-          minimumTrackTintColor="#FFD700"
-          maximumTrackTintColor="#fff"
-          thumbTintColor="#FFD700"
-          onSlidingComplete={(value) => {
-            videoRef.current.seek(value);
-            setCurrentTime(value);
-          }}
+          value={isSeeking ? seekTime : currentTime}
+          minimumTrackTintColor="#2196F3"
+          maximumTrackTintColor="#ccc"
+          thumbTintColor="#2196F3"
+          onSlidingStart={onSeekStart}
+          onValueChange={onSliding}
+          onSlidingComplete={onSeekComplete}
         />
-
-        {/* Time */}
-        <Text style={styles.time}>
-          {formatTime(currentTime)} / {formatTime(duration)}
-        </Text>
-
-        {/* Speed control */}
-        <TouchableOpacity onPress={() => setRate(rate === 1 ? 1.5 : rate === 1.5 ? 2 : 1)}>
-          <Text style={styles.rateText}>{rate}x</Text>
-        </TouchableOpacity>
-
-        {/* Fullscreen toggle */}
-        <TouchableOpacity onPress={toggleFullscreen}>
-          <Icon
-            name={fullscreen ? 'contract' : 'expand'}
-            size={22}
-            color="#fff"
-            style={{ marginLeft: 8 }}
-          />
-        </TouchableOpacity>
+        <Text style={styles.time}>{formatTime(duration)}</Text>
       </View>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    width: '100%',
-    height: 200,
-    backgroundColor: '#000',
-    borderRadius: 10,
-    overflow: 'hidden',
-    position: 'relative',
-  },
-  video: {
-    width: '100%',
-    height: '100%',
-  },
-  fullscreen: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    height: '100%',
-    width: '100%',
-    zIndex: 999,
-    backgroundColor: '#000',
-  },
-  fullscreenVideo: {
-    height: '100%',
-    width: '100%',
-  },
-  controls: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    width: '100%',
-    backgroundColor: 'rgba(0,0,0,0.6)',
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: 6,
-  },
-  thumbnailOverlay: {
-    position: 'absolute',
-    width: '100%',
-    height: '100%',
-    justifyContent: 'center',
-    alignItems: 'center',
-    zIndex: 10,
-  },
-  thumbnail: {
-    width: '100%',
-    height: '100%',
-  },
-  playIcon: {
-    position: 'absolute',
-  },
-  time: {
-    color: '#fff',
-    fontSize: 12,
-    marginHorizontal: 5,
-  },
-  rateText: {
-    color: '#FFD700',
-    fontSize: 14,
-    fontWeight: '600',
-  },
+  container: { backgroundColor: BACKGROUND_COLORS.white, borderRadius: 10, padding: 10 },
+  infoRow: { flexDirection: "row", alignItems: "center" },
+  textSection: { flex: 1, marginLeft: 10 },
+  title: { fontSize: 18, fontWeight: "bold", color: "#333" },
+  artist: { fontSize: 15, color: "#666" },
+  progressSection: { flexDirection: "row", alignItems: "center", marginTop: 5 },
+  slider: { flex: 1, marginHorizontal: 8 },
+  time: { fontSize: 13, color: "#555", width: 45, textAlign: "center" },
+  speedButton: { backgroundColor: "#2196F3", borderRadius: 8, paddingVertical: 4, paddingHorizontal: 8 },
+  speedText: { color: "#fff", fontSize: 14, fontWeight: "bold" },
 });
 
-export default CustomPlayer;
+export default AudioPlayer;
