@@ -74,6 +74,13 @@ const RegisterScreen = ({ route }) => {
 
   const handleRegister = () => {
 
+    // if(error)
+    // {
+    //   extraData.alert.setAlertMessage("Enter valid mobile!");
+    //   extraData.alert.setShowAlert(true);
+    //   extraData.alert.setAlertType(0);
+    //   return false;
+    // }
     if(!isValidEmail(email))
     {
       extraData.alert.setAlertMessage("Enter valid email!");
@@ -81,13 +88,6 @@ const RegisterScreen = ({ route }) => {
       extraData.alert.setAlertType(0);
       return false;
     }
-    // else if(error)
-    // {
-    //   extraData.alert.setAlertMessage("Enter valid mobile!");
-    //   extraData.alert.setShowAlert(true);
-    //   extraData.alert.setAlertType(0);
-    //   return false;
-    // }
     else if(!name) {
       extraData.alert.setAlertMessage("Enter name!");
       extraData.alert.setShowAlert(true);

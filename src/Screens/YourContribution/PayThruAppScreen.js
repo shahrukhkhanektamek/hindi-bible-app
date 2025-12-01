@@ -150,7 +150,43 @@ const PayThruAppScreen = ({route}) => {
       console.log("Conversion Error:", err);
     }
   };
+  
 
+  const handleSubmit = () => {
+
+    
+    if(!name) {
+      extraData.alert.setAlertMessage("Enter name!");
+      extraData.alert.setShowAlert(true);
+      extraData.alert.setAlertType(0);
+      return false;
+    }
+    else if(!selectedCountry) {
+      extraData.alert.setAlertMessage("Select country!");
+      extraData.alert.setShowAlert(true);
+      extraData.alert.setAlertType(0);
+      return false;
+    }
+    else if(!mobile) {
+      extraData.alert.setAlertMessage("Enter mobile no.!");
+      extraData.alert.setShowAlert(true);
+      extraData.alert.setAlertType(0);
+      return false;
+    }
+    else if(!email) {
+      extraData.alert.setAlertMessage("Enter email!");
+      extraData.alert.setShowAlert(true);
+      extraData.alert.setAlertType(0);
+      return false;
+    }
+    else if(!amount) {
+      extraData.alert.setAlertMessage("Enter amount!");
+      extraData.alert.setShowAlert(true);
+      extraData.alert.setAlertType(0);
+      return false;
+    }    
+    navigation.navigate('PayNow',{"filedata":filedata})
+  };
 
   useEffect(() => {
     fetchOldData();
@@ -318,11 +354,12 @@ const PayThruAppScreen = ({route}) => {
               gradientType="lightBlue"
               borderRadius={5}
               onPress={() => { 
-                if(!amount){
-                  showSuccessMessage('Enter  Amount!', extraData, 0);
-                  return false;
-                }
-                navigation.navigate('PayNow',{"filedata":filedata});
+                // if(!amount){
+                //   showSuccessMessage('Enter  Amount!', extraData, 0);
+                //   return false;
+                // }
+                // navigation.navigate('PayNow',{"filedata":filedata});
+                handleSubmit()
               }}
             />
           </View>
