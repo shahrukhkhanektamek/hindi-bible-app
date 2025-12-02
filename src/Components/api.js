@@ -16,9 +16,9 @@ const storage = new MMKV();
 export const socketUrl = 'http://192.168.1.17:3003';
 export const apiUrl = () => {   
   // const apiUrl = 'http://192.168.1.61/projects/codediffusion/hindibible/api/'; 
-  // const apiUrl = 'https://developershahrukh.in/demo/codediffusion/hindibible/api/'; 
+  const apiUrl = 'https://sademo.online/demo/codediffusion/hindibible/api/'; 
   // const apiUrl = 'https://digitalnamo.com/azmal/2025/april/hindibible/api/'; 
-  const apiUrl = 'http://192.168.1.25/projects/hindibible/api/'; 
+  // const apiUrl = 'http://192.168.1.25/projects/hindibible/api/'; 
 
       
   const commurl = apiUrl;    
@@ -39,6 +39,7 @@ export const apiUrl = () => {
     "sendPassword":`${mainUrl}send-password`,
     "createPassword":`${mainUrl}create-password`,
     "proceedLogin":`${mainUrl}proceed-login`,
+    "deleteAccount":`${mainUrl}delete-account`,
     
     "country":`${commurl}country`,
     "package":`${commurl}package`,
@@ -46,6 +47,7 @@ export const apiUrl = () => {
     "appVisit":`${commurl}app-visit`,
     "appLike":`${commurl}app-like`,
 
+    "language":`${mainUrl}language`,
     "category":`${mainUrl}category`,
     "subCategory":`${mainUrl}sub-category`,
     "subSubCategory":`${mainUrl}sub-sub-category`, 
@@ -164,7 +166,7 @@ const responseCheck = async (response, navigation, extraData, messageAlert) => {
           {
             navigation.reset({
               index: 0,
-              routes: [{ name: 'Home' },{ name: 'Category' }], 
+              routes: [{ name: 'Home' },{ name: 'Language' }], 
             });
             return result;
           }
@@ -180,7 +182,7 @@ const responseCheck = async (response, navigation, extraData, messageAlert) => {
           {
             navigation.reset({
               index: 0,
-              routes: [{ name: 'Home' },{ name: 'Category' }], 
+              routes: [{ name: 'Home' },{ name: 'Language' }], 
             });
             return result;
           }
@@ -194,7 +196,7 @@ const responseCheck = async (response, navigation, extraData, messageAlert) => {
           extraData.setToken(result?.token);
           navigation.reset({
             index: 0,
-            routes: [{ name: 'Category' }], 
+            routes: [{ name: 'Language' }], 
           }); 
           return result;
 
@@ -222,7 +224,7 @@ const responseCheck = async (response, navigation, extraData, messageAlert) => {
           {
             navigation.reset({
               index: 0,
-              routes: [{ name: 'Home' },{ name: 'Category' }], 
+              routes: [{ name: 'Home' },{ name: 'Language' }], 
             });
             return result;
           }
@@ -238,7 +240,7 @@ const responseCheck = async (response, navigation, extraData, messageAlert) => {
           {
             navigation.reset({
               index: 0,
-              routes: [{ name: 'Home' },{ name: 'Category' }], 
+              routes: [{ name: 'Home' },{ name: 'Language' }], 
             });
             return result;
           }

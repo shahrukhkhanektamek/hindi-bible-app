@@ -15,10 +15,9 @@ const urls=apiUrl();
 import { MMKV } from 'react-native-mmkv';
 const storage = new MMKV();
 
-const MainScreen = ({route}) => {
+const LanguageScreen = ({route}) => {
   const navigation = useNavigation();
   let show_case = route.params?.show_case?route.params?.show_case:0;
-  let language_id = route.params?.id?route.params?.id:0;
    
 
 
@@ -47,8 +46,8 @@ const MainScreen = ({route}) => {
  
     const fetchData = async () => { 
         try {
-          const response = await postData({show_case:show_case,language_id:language_id}, urls.category, "GET", navigation, extraData, 1);
-          if(response.status==200)
+          const response = await postData({}, urls.language, "GET", navigation, extraData, 1);
+          if(response.status==200) 
           {
             setData(response.data);           
             setisLoading(false)
@@ -58,35 +57,18 @@ const MainScreen = ({route}) => {
         }
       };
       
-      useEffect(() => {
-        fetchData()
-      },[])
+    //   useEffect(() => {
+    //     fetchData()
+    //   },[])
       if (isLoading) {
         return (
           <PageLoding />          
         );
       }
       
-      const handleChangePage = async (item) => { 
-        if(item.sub_category_used){
-          item.post_used?navigation.navigate('SubCategory', {id:item.id,name:item.name,show_case:show_case,"category_type":1}):null;
-        }else{
-          item.post_used?navigation.navigate('Post', {id:item.id,name:item.name,show_case:show_case,"category_type":1}):null
-        } 
-      };
+      
     
-      const handleDeleteAccount = async () => { 
-        console.log(userDetail.id)
-        try { 
-          const response = await postData({user_id:userDetail.id}, urls.deleteAccount, "POST", navigation, extraData);
-          if(response.status==200)
-          {
-            
-          }
-        } catch (error) {
-          console.error('Error fetching countries:', error);
-        }
-      };
+    
  
   return (
     <ScrollView style={styles.container}
@@ -130,7 +112,7 @@ const MainScreen = ({route}) => {
       </View>
       <View style={styles.button}>
         <Button
-          title="Menu"
+          title="Language"
           height="35"
           width="25%"
           fontSize={15}
@@ -143,18 +125,19 @@ const MainScreen = ({route}) => {
 
           <View style={[styles.row]}>
             {data.map((item) => (
-              <View style={[styles.col6,styles.plr5,styles.mb15]} key={item.id}>
+              <View style={[styles.plr5,styles.mb15,{width:'100%'}]} key={item.id}>
                 <GradiantButton
+                    key={item.id}
                     title={item.name}
                     title2={item?.name2}
-                    count={item?.post_count}
+                    count={0}
                     height="45"
                     width="100%"
-                    gradientType={item.post_used?'orange':'gray'}
+                    gradientType={'orange'}
                     borderRadius={5}
                     fontSize={Number(item?.font_size)}
                     fontWeight="500"
-                    onPress={() => handleChangePage(item)}
+                    onPress={() => navigation.navigate('Category', {id:item.id,name:item.name,show_case:show_case})}
                   />
                 </View>
             ))}
@@ -165,55 +148,6 @@ const MainScreen = ({route}) => {
 
 
 
-            {userDetail?(
-              <>
-              <View style={styles.buttonWrapper}>
-                  <GradiantButton
-                    title="Edit Profile"
-                    height="35"
-                    width="33%"
-                    gradientType="green"
-                    borderRadius={5}
-                    fontSize={13}
-                    fontWeight="500"
-                    onPress={() => navigation.navigate('EditProfile')}
-                    />
-                  <GradiantButton
-                    title="Edit Username"
-                    height="35"
-                    width="33%"
-                    gradientType="green"
-                    borderRadius={5}
-                    fontSize={13}
-                    fontWeight="500"
-                    onPress={() => navigation.navigate('EditUsernamePassword')}
-                    />
-                  <GradiantButton
-                    title="Order History"
-                    height="35"
-                    width="33%"
-                    gradientType="green"
-                    borderRadius={5}
-                    fontSize={13}
-                    fontWeight="500"
-                    onPress={() => navigation.navigate('OrderHistory')}
-                    />
-              </View>
-              <View style={styles.buttonWrapper}>
-                    <GradiantButton
-                    title="Delete Account"
-                    height="35"
-                    width="50%"
-                    gradientType="red"
-                    borderRadius={5}
-                    fontSize={13}
-                    fontWeight="500"
-                    onPress={() => handleDeleteAccount() }
-                    />
-              </View>
-              </>
-            ):null
-            }
               
 
 
@@ -284,4 +218,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default MainScreen;
+export default LanguageScreen;

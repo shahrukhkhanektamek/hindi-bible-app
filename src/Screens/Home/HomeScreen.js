@@ -419,7 +419,7 @@ const HomeScreen = () => {
                   borderRadius={5}
                   fontSize={15} 
                   fontWeight="500"
-                  onPress={() => navigation.navigate('Category')}
+                  onPress={() => navigation.navigate('Language')}
                 />
               </View>
               {/* <View style={styles.button}>

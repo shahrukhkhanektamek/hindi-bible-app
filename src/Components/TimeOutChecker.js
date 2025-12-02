@@ -15,7 +15,8 @@ const TimeOutChecker = () => {
   const { extraData, isMediaPlaying } = useContext(GlobalContext);   // ⬅️ ADDED
   const appSetting = extraData?.appSetting || {};
   const timeoutRef = useRef(null);
-//   
+  const userDetail = extraData.userDetail;
+
 
   const timeoutSeconds = appSetting.payment_detail?.logout_time*60 || 300000*60;
   
@@ -23,15 +24,17 @@ const TimeOutChecker = () => {
   // 🔹 Function to call on inactivity
   const onInactivity = () => {
     console.log(`⚠️ ${timeoutSeconds} seconds inactivity detected!`);
-    
-    // extraData.setuserDetail(null);
-    // extraData.setToken(null);
-    // storage.delete('token');
-    // storage.delete('user');
-    // navigation.reset({
-    //     index: 0,
-    //     routes: [{ name: 'Home' }], 
-    // });
+    if(userDetail)
+    {
+      extraData.setuserDetail(null);
+      extraData.setToken(null);
+      storage.delete('token');
+      storage.delete('user');
+      navigation.reset({
+        index: 0,
+        routes: [{ name: 'Home' }], 
+      });
+    }
     // 👉 Yahan apna function likho (logout, navigate, API call etc.)
   };
 

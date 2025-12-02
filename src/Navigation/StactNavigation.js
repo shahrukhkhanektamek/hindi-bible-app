@@ -21,6 +21,7 @@ import YourContributionHomeScreen from '../Screens/YourContribution/YourContribu
 import YourContributionScreen from '../Screens/YourContribution/YourContributionScreen.js';
 import PayDirectScreen from '../Screens/YourContribution/PayDirectScreen.js';
 
+import LanguageScreen from '../Screens/Post/LanguageScreen.js';
 import CategoryScreen from '../Screens/Post/CategoryScreen.js';
 import SubCategoryScreen from '../Screens/Post/SubCategoryScreen.js';
 import SubSubCategoryScreen from '../Screens/Post/SubSubCategoryScreen.js';
@@ -144,6 +145,7 @@ const StackNavigation = () => (
 
     <Stack.Screen name="MemberLogin" component={MemberLoginScreen} />
 
+    <Stack.Screen name="Language" component={LanguageScreen} />
     <Stack.Screen name="Category" component={CategoryScreen} />
     <Stack.Screen name="SubCategory" component={SubCategoryScreen} />
     <Stack.Screen name="SubSubCategory" component={SubSubCategoryScreen} />
