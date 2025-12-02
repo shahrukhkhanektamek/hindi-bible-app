@@ -43,7 +43,7 @@ const OneDayFreeTrialScreen = () => {
           gradientType="orange"
           borderRadius={5}
           fontSize={14}
-          onPress={() => navigation.navigate('Category',{show_case:1})}
+          onPress={() => navigation.navigate('Language',{show_case:1})}
         />
       </View>
     </ScrollView>
