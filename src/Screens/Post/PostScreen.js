@@ -139,16 +139,15 @@ const GenesisScreen = ({route}) => {
       }, [page])
     );
 
-    useEffect(() => {
-      // postViewData()
-    },[])
+    // useEffect(() => {
+    //   // postViewData()
+    // },[])
     
     const handleViewPost = async (item) => { 
       
       if(show_case)
       {
         setBeforeFreeTrialModalVisible(true)
-        console.log(show_case)
         return false;
       }
 

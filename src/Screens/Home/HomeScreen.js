@@ -98,7 +98,7 @@ const HomeScreen = () => {
           setPackage(response.data.package)
           
           
-        
+          setshowpaymentbutton(false);
           if(String(response.data.latestNews.id)!=storage.getString('latestNews')) 
           {
             setisLatestNews(true)
@@ -111,7 +111,7 @@ const HomeScreen = () => {
             {
               setshowpaymentbutton(false);              
             }
-            else if(response.data.package.status==0 || response.data.package.status==2 || response.data.free_trial==2)
+            else if(response.data.package.status==0 || response.data.package.status==2)
             {
               setshowpaymentbutton(true);
               // navigation.reset({

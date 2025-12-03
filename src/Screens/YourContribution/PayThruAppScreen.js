@@ -85,7 +85,7 @@ const PayThruAppScreen = ({route}) => {
   const [data, setdata] = useState([]); 
   const fetchOldData = async () => {  
     try {
-      const response = await postData({}, urls.getLastTransaction, "GET", navigation, extraData, 1);
+      const response = await postData({}, urls.getLastTransaction, "GET", navigation, extraData,1,1);
       if(response.status==200)
       {
         const data = response.data;
@@ -100,8 +100,8 @@ const PayThruAppScreen = ({route}) => {
             console.log('setcontribution not found or empty');
           }
  
+        }
         setisLoading(false);
-      }
     } catch (error) {
       console.error('Error fetching countries:', error);
     }

@@ -9,14 +9,17 @@ import { parsePhoneNumberFromString, getExampleNumber, getCountryCallingCode  } 
 
 import { reset } from './NavigationService';
 
-const storage = new MMKV(); 
-   
+const storage = new MMKV();  
+
+
      
 // export const socketUrl = 'http://192.168.1.61:3003';
-export const socketUrl = 'http://192.168.1.17:3003';
+// export const socketUrl = 'http://192.168.1.17:3003';
+export const socketUrl = 'http://145.223.18.56:3007/';
 export const apiUrl = () => {   
   // const apiUrl = 'http://192.168.1.61/projects/codediffusion/hindibible/api/'; 
-  const apiUrl = 'https://sademo.online/codediffusion/hindibible/api/'; 
+  // const apiUrl = 'https://sademo.online/codediffusion/hindibible/api/'; 
+  const apiUrl = 'https://developershahrukh.in/demo/codediffusion/hindibible/api/'; 
   // const apiUrl = 'https://digitalnamo.com/azmal/2025/april/hindibible/api/'; 
   // const apiUrl = 'http://192.168.1.25/projects/hindibible/api/'; 
 
@@ -162,6 +165,8 @@ const responseCheck = async (response, navigation, extraData, messageAlert) => {
           storeLoginToken(result);
           extraData.setuserDetail(JSON.stringify(result?.data));
           extraData.setToken(result?.token);
+
+          
           if(result.data.free_trial==1)
           {
             navigation.reset({
@@ -170,7 +175,7 @@ const responseCheck = async (response, navigation, extraData, messageAlert) => {
             });
             return result;
           }
-          if(result.package.status==0 || result.package.status==2)
+          else if(result.package.status==0 || result.package.status==2)
           {
             navigation.reset({
               index: 0,
@@ -467,3 +472,4 @@ export const validateNumber = (phone, countryISO) => {
 
   return possibleLengths.includes(digitOnly.length);
 };
+

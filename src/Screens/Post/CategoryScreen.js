@@ -13,16 +13,17 @@ import { postData, apiUrl } from '../../Components/api';
 const urls=apiUrl();
 
 import { MMKV } from 'react-native-mmkv';
+import LanguageModal from '../../Components/Modal/LanguageModal.js';
 const storage = new MMKV();
 
 const MainScreen = ({route}) => {
   const navigation = useNavigation();
   let show_case = route.params?.show_case?route.params?.show_case:0;
-  let language_id = route.params?.id?route.params?.id:0;
-   
+  // let language_id = route.params?.id?route.params?.id:0;
+  let language_id = storage.getString('language_id');
 
 
-    const { extraData } = useContext(GlobalContext);
+    const { extraData, languageModalVisible, setlanguageModalVisible } = useContext(GlobalContext);
     const appSetting = extraData.appSetting;
     const userDetail = extraData.userDetail;
 
@@ -42,10 +43,15 @@ const MainScreen = ({route}) => {
     useFocusEffect(
       useCallback(() => {
         fetchData(); // when returning from details screen
+        if(!language_id)
+        {
+          setlanguageModalVisible(true)
+        }
       }, [])
     );
  
     const fetchData = async () => { 
+        language_id = storage.getString('language_id');
         try {
           const response = await postData({show_case:show_case,language_id:language_id}, urls.category, "GET", navigation, extraData, 1);
           if(response.status==200)
@@ -58,9 +64,9 @@ const MainScreen = ({route}) => {
         }
       };
       
-      useEffect(() => {
-        fetchData()
-      },[])
+      // useEffect(() => {
+      //   fetchData()
+      // },[])
       if (isLoading) {
         return (
           <PageLoding />          
@@ -97,7 +103,7 @@ const MainScreen = ({route}) => {
       <View style={styles.topBar}>
         <TopBarPrimary />
       </View>
-      <View style={styles.buttonTop}>
+      <View style={[styles.buttonTop, {marginBottom:8}]}>
         <GradiantButton
           title="Home"
           height="30"
@@ -126,8 +132,21 @@ const MainScreen = ({route}) => {
               navigation.navigate('Home',  route.params); // 👈 yahan apne home screen ka route name likho
             }
           }}
+        />        
+      </View>
+        
+      <View style={[styles.buttonTop, {marginBottom:0}]}>
+        <GradiantButton
+          title="Change Language"
+          height="40"
+          width="50%"
+          gradientType="green"
+          borderRadius={5}
+          fontSize={18}
+          onPress={() => setlanguageModalVisible(true)}
         />
       </View>
+
       <View style={styles.button}>
         <Button
           title="Menu"
@@ -214,27 +233,14 @@ const MainScreen = ({route}) => {
               </>
             ):null
             }
-              
-
-
-
-
-
-{/*           
-  <GradiantButton
-  title=""
-  height="45"
-            width="45%"
-            gradientType="gray"
-            borderRadius={5}
-            fontSize={15}
-            fontWeight="500"
-          /> */}
-        
+                 
         
         
       </View>
       </TouchableOpacity>
+
+            <LanguageModal fetchDataList={fetchData} />
+
     </ScrollView>
   );
 };

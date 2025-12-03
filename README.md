@@ -45,7 +45,7 @@ cd android
 ./gradlew assembleDebug
 cd ../
 
-
+ 
 
 mkdir -p android/app/src/main/assets
 cd android

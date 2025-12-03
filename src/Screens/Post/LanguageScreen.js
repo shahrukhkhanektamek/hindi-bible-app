@@ -45,17 +45,17 @@ const LanguageScreen = ({route}) => {
     );
  
     const fetchData = async () => { 
-        try {
-          const response = await postData({}, urls.language, "GET", navigation, extraData, 1);
-          if(response.status==200) 
-          {
-            setData(response.data);           
-            setisLoading(false)
-          }
-        } catch (error) {
-          console.error('Error fetching countries:', error);
+      try {
+        const response = await postData({}, urls.language, "GET", navigation, extraData, 1);
+        if(response.status==200) 
+        {
+          setData(response.data);           
+          setisLoading(false)
         }
-      };
+      } catch (error) {
+        console.error('Error fetching countries:', error);
+      }
+    };
       
     //   useEffect(() => {
     //     fetchData()
@@ -64,6 +64,12 @@ const LanguageScreen = ({route}) => {
         return (
           <PageLoding />          
         );
+      }
+
+      const handleSelectLanguage = (item) =>{
+        storage.set("language_id", `${item.id}`)
+        storage.set("language_name",`${item.name}`)
+        navigation.navigate('Category', {id:item.id,name:item.name,show_case:show_case})
       }
       
       
@@ -137,7 +143,7 @@ const LanguageScreen = ({route}) => {
                     borderRadius={5}
                     fontSize={Number(item?.font_size)}
                     fontWeight="500"
-                    onPress={() => navigation.navigate('Category', {id:item.id,name:item.name,show_case:show_case})}
+                    onPress={() => handleSelectLanguage(item)}
                   />
                 </View>
             ))}

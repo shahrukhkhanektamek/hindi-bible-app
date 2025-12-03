@@ -27,6 +27,7 @@ export const GlobalProvider = ({ children }) => {
   const [token, setToken] = useState(null);
   const [isLoading, setisLoading] = useState(true);
   const [isMediaPlaying, setIsMediaPlaying] = useState(false);
+  const [languageModalVisible, setlanguageModalVisible] = useState(false);
 
  
   
@@ -134,7 +135,13 @@ export const GlobalProvider = ({ children }) => {
     
 
   return ( 
-    <GlobalContext.Provider value={{extraData:extraData,setIsMediaPlaying:setIsMediaPlaying,isMediaPlaying:isMediaPlaying}}>
+    <GlobalContext.Provider value={{
+      extraData:extraData,
+      setIsMediaPlaying:setIsMediaPlaying,
+      isMediaPlaying:isMediaPlaying,
+      languageModalVisible,
+      setlanguageModalVisible
+      }}>
       {children}
       <Loader extraData={extraData} />
       <AlertMessage extraData={extraData} />

@@ -51,9 +51,9 @@ const BibleStudyScreen = ({route}) => {
       }
     };
 
-    useEffect(() => {
-      fetchData()
-    },[])
+    // useEffect(() => {
+    //   fetchData()
+    // },[])
     useFocusEffect(
       useCallback(() => {
         fetchData(); // when returning from details screen

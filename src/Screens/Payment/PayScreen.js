@@ -44,8 +44,10 @@ const [page, setPage] = useState(0);
   
   const [type, settype] = useState(typeO);
 
+  let free_trial = appSetting.free_trial;
+  let package_status = appSetting.package.status;
   
-
+  
     const handleCreateTransaction = async () => {
       
       const filedata = {
@@ -210,7 +212,8 @@ const [page, setPage] = useState(0);
         <View style={styles.buttonContainer}>
           <View style={styles.textContainer}>
             <View style={styles.textBox1}>
-              
+
+              {free_trial==2 && package_status==0?<Text style={[styles.textStyle, { color: COLORS.black }]}>Apka free trial khatam ho gaya hai.</Text>:null}
               
               {(gst>0)?(
                 <View>
