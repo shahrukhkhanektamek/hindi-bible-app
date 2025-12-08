@@ -344,7 +344,7 @@ const PayThruAppScreen = ({route}) => {
             />
           </View>
 
-          <View style={styles.button}>
+          <View style={[styles.button,{marginBottom:20}]}>
             <GradiantButton
               title="PAY"
               height="35"

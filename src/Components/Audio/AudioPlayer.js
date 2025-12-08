@@ -52,15 +52,19 @@ const AudioPlayer = ({
     }
   }, [isPlaying]);
 
-  const togglePlayPause = () => {
+  const togglePlayPause = async () => {
     if (isPlaying) {
       setPausedTime(currentTime);
       setPlayingId(null);
       setIsMediaPlaying(false); // ⬅️ UPDATE CONTEXT
     } else {
-      handleViewPost(item);
-      setPlayingId(id);
-      setIsMediaPlaying(true); // ⬅️ UPDATE CONTEXT
+      const handleViewPostData = await handleViewPost(item);
+      if(handleViewPostData)
+      {
+        setPlayingId(id);
+        setIsMediaPlaying(true); // ⬅️ UPDATE CONTEXT
+      }
+      console.log(handleViewPostData)
     }
   };
 

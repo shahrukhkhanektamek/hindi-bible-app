@@ -1,5 +1,5 @@
 /* eslint-disable react-native/no-inline-styles */
-import { StyleSheet, Text, View, TextInput, TouchableOpacity, ScrollView, Alert, TouchableWithoutFeedback, Keyboard } from 'react-native';
+import { StyleSheet, Text, View, TextInput, TouchableOpacity, ScrollView, Alert, TouchableWithoutFeedback, Keyboard, KeyboardAvoidingView } from 'react-native';
 import React, { useContext, useEffect, useState } from 'react';
 import Icon from 'react-native-vector-icons/Ionicons';
 import TopBarPrimary from '../../Components/TopBar/TopBarPrimary.js';
@@ -129,6 +129,11 @@ const LoginScreen = ({route}) => {
   };
 
   return (
+    <KeyboardAvoidingView
+          style={{ flex: 1 }}
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
+          keyboardVerticalOffset={Platform.OS === "ios" ? 100 : 0}
+        >
     <ScrollView keyboardShouldPersistTaps="handled" style={[styles.container]}>
       <View style={styles.topBar}>
         <TopBarPrimary />
@@ -246,6 +251,8 @@ const LoginScreen = ({route}) => {
 
 
     </ScrollView>
+
+    </KeyboardAvoidingView>
   );
 };
 

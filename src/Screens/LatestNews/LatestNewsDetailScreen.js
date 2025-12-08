@@ -13,6 +13,7 @@ import WebView from 'react-native-webview';
 import VideoPlayer from '../../Components/Video/VideoPlayer.js';
 import GumletVideo from '../../Components/Video/GumletVideo.js';
 import LogoutButton from '../../Components/LogoutButton.js';
+import UniversalPlayer from '../../Components/Video/UniversalPlayer/UniversalPlayer.js';
 
 const LatestNewsDetailScreen = () => {
   const navigation = useNavigation();
@@ -39,17 +40,13 @@ const LatestNewsDetailScreen = () => {
     case 2: // WebView-based video
     case 3:
       return (
-        <WebView
+        <UniversalPlayer 
           key={videoKey}
           style={styles.webviewVideo}
-          javaScriptEnabled
-          domStorageEnabled
-          allowsFullscreenVideo
-          mediaPlaybackRequiresUserAction={false}
-          allowsInlineMediaPlayback={true}
-          originWhitelist={['*']}
-          source={{ uri: item.video_url }}
-          onMessage={(event) => handleWebMessage(event)}
+          type={item.video_type}               // "youtube", "vimeo", "gumlet", "gdrive", "video", "audio"
+          source={item.video_url} // video ID or URL
+          thumbnail={item.image} // optional
+          height={175}
         />
       );
 

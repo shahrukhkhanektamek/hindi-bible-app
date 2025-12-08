@@ -177,12 +177,12 @@ const GenesisScreen = ({route}) => {
             }
             else if(item.post_type==2)
             {
+              return true;
               // !item.is_paid?navigation.navigate('SinglePost', {item:item,name:name}):handlePay(item.id)
             }
             else if(item.post_type==3)
             {
-              !item.is_paid?navigation.navigate('SinglePost', {item:item,name:name}):handlePay(item.id)
-              // !item.is_paid?navigation.navigate('SingleImage', {image:item.image}):handlePay(item.id)
+              !item.is_paid?navigation.navigate('SingleImage', {image:item.image}):handlePay(item.id)
             }
             else if(item.post_type==4)
             {
@@ -193,14 +193,9 @@ const GenesisScreen = ({route}) => {
             {
               !item.is_paid?navigation.navigate('SinglePost', {item:item,name:name}):handlePay(item.id)
             }
-            else if(item.post_type==6)
+            else if(item.post_type==6) 
             {
-              !item.is_paid?navigation.navigate('SinglePost', {item:item,name:name}):handlePay(item.id)
-
-              // !item.is_paid?navigation.navigate('AlbumImage', {
-              //   images: item?.album?item.album:[],
-              //   initialIndex: 0,
-              // }):handlePay(item.id)
+              !item.is_paid?navigation.navigate('AlbumImage', {images: item?.album?item.album:[],initialIndex: 0,}):handlePay(item.id)
             }
         }
       } catch (error) {
@@ -361,22 +356,26 @@ const GenesisScreen = ({route}) => {
               ) : (item.post_type==3) ? ( 
                 <View style={styles.imageWrapper} key={postKey}>
                   <View style={styles.imageContainer}>
-                    <TouchableOpacity onPress={() =>!item.is_paid?navigation.navigate('SingleImage', {image:item.image}):handlePay(item.id)}>
+                    <TouchableOpacity 
+                      // onPress={() =>!item.is_paid?navigation.navigate('SingleImage', {image:item.image}):handlePay(item.id)}
+                      onPress={() =>handleViewPost(item)}
+                    >
                       <Image source={{uri:item.image}} style={styles.image} />
                     </TouchableOpacity>
-                  </View>
+                  </View>  
                 </View>
               
               ) : (item.post_type==6) ? ( 
                 <View style={styles.imageWrapper} key={postKey}>
                   <View style={styles.imageContainer}>
                     <TouchableOpacity 
-                    onPress={() =>
-                        !item.is_paid?navigation.navigate('AlbumImage', {
-                          images: item?.album?item.album:[],
-                          initialIndex: 0,
-                        }):handlePay(item.id)
-                    }
+                    // onPress={() =>
+                    //     !item.is_paid?navigation.navigate('AlbumImage', {
+                    //       images: item?.album?item.album:[],
+                    //       initialIndex: 0,
+                    //     }):handlePay(item.id)
+                    // }
+                    onPress={() =>handleViewPost(item)}
                     >
                       <Image source={{uri:item.image}} style={styles.image} />
                     </TouchableOpacity>
@@ -392,12 +391,13 @@ const GenesisScreen = ({route}) => {
                             gradientType="orange"
                             borderRadius={5} 
                             fontSize={15}                        
-                            onPress={() =>
-                                !item.is_paid?navigation.navigate('AlbumImage', {
-                                  images: item?.album?item.album:[],
-                                  initialIndex: 0,
-                                }):handlePay(item.id)
-                            }
+                            // onPress={() =>
+                            //     !item.is_paid?navigation.navigate('AlbumImage', {
+                            //       images: item?.album?item.album:[],
+                            //       initialIndex: 0,
+                            //     }):handlePay(item.id)
+                            // }
+                            onPress={() =>handleViewPost(item)}
                           />
                         ):null
                         }

@@ -172,7 +172,7 @@ import UniversalPlayer from "../../Components/Video/UniversalPlayer/UniversalPla
             {/* Video Type */}
             {data.post_type == 1 ? ( 
                 <View>
-
+  
                   <UniversalPlayer
                     // key={videoKey}
                     style={styles.webviewVideo}

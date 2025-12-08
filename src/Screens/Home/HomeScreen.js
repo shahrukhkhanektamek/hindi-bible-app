@@ -111,18 +111,15 @@ const HomeScreen = () => {
             {
               setshowpaymentbutton(false);              
             }
-            else if(response.data.package.status==0 || response.data.package.status==2)
+            else if(response.data.free_trial==2 || response.data.free_trial==0)
             {
-              setshowpaymentbutton(true);
-              // navigation.reset({
-              //   index: 0,
-              //   routes: [
-              //     {
-              //       name: 'SelectCountryScreen',
-              //       params: {type:1}, 
-              //     },
-              //   ],
-              // });
+              if(response.data.package.status==0 || response.data.package.status==2)
+              {
+                setshowpaymentbutton(true);
+              }
+              else {
+                setshowpaymentbutton(false);
+              }
             }
           }
           else{
