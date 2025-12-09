@@ -28,6 +28,7 @@ export const GlobalProvider = ({ children }) => {
   const [isLoading, setisLoading] = useState(true);
   const [isMediaPlaying, setIsMediaPlaying] = useState(false);
   const [languageModalVisible, setlanguageModalVisible] = useState(false);
+  const [deleteAccountModalVisible, setdeleteAccountModalVisible] = useState(false);
 
  
   
@@ -105,7 +106,7 @@ export const GlobalProvider = ({ children }) => {
     sidebar, 
     loader, 
     appSetting, 
-    userDetail, 
+    userDetail: typeof userDetail === 'string' ? JSON.parse(userDetail) : userDetail, 
     setuserDetail, 
     token, 
     setToken, 
@@ -140,7 +141,10 @@ export const GlobalProvider = ({ children }) => {
       setIsMediaPlaying:setIsMediaPlaying,
       isMediaPlaying:isMediaPlaying,
       languageModalVisible,
-      setlanguageModalVisible
+      setlanguageModalVisible,
+      
+      deleteAccountModalVisible,
+      setdeleteAccountModalVisible
       }}>
       {children}
       <Loader extraData={extraData} />

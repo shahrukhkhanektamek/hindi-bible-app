@@ -14,6 +14,7 @@ const urls=apiUrl();
 
 import { MMKV } from 'react-native-mmkv';
 import LanguageModal from '../../Components/Modal/LanguageModal.js';
+import DeleteAccountModal from '../../Components/Modal/DeleteAccountModal.js';
 const storage = new MMKV();
 
 const MainScreen = ({route}) => {
@@ -23,7 +24,7 @@ const MainScreen = ({route}) => {
   let language_id = storage.getString('language_id');
 
 
-    const { extraData, languageModalVisible, setlanguageModalVisible } = useContext(GlobalContext);
+    const { extraData, languageModalVisible, setlanguageModalVisible, deleteAccountModalVisible, setdeleteAccountModalVisible } = useContext(GlobalContext);
     const appSetting = extraData.appSetting;
     const userDetail = extraData.userDetail;
 
@@ -75,14 +76,13 @@ const MainScreen = ({route}) => {
       
       const handleChangePage = async (item) => { 
         if(item.sub_category_used){
-          item.post_used?navigation.navigate('SubCategory', {id:item.id,name:item.name,show_case:show_case,"category_type":1}):null;
+          item.sub_category_used?navigation.navigate('SubCategory', {id:item.id,name:item.name,show_case:show_case,"category_type":1}):null;
         }else{
           item.post_used?navigation.navigate('Post', {id:item.id,name:item.name,show_case:show_case,"category_type":1}):null
         } 
       };
     
-      const handleDeleteAccount = async () => { 
-        console.log(userDetail.id)
+      const handleConfirmDeleteAccount = async () => {
         try { 
           const response = await postData({user_id:userDetail.id}, urls.deleteAccount, "POST", navigation, extraData);
           if(response.status==200)
@@ -93,155 +93,179 @@ const MainScreen = ({route}) => {
           console.error('Error fetching countries:', error);
         }
       };
+    
+      const handleDeleteAccountPre = async () => { 
+        setdeleteAccountModalVisible(true)
+      };
  
   return (
-    <ScrollView style={styles.container}
-    refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
-    >
-      <TouchableOpacity activeOpacity={1}>
+    <>
+      <ScrollView style={styles.container}
+      refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+      >
+        <TouchableOpacity activeOpacity={1}>
 
-      <View style={styles.topBar}>
-        <TopBarPrimary />
-      </View>
-      <View style={[styles.buttonTop, {marginBottom:8}]}>
-        <GradiantButton
-          title="Home"
-          height="30"
-          width="25%"
-          gradientType="yellow"
-          borderRadius={5}
-          fontSize={15}
-          onPress={() => navigation.navigate('Home')}
-        />
-        {userDetail?(
-          <LogoutButton />
-        ):null
-        }
-        
-        <GradiantButton
-          title="Back"
-          height="30"
-          width="25%"
-          gradientType="purple"
-          borderRadius={5}
-          fontSize={15}
-          onPress={() => {
-            if (navigation.canGoBack()) {
-              navigation.goBack();
-            } else {
-              navigation.navigate('Home',  route.params); // 👈 yahan apne home screen ka route name likho
-            }
-          }}
-        />        
-      </View>
-        
-      <View style={[styles.buttonTop, {marginBottom:0}]}>
-        <GradiantButton
-          title="Change Language"
-          height="40"
-          width="50%"
-          gradientType="green"
-          borderRadius={5}
-          fontSize={18}
-          onPress={() => setlanguageModalVisible(true)}
-        />
-      </View>
-
-      <View style={styles.button}>
-        <Button
-          title="Menu"
-          height="35"
-          width="25%"
-          fontSize={15}
-          backgroundColor="#3669c3"
-          borderRadius={5}
-        />
-      </View>
-      <View style={styles.buttonContainer}>
-        <View style={styles.buttonWrapper}>
-
-          <View style={[styles.row]}>
-            {data.map((item) => (
-              <View style={[styles.col6,styles.plr5,styles.mb15]} key={item.id}>
-                <GradiantButton
-                    title={item.name}
-                    title2={item?.name2}
-                    count={item?.post_count}
-                    height="45"
-                    width="100%"
-                    gradientType={item.post_used?'orange':'gray'}
-                    borderRadius={5}
-                    fontSize={Number(item?.font_size)}
-                    fontWeight="500"
-                    onPress={() => handleChangePage(item)}
-                  />
-                </View>
-            ))}
-          </View>
-
+        <View style={styles.topBar}>
+          <TopBarPrimary />
+        </View>
+        <View style={[styles.buttonTop, {marginBottom:8}]}>
+          <GradiantButton
+            title="Home"
+            height="30"
+            width="25%"
+            gradientType="yellow"
+            borderRadius={5}
+            fontSize={15}
+            onPress={() => navigation.navigate('Home')}
+          />
+          {userDetail?(
+            <LogoutButton />
+          ):null
+          }
           
+          <GradiantButton
+            title="Back"
+            height="30"
+            width="25%"
+            gradientType="purple"
+            borderRadius={5}
+            fontSize={15}
+            onPress={() => {
+              if (navigation.canGoBack()) {
+                navigation.goBack();
+              } else {
+                navigation.navigate('Home',  route.params); // 👈 yahan apne home screen ka route name likho
+              }
+            }}
+          />        
+        </View>
+          
+        <View style={[styles.buttonTop, {marginBottom:0}]}>
+          <GradiantButton
+            title="Change Language"
+            height="40"
+            width="50%"
+            gradientType="green"
+            borderRadius={5}
+            fontSize={18}
+            onPress={() => setlanguageModalVisible(true)}
+          />
         </View>
 
+        <View style={styles.button}>
+          <Button
+            title="Menu"
+            height="35"
+            width="25%"
+            fontSize={15}
+            backgroundColor="#3669c3"
+            borderRadius={5}
+          />
+        </View>
+        <View style={styles.buttonContainer}>
+          <View style={styles.buttonWrapper}>
 
+            <View style={[styles.row]}>
+              {data.map((item) => (
+                <View style={[styles.col6,styles.plr5,styles.mb15]} key={item.id}>
+                  <GradiantButton
+                      title={item.name}
+                      title2={item?.name2}
+                      count={item?.post_count}
+                      height="45"
+                      width="100%"
+                      gradientType={item.post_used?'orange':'gray'}
+                      borderRadius={5}
+                      fontSize={Number(item?.font_size)}
+                      fontWeight="500"
+                      onPress={() => handleChangePage(item)}
+                    />
+                  </View>
+              ))}
+            </View>
 
-            {userDetail?(
-              <>
-              <View style={styles.buttonWrapper}>
-                  <GradiantButton
-                    title="Edit Profile"
-                    height="35"
-                    width="33%"
-                    gradientType="green"
-                    borderRadius={5}
-                    fontSize={13}
-                    fontWeight="500"
-                    onPress={() => navigation.navigate('EditProfile')}
-                    />
-                  <GradiantButton
-                    title="Edit Username"
-                    height="35"
-                    width="33%"
-                    gradientType="green"
-                    borderRadius={5}
-                    fontSize={13}
-                    fontWeight="500"
-                    onPress={() => navigation.navigate('EditUsernamePassword')}
-                    />
-                  <GradiantButton
-                    title="Order History"
-                    height="35"
-                    width="33%"
-                    gradientType="green"
-                    borderRadius={5}
-                    fontSize={13}
-                    fontWeight="500"
-                    onPress={() => navigation.navigate('OrderHistory')}
-                    />
-              </View>
-              <View style={styles.buttonWrapper}>
-                    <GradiantButton
-                    title="Delete Account"
-                    height="35"
-                    width="50%"
-                    gradientType="red"
-                    borderRadius={5}
-                    fontSize={13}
-                    fontWeight="500"
-                    onPress={() => handleDeleteAccount() }
-                    />
-              </View>
-              </>
-            ):null
-            }
-                 
+            
+          </View>
+
+        </View>
+        </TouchableOpacity>
+
         
-        
-      </View>
-      </TouchableOpacity>
 
-            <LanguageModal fetchDataList={fetchData} />
+        <LanguageModal fetchDataList={fetchData} />
+        <DeleteAccountModal handleDeleteAccount={handleConfirmDeleteAccount} />
 
-    </ScrollView>
+      </ScrollView>
+      {userDetail?(
+          <>
+          <View style={{
+            position: 'static',
+            bottom: 0,
+            left:0,
+            width: '100%',
+            alignItems: 'center',
+            paddingBottom: 5,
+            backgroundColor:BACKGROUND_COLORS.primary,
+            paddingHorizontal:10,
+            paddingVertical:5
+          }}>
+            {/* First Row */}
+            <View style={{
+              flexDirection: 'row',
+              width: '100%',
+              justifyContent: 'space-between',
+              marginBottom: 5
+            }}>
+              <GradiantButton
+                title="Edit Profile"
+                height="35"
+                width="33%"
+                gradientType="green"
+                borderRadius={5}
+                fontSize={13}
+                fontWeight="500"
+                onPress={() => navigation.navigate('EditProfile')}
+              />
+              <GradiantButton
+                title="Edit Username"
+                height="35"
+                width="33%"
+                gradientType="green"
+                borderRadius={5}
+                fontSize={13}
+                fontWeight="500"
+                onPress={() => navigation.navigate('EditUsernamePassword')}
+              />
+              <GradiantButton
+                title="Order History"
+                height="35"
+                width="33%"
+                gradientType="green"
+                borderRadius={5}
+                fontSize={13}
+                fontWeight="500"
+                onPress={() => navigation.navigate('OrderHistory')}
+              />
+            </View>
+
+            {/* Second Row */}
+            <View style={{width: '90%'}}>
+              <GradiantButton
+                title="Delete Account"
+                height="35"
+                width="100%"
+                gradientType="red"
+                borderRadius={5}
+                fontSize={13}
+                fontWeight="500"
+                onPress={() => handleDeleteAccountPre()}
+              />
+            </View>
+          </View>
+          </>
+        ):null
+        }
+    </>
   );
 };
 
@@ -272,7 +296,7 @@ const styles = StyleSheet.create({
   buttonWrapper: {
     flexDirection: 'row',
     justifyContent: 'space-evenly',
-    marginBottom: 16,
+    marginBottom: 0,
   },
   row: {
       // flex:1,
