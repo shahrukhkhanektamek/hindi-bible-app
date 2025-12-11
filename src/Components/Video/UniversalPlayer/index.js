@@ -1,7 +1,7 @@
 import YoutubePlayerComponent from './YoutubePlayer';
 import VimeoPlayer from './VimeoPlayer';
 import GumletPlayer from './GumletPlayer';
-import GDrivePlayer from './GDrivePlayer';
+import GDrivePlayer from './GoogleDrivePlayer';
 import CustomPlayer from './CustomPlayer';
 
 export {

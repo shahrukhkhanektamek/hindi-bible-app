@@ -173,7 +173,7 @@ const UsernamePasswordScreen = ({ route }) => {
         </Animated.View>
       </View>
 
-      <View style={[styles.button, { marginBottom: 20 }]}>
+      <View style={[styles.button, { marginBottom: 50 }]}>
         <GradiantButton
           title="Register"
           height="35"

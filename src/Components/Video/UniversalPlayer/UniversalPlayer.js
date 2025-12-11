@@ -6,7 +6,6 @@ const UniversalPlayer = ({ type, source, thumbnail, gumletToken, vimeoToken, id,
   const [paused, setPaused] = useState(true);
 
   if(!source) return <Text style={{ color:'#fff' }}>No source found</Text>;
-
   let type2 = '';
   if(type==1) type2 = 'default';
   if(type==2) type2 = 'vimeo';
