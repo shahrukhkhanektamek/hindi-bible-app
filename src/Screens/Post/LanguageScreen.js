@@ -131,7 +131,7 @@ const LanguageScreen = ({route}) => {
 
           <View style={[styles.row]}>
             {data.map((item) => (
-              <View style={[styles.plr5,styles.mb15,{width:'100%'}]} key={item.id}>
+              <View style={[styles.plr5,styles.mb15,{width:'50%',}]} key={item.id}>
                 <GradiantButton
                     key={item.id}
                     title={item.name}
@@ -212,6 +212,8 @@ const styles = StyleSheet.create({
       // flex:1,
       flexDirection: 'row',
       flexWrap: 'wrap',
+      justifyContent:'center',
+      textAlign:'center'
   },
   col6:{
       width:'50%'

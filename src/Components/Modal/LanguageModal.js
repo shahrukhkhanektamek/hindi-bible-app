@@ -80,12 +80,17 @@ const LanguageModal = ({fetchDataList}) => {
             
 
 
-
-            <TouchableOpacity 
+                    
+            <GradiantButton
+                title="Close"
+                height="40"
+                width="40%"
+                gradientType="green"
+                borderRadius={5}
+                fontSize={15}
                 onPress={() => setlanguageModalVisible(false)} 
-                style={styles.updateBtn}>
-                <Text style={{ color: '#fff', textAlign: 'center' }}>Close</Text>
-            </TouchableOpacity>
+            />
+
         </View>
         </View>
     </Modal>

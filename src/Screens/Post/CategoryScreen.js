@@ -143,11 +143,11 @@ const MainScreen = ({route}) => {
         <View style={[styles.buttonTop, {marginBottom:0}]}>
           <GradiantButton
             title="Change Language"
-            height="40"
-            width="50%"
+            height="30"
+            width="40%"
             gradientType="green"
             borderRadius={5}
-            fontSize={18}
+            fontSize={15}
             onPress={() => setlanguageModalVisible(true)}
           />
         </View>
@@ -163,7 +163,7 @@ const MainScreen = ({route}) => {
           />
         </View>
         <View style={styles.buttonContainer}>
-          <View style={styles.buttonWrapper}>
+          {/* <View style={styles.buttonWrapper}> */}
 
             <View style={[styles.row]}>
               {data.map((item) => (
@@ -185,7 +185,7 @@ const MainScreen = ({route}) => {
             </View>
 
             
-          </View>
+          {/* </View> */}
 
         </View>
         </TouchableOpacity>
@@ -249,7 +249,7 @@ const MainScreen = ({route}) => {
             </View>
 
             {/* Second Row */}
-            <View style={{width: '90%'}}>
+            <View style={{width: '40%'}}>
               <GradiantButton
                 title="Delete Account"
                 height="35"

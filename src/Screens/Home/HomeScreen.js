@@ -29,10 +29,14 @@ const storage = new MMKV
 import { GlobalContext } from '../../Components/GlobalContext';
 import WebView from 'react-native-webview';
 import DeviceInfo from 'react-native-device-info';
+import FreeTrialExpireActivePlanModal from '../../Components/Modal/MemberLogin/FreeTrialExpireActivePlanModal.js';
+import FreeTrialExpireExpirePlanModal from '../../Components/Modal/MemberLogin/FreeTrialExpireExpirePlanModal.js';
+import GradiantButton from '../../Components/Button/GradientButton.js';
+import LanguageModal from '../../Components/Modal/LanguageModal.js';
 
 const HomeScreen = () => {
   
-  const { extraData } = useContext(GlobalContext);
+  const { extraData, languageModalVisible, setlanguageModalVisible } = useContext(GlobalContext);
   const appSetting = extraData.appSetting;
   const userDetail = extraData.userDetail;
   const setappSetting = extraData.setappSetting;
@@ -47,6 +51,8 @@ const HomeScreen = () => {
   const [isAfterRegisterModalVisible, setIsAfterRegisterModalVisible] = useState(false);
   const [isFreeTrialRuningModalModalVisible, setIsFreeTrialRuningModalVisible] = useState(false);
   const [isFreeTrialExpireModalVisible, setIsFreeTrialExpireModalVisible] = useState(false);
+  const [isFreeTrialExpireActivePlanModalVisible, setIsFreeTrialExpireActivePlanModalVisible] = useState(false);
+  const [isFreeTrialExpireExpirePlanModalVisible, setIsFreeTrialExpireExpirePlanModalVisible] = useState(false);
   const [isPackageExpireModalVisible, setIsPackageExpireModalVisible] = useState(false);
   const [showpaymentbutton, setshowpaymentbutton] = useState(false);
 
@@ -160,7 +166,13 @@ const HomeScreen = () => {
     }
     else if(appSetting.free_trial==2)
     {
-      setIsFreeTrialExpireModalVisible(true)
+      // appSetting.package.status = 2;
+      if(appSetting.package.status==0)
+        setIsFreeTrialExpireModalVisible(true)
+      else if(appSetting.package.status==1)
+        setIsFreeTrialExpireActivePlanModalVisible(true)
+      else if(appSetting.package.status==2)
+        setIsFreeTrialExpireExpirePlanModalVisible(true)
     }
   };
 
@@ -237,7 +249,7 @@ const HomeScreen = () => {
     }, [opacity]);
 
     useEffect(() => {
-      fetchSettingData2()
+      // fetchSettingData2()
     },[])
 
     useFocusEffect(
@@ -245,6 +257,10 @@ const HomeScreen = () => {
         fetchSettingData2(); // when returning from details screen
       }, [])
     );
+
+
+
+
 
     if (isLoading) {
       return (
@@ -265,7 +281,7 @@ const HomeScreen = () => {
         <TopBarPrimary />
       </View>
 
-      <Text style={[styles.heading, { fontFamily: 'Cambria', lineHeight: 25 }]}><Text style={{ color: COLORS.peru }}>TGC</Text> HINDI BIBLE STUDY</Text>
+      <Text style={[styles.heading, { fontFamily: 'Cambria', lineHeight: 25 }]}><Text style={{ color: COLORS.peru }}>TGC</Text> BIBLE STUDY</Text>
 
       <View style={styles.starContainer}>
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
@@ -276,56 +292,72 @@ const HomeScreen = () => {
       </View>
 
       <View style={styles.buttonContainer}>
-        <GradientButton
-          title="Subscribers"
-          height="30"
-          width="26%"
-          gradientType="yellow"
-          borderRadius={5}
-        />
-        <View style={styles.subscriber}>          
-          <Text style={styles.subscriberText}>{appSetting.total_subscribe}</Text>
-        </View>
-        <GradientButton
-          title="Latest News"
-          height="30"
-          width="28%"
-          gradientType="blue"
-          borderRadius={5}
-          onPress={handleLatestnew}
-        />
-        <GradientButton
-          title="Contact Us"
-          height="30"
-          width="25%"
-          gradientType="green"
-          borderRadius={5}
-          onPress={() => navigation.navigate('ContactUs')}
-        />
+
+          <View width="27%">
+            <GradientButton
+              title="Subscribers"
+              height="30"              
+              gradientType="yellow"
+              borderRadius={5}
+            />
+            <View style={styles.emojiContainer}>
+              <View style={{ flexDirection: 'row', alignItems: 'center',justifyContent:'space-between' }}>
+                <View style={styles.emojiBackground}>
+                  <TouchableOpacity onPress={() => handleLike(1)}>
+                    <Text style={styles.emoji}>❤️ {appSetting.total_heart}</Text>
+                  </TouchableOpacity>
+                </View>
+                <View style={styles.emojiBackground}> 
+                  <TouchableOpacity onPress={() => handleLike(2)}>
+                    <Text style={styles.emoji}>👍 {appSetting.total_thumb}</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </View>
+          </View>
+          <View width="4%">
+              <View style={styles.subscriber}>          
+                <Text style={styles.subscriberText}>{appSetting.total_subscribe}</Text>
+              </View>
+          </View>
+          <View width="28%">
+            <GradientButton
+              title="Latest News"
+              height="30"          
+              gradientType="blue"
+              borderRadius={5}
+              onPress={handleLatestnew}
+            />
+            <View style={styles.emojiContainer}>
+              <View style={{ flexDirection: 'row', justifyContent:'center' }}>                
+                <Text style={[styles.text, { marginTop: 0, }]}>{NewDate}</Text>
+              </View>
+            </View>
+          </View>
+          <View width="25%">
+              <GradientButton
+                title="Contact Us"
+                height="30"              
+                gradientType="green"
+                borderRadius={5}
+                onPress={() => navigation.navigate('ContactUs')}
+              />
+          </View>
+
+        
+        
+        
+        
+        
       </View>
 
-      <View style={styles.emojiContainer}>
-        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 37 }}>
-          <View style={styles.emojiBackground}>
-            <TouchableOpacity onPress={() => handleLike(1)}>
-              <Text style={styles.emoji}>❤️ {appSetting.total_heart}</Text>
-            </TouchableOpacity>
-
-          </View>
-          <View style={styles.emojiBackground}> 
-            <TouchableOpacity onPress={() => handleLike(2)}>
-              <Text style={styles.emoji}>👍 {appSetting.total_thumb}</Text>
-            </TouchableOpacity>
-          </View>
-          <Text style={[styles.text, { marginTop: 0 }]}>{NewDate}</Text>
-        </View>
-      </View>
+      
 
       <View style={styles.priceButton}>
         <Button
           title={appSetting.detail.fees_string}
           height="40"
-          width="50%"
+          width="45%"
           backgroundColor={BACKGROUND_COLORS.darkRed}
           color="#ffff00"
           borderRadius={5}
@@ -334,6 +366,15 @@ const HomeScreen = () => {
           borderColor="#ffff00"
           borderWidth={4}
         />
+        <GradiantButton
+            title="Change Language"
+            height="35"
+            width="45%"
+            gradientType="green"
+            borderRadius={5}
+            fontSize={15}
+            onPress={() => setlanguageModalVisible(true)}
+          />
       </View>
  
       <View style={styles.videoPlayer}>
@@ -372,7 +413,7 @@ const HomeScreen = () => {
 
       <View style={styles.button}>
         <GradientButton
-          title="Your Contribution"
+          title="Money Contribution"
           title2="Aapka Arthik Yogdan"
           height="50"
           width="50%"
@@ -389,7 +430,7 @@ const HomeScreen = () => {
  
       {
         (userDetail)? 
-        <>
+        <> 
           {(showpaymentbutton)?
             <View style={styles.button}>
               <GradientButton
@@ -411,7 +452,7 @@ const HomeScreen = () => {
                   title="Menu"
                   height="50"
                   width="50%"
-                  gradientType="purple"
+                  gradientType="blue"
                   color={COLORS.white}
                   borderRadius={5}
                   fontSize={15} 
@@ -477,7 +518,7 @@ const HomeScreen = () => {
           title="hindibiblestudy.com"
           height="35"
           width="60%"
-          gradientType="blue"
+          gradientType="purple"
           color={COLORS.white}
           borderRadius={5}
           fontSize={16}
@@ -507,11 +548,23 @@ const HomeScreen = () => {
         onClose={() => setIsFreeTrialExpireModalVisible(false)}
       />
 
+      <FreeTrialExpireActivePlanModal
+        visible={isFreeTrialExpireActivePlanModalVisible}
+        onClose={() => setIsFreeTrialExpireActivePlanModalVisible(false)}
+      />
+
+      <FreeTrialExpireExpirePlanModal
+        visible={isFreeTrialExpireExpirePlanModalVisible}
+        onClose={() => setIsFreeTrialExpireExpirePlanModalVisible(false)}
+      />
+
       <PackageExpireModal
         visible={isPackageExpireModalVisible}
         onClose={() => setIsPackageExpireModalVisible(false)}
         appSetting={appSetting}
       />
+
+      <LanguageModal fetchDataList={fetchSettingData2} />
 
       <ForceUpdateModal forceUpdate={forceUpdate} />
 
@@ -541,7 +594,7 @@ const styles = StyleSheet.create({
   buttonContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center',
+    // alignItems: 'center',
     marginTop: 3,
     marginHorizontal: 10,
   },
@@ -581,9 +634,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 6,
     paddingVertical: 4,
     borderRadius: 15,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
+    // alignItems: 'center',
+    // justifyContent: 'center',
+  }, 
   emoji: {
     fontSize: 12,
   },
@@ -595,9 +648,13 @@ const styles = StyleSheet.create({
     marginLeft: 235,
   },
   priceButton: {
+    flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'space-between',
     marginTop: 10,
+    // paddingHorizontal:15,
+    width:'90%',
+    margin:'auto'
   },
   webviewVideo: {
     // height: (Dimensions.get('window').width * 9) / 16,

@@ -143,7 +143,7 @@ const GenesisScreen = ({route}) => {
     //   // postViewData()
     // },[])
     
-    const handleViewPost = async (item) => { 
+    const handleViewPost = async (item, isRead) => { 
       
       if(show_case)
       {
@@ -164,6 +164,7 @@ const GenesisScreen = ({route}) => {
         const response = await postData({post_id:item.id,id:id,category_type:category_type}, urls.postView, "POST", null, extraData, 0);
         if(response.status==200)
         {
+          // item.is_paid = 1;
 
             if(response.data.is_paid==1)
             {
@@ -182,7 +183,10 @@ const GenesisScreen = ({route}) => {
             }
             else if(item.post_type==3)
             {
-              !item.is_paid?navigation.navigate('SingleImage', {image:item.image}):handlePay(item.id)
+              if(!isRead)
+                !item.is_paid?navigation.navigate('SingleImage', {image:item.image}):handlePay(item.id)
+              else
+                !item.is_paid?navigation.navigate('SinglePost', {item:item,name:name}):handlePay(item.id)
             }
             else if(item.post_type==4)
             {
@@ -195,7 +199,11 @@ const GenesisScreen = ({route}) => {
             }
             else if(item.post_type==6) 
             {
-              !item.is_paid?navigation.navigate('AlbumImage', {images: item?.album?item.album:[],initialIndex: 0,}):handlePay(item.id)
+              if(!isRead)
+                !item.is_paid?navigation.navigate('AlbumImage', {images: item?.album?item.album:[],initialIndex: 0,}):handlePay(item.id)
+              else
+                !item.is_paid?navigation.navigate('SinglePost', {item:item,name:name}):handlePay(item.id)
+
             }
         }
       } catch (error) {
@@ -448,7 +456,7 @@ const GenesisScreen = ({route}) => {
               <TouchableOpacity 
                 style={styles.readMoreButton}
                 onPress={() =>{
-                  handleViewPost(item); 
+                  handleViewPost(item,'read'); 
                 }}
               >
                 <Text style={styles.readMoreText}>Read More</Text>

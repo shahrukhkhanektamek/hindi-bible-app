@@ -58,7 +58,7 @@ const App = () => {
     const updateDimensions = ({ window }) => {
       setScreenHeight(window.height);
       setScreenWidth(window.width);
-      setIsPortrait(window.height >= window.width);
+      // setIsPortrait(window.height >= window.width);
     };
 
     // Initial dimensions

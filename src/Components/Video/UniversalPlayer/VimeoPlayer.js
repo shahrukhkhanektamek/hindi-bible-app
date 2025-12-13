@@ -90,6 +90,7 @@ const VimeoPlayer = ({ videoUrl, height = 200 }) => {
             allowsInlineMediaPlayback={true}
             setSupportMultipleWindows={false}
             androidLayerType="hardware"
+            androidHardwareAccelerationDisabled={false}
             mediaPlaybackRequiresUserAction={false}
             originWhitelist={['*']}
             mixedContentMode="always"

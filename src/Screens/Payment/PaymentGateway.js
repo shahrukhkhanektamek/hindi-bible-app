@@ -55,13 +55,15 @@ const PaymentGatewayScreen = ({route}) => {
       }
       else if(type==2)
       {          
-        navigation.reset({
-          index: 0,
-          routes: [{
-            name: 'Post',
-            params: JSON.parse(response.data.fileData), 
-          }],
-        });
+        // navigation.reset({
+        //   index: 0,
+        //   routes: [{
+        //     name: 'Post',
+        //     params: JSON.parse(response.data.fileData), 
+        //   }],
+        // });
+        // navigation.push('Post', JSON.parse(response.data.fileData));
+        navigation.pop(2);
       }
       else if(type==3)
       {

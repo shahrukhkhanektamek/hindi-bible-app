@@ -1,4 +1,4 @@
-import { Alert, Image, Linking, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Alert, Image, Linking, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import React, { useContext } from 'react';
 import TopBarPrimary from '../../Components/TopBar/TopBarPrimary.js';
 import GradiantButton from '../../Components/Button/GradientButton.js';
@@ -45,6 +45,10 @@ const PayDirectScreen = () => {
 
   return (
     <ScrollView style={styles.container}>
+
+      <TouchableOpacity
+            activeOpacity={1}
+            >
       <View style={styles.topBar}>
         <TopBarPrimary />
       </View>
@@ -122,6 +126,7 @@ const PayDirectScreen = () => {
 
 
       </View>
+      </TouchableOpacity>
     </ScrollView>
   );
 };

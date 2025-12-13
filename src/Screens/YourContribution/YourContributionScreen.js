@@ -1,14 +1,39 @@
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
-import React from 'react';
+import React, { useState } from 'react';
 import TopBarPrimary from '../../Components/TopBar/TopBarPrimary.js';
 import GradiantButton from '../../Components/Button/GradientButton.js';
 import { useNavigation } from '@react-navigation/native';
 import COLORS from '../../Constants/Colors.js';
 import BACKGROUND_COLORS from '../../Constants/BackGroundColors.js';
+import InternationalContributionModal from '../../Components/Modal/MemberLogin/InternationalContributionModal.js';
 
 const YourContributionScreen = ({route}) => {
   const navigation = useNavigation();
   const {payment_type} = route.params;
+  const [isModalVisible, setisModalVisible] = useState(false);
+
+
+  const handleClick = (btnC) =>{
+
+    if(btnC==1)
+    {
+      navigation.navigate('PayDirect',{"payment_type":payment_type})
+    }
+    else
+    {
+      if(payment_type=='international')
+      {
+        setisModalVisible(true)
+      }
+      else
+      {
+        navigation.navigate('PayThruApp',{"payment_type":payment_type})
+      }
+    }
+
+  }
+
+
 
   return (
     <ScrollView style={styles.container}>
@@ -51,7 +76,7 @@ const YourContributionScreen = ({route}) => {
           fontSize={16}
           gradientType="green"
           borderRadius={5}
-          onPress={() => navigation.navigate('PayDirect',{"payment_type":payment_type})}
+          onPress={() => handleClick(1)}
         />
       </View>
 
@@ -68,9 +93,15 @@ const YourContributionScreen = ({route}) => {
           fontSize={16}
           gradientType="yellow"
           borderRadius={5}
-          onPress={() => navigation.navigate('PayThruApp',{"payment_type":payment_type})}
+          onPress={() => handleClick(2)}
         />
       </View>
+
+    <InternationalContributionModal
+        visible={isModalVisible}
+        onClose={() => setisModalVisible(false)}        
+      />
+
     </ScrollView>
   );
 };

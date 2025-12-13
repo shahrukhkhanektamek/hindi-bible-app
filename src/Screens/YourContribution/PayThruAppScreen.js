@@ -185,7 +185,26 @@ const PayThruAppScreen = ({route}) => {
       extraData.alert.setAlertType(0);
       return false;
     }    
-    navigation.navigate('PayNow',{"filedata":filedata})
+    // navigation.navigate('PayNow',{"filedata":filedata,
+    //   "convertedAmount": convertedAmount,
+    //   "convertion_fess": convertion_fess,
+    //   "payment_type": payment_type
+    // })
+
+    const navigationData = {
+      filedata: filedata,
+      calculationData: {
+        usd: convertedAmount?.usd,
+        converted: convertedAmount?.converted,
+        conversionFeeAmount: convertedAmount?.conversionFeeAmount,
+        razorpayGST: convertedAmount?.razorpayGST,
+        finalAmount: convertedAmount?.finalAmount,
+        convertion_fess: convertion_fess,
+        payment_type: payment_type
+      }
+    };
+    navigation.navigate('PayNow', navigationData);
+
   };
 
   useEffect(() => {
@@ -202,6 +221,42 @@ const PayThruAppScreen = ({route}) => {
     fetchAppSettingData();
   }, []);
 
+
+  const convertedAmountCard = () =>  {
+    if (!convertedAmount || payment_type === 'india') {
+      return null;
+    }
+    
+    return(
+      <View style={{
+        backgroundColor: '#fff',
+        padding: 15,
+        borderRadius: 10,
+        marginBottom: 15,
+        marginTop: 5
+      }}>
+        <Text style={{ fontSize: 18, fontWeight: '700', marginBottom: 10 }}>Calculation Summary</Text>
+
+        <Text>💵 Entered Amount:  ${convertedAmount.usd}</Text>
+        <Text>💱 Converted to INR: ₹{convertedAmount.converted}</Text>
+        <Text>🔁 Razorpay Fee ({convertion_fess}%): - ₹{convertedAmount.conversionFeeAmount}</Text>
+        {/* <Text>💳 Razorpay Fee ({fees}%): - ₹{convertedAmount.razorpayFee}</Text> */}
+        <Text>🧾 GST on Razorpay (18%): - ₹{convertedAmount.razorpayGST}</Text>
+
+        <View style={{
+          borderTopWidth: 1,
+          marginTop: 10,
+          paddingTop: 10,
+          borderColor: "#ddd"
+        }}>
+          <Text style={{ fontSize: 20, fontWeight: "bold", color: "green" }}>
+            Final Amount We Receive: ₹{convertedAmount.finalAmount}
+          </Text>
+        </View>
+      </View>
+    )
+    
+  }
 
   if (isLoading) { 
     return (
@@ -301,35 +356,8 @@ const PayThruAppScreen = ({route}) => {
             />
           </View>
 
-
-          {convertedAmount && payment_type!='india' && (
-            <View style={{
-              backgroundColor: '#fff',
-              padding: 15,
-              borderRadius: 10,
-              marginBottom: 15,
-              marginTop: 5
-            }}>
-              <Text style={{ fontSize: 18, fontWeight: '700', marginBottom: 10 }}>Calculation Summary</Text>
-
-              <Text>💵 Entered Amount:  ${convertedAmount.usd}</Text>
-              <Text>💱 Converted to INR: ₹{convertedAmount.converted}</Text>
-              <Text>🔁 Razorpay Fee ({convertion_fess}%): - ₹{convertedAmount.conversionFeeAmount}</Text>
-              {/* <Text>💳 Razorpay Fee ({fees}%): - ₹{convertedAmount.razorpayFee}</Text> */}
-              <Text>🧾 GST on Razorpay (18%): - ₹{convertedAmount.razorpayGST}</Text>
-
-              <View style={{
-                borderTopWidth: 1,
-                marginTop: 10,
-                paddingTop: 10,
-                borderColor: "#ddd"
-              }}>
-                <Text style={{ fontSize: 20, fontWeight: "bold", color: "green" }}>
-                  Final Amount We Receive: ₹{convertedAmount.finalAmount}
-                </Text>
-              </View>
-            </View>
-          )}
+            {convertedAmountCard()}
+          
 
           <View style={styles.inputGroup}>
             <Text style={styles.label}>Ammount <Text style={styles.redStar}>*</Text></Text>

@@ -18,9 +18,9 @@ adb tcpip 5555
 adb connect 192.168.1.29:5555
 
 
-adb -s 37a661c1 tcpip 5555
-adb -s 37a661c1 shell ip route
-adb connect 192.168.1.7:5555
+adb -s RZCW924HD8X tcpip 5555
+adb -s RZCW924HD8X shell ip route
+adb connect 192.168.1.48:5555
 
 // vivo 
 adb devices

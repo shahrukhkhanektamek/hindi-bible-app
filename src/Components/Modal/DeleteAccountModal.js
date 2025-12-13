@@ -73,17 +73,17 @@ const DeleteAccountModal = ({ handleDeleteAccount }) => {
           {/* Action Buttons */}
           <View style={styles.buttonContainer}>
             <TouchableOpacity 
-              style={[styles.button, styles.cancelButton]}
+              style={[styles.button, styles.deleteButton]}
               onPress={() => setdeleteAccountModalVisible(false)}
             >
-              <Text style={styles.cancelButtonText}>Cancel</Text>
+              <Text style={styles.deleteButtonText}>Cancel</Text>
             </TouchableOpacity>
             
             <TouchableOpacity 
-              style={[styles.button, styles.deleteButton]}
+              style={[styles.button, styles.cancelButton]}
               onPress={handleDeleteAccount}
             >
-              <Text style={styles.deleteButtonText}>Delete Account</Text>
+              <Text style={styles.cancelButtonText}>Delete Account</Text>
             </TouchableOpacity>
           </View>
         </View>

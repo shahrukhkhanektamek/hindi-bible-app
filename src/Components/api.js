@@ -109,6 +109,8 @@ export const postData = async (filedata, url, method, navigation, extraData, loa
   if(method=='POST')  data = JSON.stringify(Object.assign(filedata, { device_id: deviceId,device_detail:deviceInfo}));
   if(method=='GET') data = '';
 
+  console.log( await DeviceInfo.getIpAddress())
+
 
   if (method === 'GET' && filedata) {
     const params = new URLSearchParams({ ...filedata, device_id: deviceId,device_detail:deviceInfo }).toString();
